@@ -1,0 +1,36 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin:0;
+}
+
+a{
+    text-decoration: none;
+    color:black;
+}
+
+.Head{
+    width: 100%;
+    background-color: rgb(118, 177, 228);
+}
+.Navbar{
+    width: 25%;
+    font-weight: 700;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 10px;
+}
+
+.Nav-item{
+    padding:10px 20px;
+    background-color:rgb(134, 241, 134);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s all;
+}
+.Nav-item:hover{
+    transform: scale(1.05);
+    box-shadow: 2px 2px 2px rgb(172, 172, 172);
+}
