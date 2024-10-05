@@ -12,17 +12,17 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-        cb(null, file.originalname);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 })
 
-const upload = multer({ storage })
+const upload = multer({ storage }).single('avatar');
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.post('/upload', upload.single('avatar'), (req, res) => {
+app.post('/upload', upload, (req, res) => {
     console.log(req.body);
     console.log(req.file);
 });
