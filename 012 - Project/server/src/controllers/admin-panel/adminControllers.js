@@ -4,7 +4,6 @@ const AdminModel = require("../../models/adminModel");
 
 const testAdmin = (req, res) => {
     res.status(200).json({ message: 'test successful' });
-    console.log('hello');
 };
 
 const registerAdmin = async () => {
