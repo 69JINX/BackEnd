@@ -29,10 +29,11 @@ function App() {
         nav('/dashboard');
       })
       .catch((error) => {
-        console.log(error);
-        console.log(error.response.data.message);
+        let showErr="error";
+        if (error.message) showErr = error.message;
+        if (error.response) showErr = error.response.data.message;
 
-        toast.error(error.response.data.message, {
+        toast.error(showErr, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -42,13 +43,14 @@ function App() {
           progress: undefined,
           theme: "colored",
         });
+
       })
   }
 
   return (
 
     <div className="mx-auto my-[100px] bg-white rounded-[10px] w-[40%] h-[400px] p-[20px] border">
-          <ToastContainer
+      <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -104,7 +106,7 @@ function App() {
           </Link>
         </div>
       </form>
-  
+
     </div>
   );
 }

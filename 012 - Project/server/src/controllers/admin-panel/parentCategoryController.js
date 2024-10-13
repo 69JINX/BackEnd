@@ -1,6 +1,6 @@
 const parentCategoryModel = require("../../models/parentCategoryModel");
 
-const parentCategoryController = async (req, res) => {
+const createParentCategory = async (req, res) => {
     try {
         console.log(req.body);
         const dataToSave = new parentCategoryModel(req.body);
@@ -11,9 +11,29 @@ const parentCategoryController = async (req, res) => {
         if (error.code === 11000) { // MongoDB duplicate key error
             return res.status(400).send({ message: "Category already exists." });
         }
-        
+
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
-module.exports = parentCategoryController;
+const readParentCategory = async (req, res) => {
+    try {
+        const data = await parentCategoryModel.find();
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+const updateStatusParentCategory = async (req, res) => {
+    try {
+        const response = await parentCategoryModel.findByIdAndUpdate(req.params._id, { status: req.body.status })
+        res.status(200).json({ message: 'successfully Updated', response });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+module.exports = { createParentCategory, readParentCategory, updateStatusParentCategory };
