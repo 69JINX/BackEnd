@@ -20,7 +20,7 @@ function App() {
 
   const handleLogin = () => {
 
-    var inTenSeconds = new Date(new Date().getTime() + 1 * 60 * 1000);
+    var inTenSeconds = new Date(new Date().getTime() + 100 * 60 * 1000);
 
     axios.post("http://localhost:4000/api/admin-panel/admin/login", User)
       .then((response) => {

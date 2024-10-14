@@ -12,25 +12,22 @@ const ViewCategory = () => {
   let [show3, setShow3] = useState(false);
   let [show4, setShow4] = useState(false);
 
-  const [parentCategories, setparentCategories] = useState([]);
+  const [parentCategories, setparentCategories] = useState([12]);
+  const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
+
+  const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
+  const [numOfCheckedBoxes, setnumOfCheckedBoxes] = useState(0);
+
 
   let fetchParentCategories = () => {
-
     axios.get('http://localhost:4000/api/admin-panel/parent-category/read-category')
       .then((response) => {
-        console.log(response.data.data);
         setparentCategories(response.data.data);
-        console.log(parentCategories);
       })
       .catch((error) => {
         console.log(error);
       });
   }
-
-  useEffect(() => {
-    fetchParentCategories();
-  }, [])
-
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
     axios.put(`http://localhost:4000/api/admin-panel/parent-category/update-status/${e.target.value}`, { status })
@@ -52,6 +49,68 @@ const ViewCategory = () => {
       });
   }
 
+  useEffect(() => {
+    setisChildSelectChecked(new Array(parentCategories.length).fill(false));
+  }, [parentCategories])
+
+  useEffect(() => {
+    fetchParentCategories();
+  }, [])
+
+  const handleMasterCheckbox = (e) => {
+    const newMasterCheckedState = !isMasterSelectChecked;
+    setisMasterSelectChecked(newMasterCheckedState);
+
+     // Set all checkboxes to the same state as master checkbox
+    setisChildSelectChecked(new Array(parentCategories.length).fill(newMasterCheckedState));
+
+    // if (e.target.checked == true) {
+    //   setisMasterSelectChecked(true);
+    //   setisChildSelectChecked(new Array(parentCategories.length).fill(isMasterSelectChecked));
+    //   setnumOfCheckedBoxes(parentCategories.length);
+    // }
+    // if (e.target.checked == false) {
+    //   setisMasterSelectChecked(false);
+    //   setisChildSelectChecked(new Array(parentCategories.length).fill(isMasterSelectChecked));
+    //   setnumOfCheckedBoxes(0);
+    // }
+  }
+  // useEffect(() => {
+  //   if (isMasterSelectChecked) setisChildSelectChecked(new Array(parentCategories.length).fill(isMasterSelectChecked));
+  //   if (!isMasterSelectChecked) setisChildSelectChecked(new Array(parentCategories.length).fill(isMasterSelectChecked));
+  // }, [isMasterSelectChecked])
+
+  const handleChildCheckbox = (index) => {
+    const updatedCheckedStates = isChildSelectChecked.map((checked, i) =>
+      i === index ? !checked : checked
+    );
+    setisChildSelectChecked(updatedCheckedStates);
+
+ // If all checkboxes are checked, set master checkbox to true, otherwise false
+    const allChecked = updatedCheckedStates.every((checked) => checked === true);
+    setisMasterSelectChecked(allChecked);
+
+    // if (e.target.checked == true) setnumOfCheckedBoxes(numOfCheckedBoxes + 1);
+    // if (e.target.checked == false) setnumOfCheckedBoxes(numOfCheckedBoxes - 1);
+    // const updatedCheckedStates = isChildSelectChecked.map((checked, i) =>
+    //   i === index ? !checked : checked
+    // );
+    // console.log('isChildSelectChecked '+isChildSelectChecked)
+    // console.log('updatedCheckedStates '+updatedCheckedStates);
+    // setisChildSelectChecked(updatedCheckedStates);
+  }
+
+  // useEffect(() => {
+  //   console.log(numOfCheckedBoxes);
+  //   if (numOfCheckedBoxes == parentCategories.length) {
+  //     setisMasterSelectChecked(true);
+  //   }
+  //   if (numOfCheckedBoxes < parentCategories.length) {
+  //     setisMasterSelectChecked(false);
+  //   }
+
+  // }, [numOfCheckedBoxes])
+
 
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
@@ -63,18 +122,8 @@ const ViewCategory = () => {
           <thead>
             <tr className="text-left border-b">
               <th>
-                <button
-                  className="bg-red-400 rounded-sm px-2 py-1"
-
-                >Delete</button>
-                <input
-                  type="checkbox"
-                  name="deleteAll"
-                  id="deleteAllCat"
-
-                  className="accent-[#5351c9]"
-
-                />
+                <button className="bg-red-400 rounded-sm px-2 py-1">Delete</button>
+                <input onChange={handleMasterCheckbox} type="checkbox" name="deleteAll" id="deleteAllCat" className="accent-[#5351c9]" checked={isMasterSelectChecked} />
               </th>
               <th>Sno</th>
               <th>Category Name</th>
@@ -90,14 +139,7 @@ const ViewCategory = () => {
               parentCategories.map((parentCategory, index) => (
                 <tr className="border-b">
                   <td>
-                    <input
-                      type="checkbox"
-                      name="delete"
-                      id="delete1"
-
-                      className="accent-[#5351c9] cursor-pointer"
-
-                    />
+                    <input checked={isChildSelectChecked[index]} onChange={() => handleChildCheckbox(index)} type="checkbox" name={`checkbox${index}`} id="delete1" className="accent-[#5351c9] cursor-pointer" />
                   </td>
                   <td>{index + 1}</td>
                   <td>{parentCategory.name}</td>
