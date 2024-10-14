@@ -1,12 +1,68 @@
+import axios from "axios";
 import React from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 const AddSizes = () => {
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    axios.post(`http://localhost:4000/api/admin-panel/size/create-size`, {
+      name: e.target.size.value,
+      order: e.target.size_order.value,
+      status:e.target.status.value
+    })
+      .then((response) => {
+        console.log(response.data);
+        toast.success(`Size Added Successfully`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status == 400) {
+
+          console.error(error.response.data.message);
+
+          toast.error(error.response.data.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        }
+      })
+  }
+
   return (
-    <div className="w-[90%] my-[150px] mx-auto bg-white rounded-[10px] border">
-      <span className="block bg-[#f8f8f9] h-[50px] rounded-[10px_10px_0_0] border-b p-[8px_16px] text-[25px] font-[700] text-[#303640]">
-        Add Size
-      </span>
-      <form>
+    <form method="post" onSubmit={handleSubmit}>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
+      <div className="w-[90%] my-[150px] mx-auto bg-white rounded-[10px] border">
+        <span className="block bg-[#f8f8f9] h-[50px] rounded-[10px_10px_0_0] border-b p-[8px_16px] text-[25px] font-[700] text-[#303640]">
+          Add Size
+        </span>
+
         <div className="w-full p-[8px_16px] my-[10px] ">
           <label htmlFor="size" className="text-[#252b36f2]">
             Size Name
@@ -25,33 +81,35 @@ const AddSizes = () => {
           </label>
           <input
             type="text"
-            name="size"
+            name="size_order"
             id="size_order"
             placeholder="Size Order"
             className="w-full input rounded-[5px] p-2 border my-[10px]"
           />
         </div>
-        <div className="w-full p-[8px_16px] my-[10px] ">
-          <label htmlFor="size" className="text-[#252b36f2] mr-[30px]">
-            Display
+        <div className="w-full my-[10px]">
+          <label
+            htmlFor="categoryStatus"
+            className=" text-[#303640] mr-[20px]"
+          >
+            Status
           </label>
           <input
             type="radio"
-            name="size"
-            id="size"
-            value="0"
-            placeholder="Size Name"
-            className="my-[10px] mx-[20px] accent-[#5351c9]"
+            name="status"
+            id="categoryStatus"
+            value={true}
+
+            className="input my-[10px] mx-[10px] accent-[#5351c9] cursor-pointer"
           />
           <span>Display</span>
           <input
             type="radio"
-            name="size"
-            id="size"
-            value="1"
-            placeholder="Size Name"
-            className="my-[10px] mx-[20px] accent-[#5351c9]"
-            checked
+            name="status"
+            id="categoryStatus"
+            value={false}
+
+            className="input my-[10px] mx-[10px] accent-[#5351c9] cursor-pointer"
           />
           <span>Hide</span>
         </div>
@@ -60,8 +118,9 @@ const AddSizes = () => {
             Add Size
           </button>
         </div>
-      </form>
-    </div>
+
+      </div>
+    </form>
   );
 };
 
