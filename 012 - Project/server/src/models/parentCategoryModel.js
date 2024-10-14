@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const parentCategorySchema = mongoose.Schema({
-    name: { type: String, required: true, unique: true,message:"Category already Exist" },
+    name: { type: String, required: true, unique: true},
     description: String,
     status: { type: Boolean, default: true },
     created_at: Date,

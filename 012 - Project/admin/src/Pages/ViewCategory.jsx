@@ -12,11 +12,9 @@ const ViewCategory = () => {
   let [show3, setShow3] = useState(false);
   let [show4, setShow4] = useState(false);
 
-  const [parentCategories, setparentCategories] = useState([12]);
+  const [parentCategories, setparentCategories] = useState([]);
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
-
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
-  const [numOfCheckedBoxes, setnumOfCheckedBoxes] = useState(0);
 
 
   let fetchParentCategories = () => {
@@ -61,7 +59,7 @@ const ViewCategory = () => {
     const newMasterCheckedState = !isMasterSelectChecked;
     setisMasterSelectChecked(newMasterCheckedState);
 
-     // Set all checkboxes to the same state as master checkbox
+    // Set all checkboxes to the same state as master checkbox
     setisChildSelectChecked(new Array(parentCategories.length).fill(newMasterCheckedState));
 
     // if (e.target.checked == true) {
@@ -81,12 +79,10 @@ const ViewCategory = () => {
   // }, [isMasterSelectChecked])
 
   const handleChildCheckbox = (index) => {
-    const updatedCheckedStates = isChildSelectChecked.map((checked, i) =>
-      i === index ? !checked : checked
-    );
-    setisChildSelectChecked(updatedCheckedStates);
 
- // If all checkboxes are checked, set master checkbox to true, otherwise false
+    const updatedCheckedStates = isChildSelectChecked.map((checked, i) => i === index ? !checked : checked);
+    setisChildSelectChecked(updatedCheckedStates);
+    // If all checkboxes are checked, set master checkbox to true, otherwise false
     const allChecked = updatedCheckedStates.every((checked) => checked === true);
     setisMasterSelectChecked(allChecked);
 
