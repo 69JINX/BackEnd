@@ -52,14 +52,16 @@ const ViewCategory = () => {
       });
   }
 
-  useEffect(() => {
-    setisChildSelectChecked(new Array(parentCategories.length).fill(false));
-    if (parentCategories.length === 0) setisMasterSelectChecked(false);
-  }, [parentCategories])
+
 
   useEffect(() => {
     fetchParentCategories();
   }, [])
+
+  useEffect(() => {
+    setisChildSelectChecked(new Array(parentCategories.length).fill(false));
+    if (parentCategories.length === 0) setisMasterSelectChecked(false);
+  }, [parentCategories])
 
   const handleMasterCheckbox = (e) => {
     const newMasterCheckedState = !isMasterSelectChecked;
@@ -72,9 +74,6 @@ const ViewCategory = () => {
     setisChildSelectChecked(new Array(parentCategories.length).fill(newMasterCheckedState));
   }
 
-  useEffect(() => {
-    console.log(checkedCategoriesIDs);
-  }, [checkedCategoriesIDs])
 
   const handleChildCheckbox = (e, index) => {
 
@@ -94,7 +93,7 @@ const ViewCategory = () => {
   }
 
 
-  const handleDlt = (id) => {
+  const handleDlt = (id,name) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -110,7 +109,7 @@ const ViewCategory = () => {
           .then((response) => {
             console.log(response.data);
             fetchParentCategories();
-            toast.success(`Category Deleted Successfully`, {
+            toast.success(`${name} Category Deleted Successfully`, {
               position: "top-right",
               autoClose: 5000,
               hideProgressBar: false,
@@ -176,11 +175,6 @@ const ViewCategory = () => {
         });
       }
     });
-
-
-
-   
-      
     }
   }
 
@@ -237,7 +231,7 @@ const ViewCategory = () => {
                     }
                   </td>
                   <td>
-                    <MdDelete onClick={() => handleDlt(parentCategory._id)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
+                    <MdDelete onClick={() => handleDlt(parentCategory._id,parentCategory.name)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
                     |{" "}
                     <Link to={`/dashboard/category/update-category/${'parentCategory._id'}`}>
                       <CiEdit className="my-[5px] text-yellow-500 cursor-pointer inline" />

@@ -3,13 +3,17 @@ import React, { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import { Tooltip } from "react-tooltip";
+import Swal from "sweetalert2";
 
 const ViewColor = () => {
 
   const [Color, setColor] = useState([]);
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
+
+  const [checkedColorsIDs, setcheckedColorsIDs] = useState([]);
 
   const fetchColor = () => {
     axios.get(`http://localhost:4000/api/admin-panel/color/read-color`)
@@ -49,18 +53,33 @@ const ViewColor = () => {
 
   useEffect(() => {
     setisChildSelectChecked(new Array(Color.length).fill(false));
+    if (Color.length === 0) setisMasterSelectChecked(false);
   }, [Color])
+
+
 
 
   const handleMasterCheckbox = (e) => {
     const newMasterCheckedState = !isMasterSelectChecked;
     setisMasterSelectChecked(newMasterCheckedState);
 
+    if (e.target.checked) setcheckedColorsIDs(Color.map((color) => color._id));
+    if (!e.target.checked) setcheckedColorsIDs([]);
+
     // Set all checkboxes to the same state as master checkbox
     setisChildSelectChecked(new Array(Color.length).fill(newMasterCheckedState));
   }
 
-  const handleChildCheckbox = (index) => {
+  const handleChildCheckbox = (e, index) => {
+
+    if (e.target.checked) setcheckedColorsIDs(((prev) => [...prev, e.target.value]));
+    if (!e.target.checked) {
+      const temp_array = checkedColorsIDs;
+      const index = temp_array.indexOf(e.target.value);
+      if (index > -1) temp_array.splice(index, 1);
+      setcheckedColorsIDs(temp_array);
+    }
+
     const updatedCheckedStates = isChildSelectChecked.map((checked, i) => i === index ? !checked : checked);
     setisChildSelectChecked(updatedCheckedStates);
     // If all checkboxes are checked, set master checkbox to true, otherwise false
@@ -68,8 +87,104 @@ const ViewColor = () => {
     setisMasterSelectChecked(allChecked);
   }
 
+  const handleDlt = (id, name) => {
+    console.log(name);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        axios.put(`http://localhost:4000/api/admin-panel/color/delete-color/${id}`)
+          .then((response) => {
+            console.log(response.data);
+            fetchColor();
+            toast.success(`${name} Color Deleted Successfully`, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "deleted successfully.",
+          icon: "success"
+        });
+      }
+    });
+  }
+
+  const handleMultiDlt = () => {
+    if (checkedColorsIDs.length > 0) {
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          axios.put('http://localhost:4000/api/admin-panel/color/delete-colors', { checkedColorsIDs })
+            .then((response) => {
+              console.log(response.data);
+              fetchColor();
+              toast.success(`${checkedColorsIDs.length} Color/s Deleted Successfully`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "delted succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
   return (
     <div className="w-[90%] bg-white rounded-[10px] border mx-auto my-[150px]">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <span className="block h-[40px] border-b rounded-[10px_10px_0_0] bg-[#f8f8f9] text-[#303640] p-[8px_16px] text-[20px]">
         View Color
       </span>
@@ -78,7 +193,7 @@ const ViewColor = () => {
           <thead>
             <tr className="border-b text-left">
               <th className="flex p-2">
-                <button className="bg-[#5351c9] font-light text-white rounded-md p-1 w-[80px] h-[35px] my-[10px] mr-[10px]">
+                <button onClick={handleMultiDlt} className="bg-[#5351c9] font-light text-white rounded-md p-1 w-[80px] h-[35px] my-[10px] mr-[10px]">
                   Delete
                 </button>
                 <input onChange={handleMasterCheckbox} checked={isMasterSelectChecked}
@@ -99,7 +214,7 @@ const ViewColor = () => {
               Color.map((color, index) => (
                 <tr className="border-b">
                   <td className="p-2">
-                    <input checked={isChildSelectChecked[index]} onChange={() => handleChildCheckbox(index)}
+                    <input value={color._id} checked={isChildSelectChecked[index]} onChange={(e) => handleChildCheckbox(e, index)}
                       type="checkbox"
                       name="delete"
                       className="cursor-pointer accent-[#5351c9] input"
@@ -112,14 +227,14 @@ const ViewColor = () => {
                       className={`w-[90%] mx-auto h-[20px] border`}></div>
                   </td>
                   <td className="p-2">
-                    <MdDelete className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
+                    <MdDelete onClick={(e) => handleDlt(color._id, color.name)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
                     |{" "}
                     <Link to="/dashboard/color/update-colors">
                       <CiEdit className="my-[5px] text-yellow-500 cursor-pointer inline" />
                     </Link>
                   </td>
                   <td className="p-2">
-                  <button onClick={updateStatus} value={color._id} data-tooltip-id="btn-tooltip" data-tooltip-content={!color.status ? "Click to Active" : " Click to Inactive"} className={`${color.status ? "bg-green-600" : "bg-red-600"} text-white font-light rounded-md my-1 p-1 w-[80px] h-[35px] cursor-pointer`}>
+                    <button onClick={updateStatus} value={color._id} data-tooltip-id="btn-tooltip" data-tooltip-content={!color.status ? "Click to Active" : " Click to Inactive"} className={`${color.status ? "bg-green-600" : "bg-red-600"} text-white font-light rounded-md my-1 p-1 w-[80px] h-[35px] cursor-pointer`}>
                       {color.status ? "Active" : "Inactive"}
                     </button>
                     <Tooltip id="btn-tooltip" />

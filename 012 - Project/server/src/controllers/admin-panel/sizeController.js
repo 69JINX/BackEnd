@@ -19,7 +19,7 @@ const createSize = async (req, res) => {
 
 const readSize = async (req, res) => {
     try {
-        const data = await sizeModel.find();
+        const data = await sizeModel.find({deleted_at:null});
         res.status(200).json({ message: 'success', data })
     }
     catch (error) {
@@ -37,4 +37,31 @@ const updateStatusSize = async (req, res) => {
     }
 }
 
-module.exports = { createSize, readSize, updateStatusSize };
+const deleteSize = async (req, res) => {
+    try {
+        const response = await sizeModel.findByIdAndUpdate(req.params._id, { deleted_at: Date.now() })
+        res.status(200).json({ message: 'successfully Deleted', response });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Serer Error' });
+    }
+}
+
+const deleteSizes = async (req, res) => {
+    try {
+        const response = await sizeModel.updateMany(
+            { _id: req.body.checkedSizeIDs }, {
+            $set: {
+                deleted_at: Date.now()
+            }
+        });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+        // console.log(req.body.checkedCategoriesIDs);
+
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+module.exports = { createSize, readSize, updateStatusSize, deleteSize, deleteSizes };

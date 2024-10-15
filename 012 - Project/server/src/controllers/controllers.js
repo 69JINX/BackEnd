@@ -1,7 +1,7 @@
 const { testAdmin, adminLogin, registerAdmin } = require('./admin-panel/adminControllers')
-const { addColor, readColor, updateStatusColor } = require('./admin-panel/colorController')
+const { addColor, readColor, updateStatusColor, deleteColor, deleteColors } = require('./admin-panel/colorController')
 const { createParentCategory, readParentCategory, updateStatusParentCategory, deleteParentCategory, deleteParentCategories } = require('./admin-panel/parentCategoryController')
-const { createSize, readSize, updateStatusSize } = require('./admin-panel/sizeController')
+const { createSize, readSize, updateStatusSize, deleteSize, deleteSizes } = require('./admin-panel/sizeController')
 module.exports = {
     testAdmin,
     adminLogin,
@@ -16,5 +16,9 @@ module.exports = {
     readSize,
     updateStatusSize,
     deleteParentCategory,
-    deleteParentCategories
+    deleteParentCategories,
+    deleteColor,
+    deleteColors,
+    deleteSize,
+    deleteSizes
 }

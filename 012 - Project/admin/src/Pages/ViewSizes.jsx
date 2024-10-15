@@ -4,12 +4,16 @@ import { CiEdit } from "react-icons/ci";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Tooltip } from "react-tooltip";
+import { toast, ToastContainer } from "react-toastify";
+import Swal from "sweetalert2";
 
 const ViewSizes = () => {
 
   const [Size, setSize] = useState([]);
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
+
+  const [checkedSizeIDs, setcheckedSizeIDs] = useState([]);
 
   const fetchSizes = () => {
     axios.get(`http://localhost:4000/api/admin-panel/size/read-size`)
@@ -49,18 +53,34 @@ const ViewSizes = () => {
 
   useEffect(() => {
     setisChildSelectChecked(new Array(Size.length).fill(false));
+    if (Size.length === 0) setisMasterSelectChecked(false);
   }, [Size])
 
+  useEffect(() => {
+    console.log(checkedSizeIDs);
+  }, [checkedSizeIDs])
 
   const handleMasterCheckbox = (e) => {
     const newMasterCheckedState = !isMasterSelectChecked;
     setisMasterSelectChecked(newMasterCheckedState);
 
+    if (e.target.checked) setcheckedSizeIDs(Size.map((size) => size._id));
+    if (!e.target.checked) setcheckedSizeIDs([]);
+
     // Set all checkboxes to the same state as master checkbox
     setisChildSelectChecked(new Array(Size.length).fill(newMasterCheckedState));
   }
 
-  const handleChildCheckbox = (index) => {
+  const handleChildCheckbox = (e, index) => {
+
+    if (e.target.checked) setcheckedSizeIDs(((prev) => [...prev, e.target.value]));
+    if (!e.target.checked) {
+      const temp_array = checkedSizeIDs;
+      const index = temp_array.indexOf(e.target.value);
+      if (index > -1) temp_array.splice(index, 1);
+      setcheckedSizeIDs(temp_array);
+    }
+
     const updatedCheckedStates = isChildSelectChecked.map((checked, i) => i === index ? !checked : checked);
     setisChildSelectChecked(updatedCheckedStates);
     // If all checkboxes are checked, set master checkbox to true, otherwise false
@@ -68,8 +88,106 @@ const ViewSizes = () => {
     setisMasterSelectChecked(allChecked);
   }
 
+
+  const handleDlt = (id, name) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        axios.put(`http://localhost:4000/api/admin-panel/size/delete-size/${id}`)
+          .then((response) => {
+            console.log(response.data);
+            fetchSizes();
+            toast.success(`${name} Size Deleted Successfully`, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "deleted successfully.",
+          icon: "success"
+        });
+      }
+    });
+
+
+  }
+
+  const handleMultiDlt = () => {
+    if (checkedSizeIDs.length > 0) {
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          axios.put('http://localhost:4000/api/admin-panel/size/delete-sizes', { checkedSizeIDs })
+            .then((response) => {
+              console.log(response.data);
+              fetchSizes();
+              toast.success(`All ${checkedSizeIDs.length} Sizes Deleted Successfully`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "delted succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
   return (
     <div className="w-[90%] bg-white mx-auto border rounded-[10px] my-[150px]">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
       <span className="block border-b rounded-[10px_10px_0_0] bg-[#f8f8f9] text-[#303640] h-[50px] p-[8px_16px] text-[23px] font-bold">
         View Size
       </span>
@@ -78,7 +196,7 @@ const ViewSizes = () => {
           <thead>
             <tr className="text-left border-b">
               <th>
-                Delete
+                <button onClick={handleMultiDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete</button>
                 <input onChange={handleMasterCheckbox} checked={isMasterSelectChecked} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
                 />
               </th>
@@ -94,7 +212,7 @@ const ViewSizes = () => {
               Size.map((size, index) => (
                 <tr className="border-b">
                   <td>
-                    <input checked={isChildSelectChecked[index]} onChange={() => handleChildCheckbox(index)}
+                    <input value={size._id} checked={isChildSelectChecked[index]} onChange={(e) => handleChildCheckbox(e, index)}
                       type="checkbox"
                       name="delete"
                       className="accent-[#5351c9] cursor-pointer input"
@@ -104,7 +222,7 @@ const ViewSizes = () => {
                   <td>{size.name}</td>
                   <td>{size.order}</td>
                   <td className="flex gap-[5px]">
-                    <MdDelete className="my-[5px] text-red-500 cursor-pointer" /> |{" "}
+                    <MdDelete onClick={() => handleDlt(size._id, size.name)} className="my-[5px] text-red-500 cursor-pointer" /> |{" "}
                     <Link to="/dashboard/sizes/update-size">
                       <CiEdit className="my-[5px] text-yellow-500 cursor-pointer" />
                     </Link>

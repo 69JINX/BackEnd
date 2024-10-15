@@ -19,7 +19,7 @@ const addColor = async (req, res) => {
 
 const readColor = async (req, res) => {
     try {
-        const data = await colorModel.find();
+        const data = await colorModel.find({ deleted_at: null });
         res.status(200).json({ message: 'Success', data })
     }
     catch (error) {
@@ -37,4 +37,31 @@ const updateStatusColor = async (req, res) => {
     }
 }
 
-module.exports = { addColor, readColor, updateStatusColor }
+const deleteColor = async (req, res) => {
+    try {
+        const response = await colorModel.findByIdAndUpdate(req.params._id, { deleted_at: Date.now() })
+        res.status(200).json({ message: 'successfully Deleted', response });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Serer Error' });
+    }
+}
+
+const deleteColors = async (req, res) => {
+    try {
+        const response = await colorModel.updateMany(
+            { _id: req.body.checkedColorsIDs }, {
+            $set: {
+                deleted_at: Date.now()
+            }
+        });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+        // console.log(req.body.checkedCategoriesIDs);
+
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+module.exports = { addColor, readColor, updateStatusColor, deleteColor, deleteColors }
