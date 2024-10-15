@@ -18,7 +18,7 @@ const createParentCategory = async (req, res) => {
 
 const readParentCategory = async (req, res) => {
     try {
-        const data = await parentCategoryModel.find();
+        const data = await parentCategoryModel.find({ deleted_at: null });
         res.status(200).json({ message: 'success', data })
     }
     catch (error) {
@@ -36,4 +36,31 @@ const updateStatusParentCategory = async (req, res) => {
     }
 }
 
-module.exports = { createParentCategory, readParentCategory, updateStatusParentCategory };
+const deleteParentCategory = async (req, res) => {
+    try {
+        const response = await parentCategoryModel.findByIdAndUpdate(req.params._id, { deleted_at: Date.now() })
+        res.status(200).json({ message: 'successfully Deleted', response });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Serer Error' });
+    }
+}
+
+const deleteParentCategories = async (req, res) => {
+    try {
+        const response = await parentCategoryModel.updateMany(
+            {_id:req.body.checkedCategoriesIDs}, {
+            $set: {
+                deleted_at: Date.now()
+            }
+        });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+        // console.log(req.body.checkedCategoriesIDs);
+
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+module.exports = { createParentCategory, readParentCategory, updateStatusParentCategory, deleteParentCategory, deleteParentCategories };
