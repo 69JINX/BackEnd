@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const parentCategorySchema = mongoose.Schema({
-    name: { type: String, required: true, unique: true},
+const parentCategorySchema = new mongoose.Schema({
+    name: { type: String, required: true, unique: true },
     description: String,
-    status: { type: Boolean, default: true },
+    status: { type: Boolean, default: true, set: value => value === '' ? true : value },
     created_at: Date,
     update_at: Date,
     deleted_at: { type: Date, default: null }

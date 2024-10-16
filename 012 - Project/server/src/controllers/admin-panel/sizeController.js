@@ -12,7 +12,7 @@ const createSize = async (req, res) => {
         if (error.code === 11000) { // MongoDB duplicate key error
             return res.status(400).send({ message: "Size already exists." });
         }
-
+        console.log(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }

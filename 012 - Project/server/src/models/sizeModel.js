@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
-const sizeSchema = mongoose.Schema({
+const sizeSchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
     order: { type: String, required: true, unique: true },
-    status: { type: Boolean, default: true },
+    status: { type: Boolean, default: true, set: value => value === '' ? true : value },
     created_at: Date,
     update_at: Date,
     deleted_at: { type: Date, default: null }
