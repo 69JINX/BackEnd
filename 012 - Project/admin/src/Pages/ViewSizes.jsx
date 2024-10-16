@@ -16,7 +16,7 @@ const ViewSizes = () => {
   const [checkedSizeIDs, setcheckedSizeIDs] = useState([]);
 
   const fetchSizes = () => {
-    axios.get(`http://localhost:4000/api/admin-panel/size/read-size`)
+    axios.get(`http://localhost:4000/api/admin-panel/size/read-sizes`)
       .then((response) => {
         console.log(response.data);
         setSize(response.data.data);
@@ -223,7 +223,7 @@ const ViewSizes = () => {
                   <td>{size.order}</td>
                   <td className="flex gap-[5px]">
                     <MdDelete onClick={() => handleDlt(size._id, size.name)} className="my-[5px] text-red-500 cursor-pointer" /> |{" "}
-                    <Link to="/dashboard/sizes/update-size">
+                    <Link to={`/dashboard/sizes/update-size/${size._id}`}>
                       <CiEdit className="my-[5px] text-yellow-500 cursor-pointer" />
                     </Link>
                   </td>

@@ -49,7 +49,7 @@ const deleteParentCategory = async (req, res) => {
 const deleteParentCategories = async (req, res) => {
     try {
         const response = await parentCategoryModel.updateMany(
-            {_id:req.body.checkedCategoriesIDs}, {
+            { _id: req.body.checkedCategoriesIDs }, {
             $set: {
                 deleted_at: Date.now()
             }
@@ -63,4 +63,32 @@ const deleteParentCategories = async (req, res) => {
     }
 }
 
-module.exports = { createParentCategory, readParentCategory, updateStatusParentCategory, deleteParentCategory, deleteParentCategories };
+const parentCategoryByID = async (req, res) => {
+    try {
+        const data = await parentCategoryModel.find({ _id: req.params._id });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+const updateParentCategory = async (req, res) => {
+    try {
+        const response = await parentCategoryModel.findByIdAndUpdate(req.params._id,
+            {
+                name: req.body.name,
+                description: req.body.description
+            })
+        res.status(200).json({ message: 'successfully Updated', response });
+    }
+    catch (error) {
+        if (error.code === 11000) { // MongoDB duplicate key error
+            return res.status(400).send({ message: "Category already exists." });
+        }
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+
+module.exports = { createParentCategory, readParentCategory, updateStatusParentCategory, deleteParentCategory, deleteParentCategories, parentCategoryByID, updateParentCategory };

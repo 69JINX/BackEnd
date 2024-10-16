@@ -64,4 +64,31 @@ const deleteColors = async (req, res) => {
     }
 }
 
-module.exports = { addColor, readColor, updateStatusColor, deleteColor, deleteColors }
+const colorByID = async (req, res) => {
+    try {
+        const data = await colorModel.find({ _id: req.params._id });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
+
+const updateColor = async (req, res) => {
+    try {
+        const response = await colorModel.findByIdAndUpdate(req.params._id,
+            {
+                name: req.body.name,
+                code: req.body.code
+            })
+        res.status(200).json({ message: 'successfully Updated', response });
+    }
+    catch (error) {
+        if (error.code === 11000) { // MongoDB duplicate key error
+            return res.status(400).send({ message: "Color already exists." });
+        }
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+module.exports = { addColor, readColor, updateStatusColor, deleteColor, deleteColors, colorByID, updateColor }

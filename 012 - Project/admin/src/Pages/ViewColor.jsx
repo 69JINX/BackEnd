@@ -229,7 +229,7 @@ const ViewColor = () => {
                   <td className="p-2">
                     <MdDelete onClick={(e) => handleDlt(color._id, color.name)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
                     |{" "}
-                    <Link to="/dashboard/color/update-colors">
+                    <Link to={`/dashboard/color/update-colors/${color._id}`}>
                       <CiEdit className="my-[5px] text-yellow-500 cursor-pointer inline" />
                     </Link>
                   </td>

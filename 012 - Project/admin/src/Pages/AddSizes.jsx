@@ -9,7 +9,7 @@ const AddSizes = () => {
     axios.post(`http://localhost:4000/api/admin-panel/size/create-size`, {
       name: e.target.size.value,
       order: e.target.size_order.value,
-      status:e.target.status.value
+      status: e.target.status.value
     })
       .then((response) => {
         console.log(response.data);
