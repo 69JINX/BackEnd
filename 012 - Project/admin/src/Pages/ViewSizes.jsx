@@ -6,10 +6,16 @@ import axios from "axios";
 import { Tooltip } from "react-tooltip";
 import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
+import Modal from "react-responsive-modal";
+import { FaTrash } from "react-icons/fa";
+import { BiReceipt, BiRecycle } from "react-icons/bi";
 
 const ViewSizes = () => {
 
+  const [open, setOpen] = useState(false);
+
   const [Size, setSize] = useState([]);
+  const [DeletedSizes, setDeletedSizes] = useState([]);
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
 
@@ -24,6 +30,17 @@ const ViewSizes = () => {
       .catch((error) => {
         console.log(error);
       })
+  }
+
+  const fetchDeletedSizes = () => {
+    axios.get('http://localhost:4000/api/admin-panel/size/deleted-sizes')
+      .then((response) => {
+        console.log(response.data);
+        setDeletedSizes(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   const updateStatus = (e) => {
@@ -49,6 +66,7 @@ const ViewSizes = () => {
 
   useEffect(() => {
     fetchSizes();
+    fetchDeletedSizes();
   }, [])
 
   useEffect(() => {
@@ -92,7 +110,7 @@ const ViewSizes = () => {
   const handleDlt = (id, name) => {
     Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "Deleted item will be moved to Recycle bin!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -105,6 +123,7 @@ const ViewSizes = () => {
           .then((response) => {
             console.log(response.data);
             fetchSizes();
+            fetchDeletedSizes();
             toast.success(`${name} Size Deleted Successfully`, {
               position: "top-right",
               autoClose: 5000,
@@ -136,7 +155,7 @@ const ViewSizes = () => {
 
       Swal.fire({
         title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        text: "Deleted items will be moved to Recycle bin!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -149,6 +168,7 @@ const ViewSizes = () => {
             .then((response) => {
               console.log(response.data);
               fetchSizes();
+              fetchDeletedSizes();
               toast.success(`All ${checkedSizeIDs.length} Sizes Deleted Successfully`, {
                 position: "top-right",
                 autoClose: 5000,
@@ -174,6 +194,29 @@ const ViewSizes = () => {
     }
   }
 
+
+  const handleRecover = (id,name) => {
+    axios.put(`http://localhost:4000/api/admin-panel/size/recover-size/${id}`)
+      .then((response) => {
+        console.log(response.data.data);
+        fetchSizes();
+        fetchDeletedSizes();
+        toast.success(`${name} Size Recovered Successfully`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
   return (
     <div className="w-[90%] bg-white mx-auto border rounded-[10px] my-[150px]">
       <ToastContainer
@@ -188,8 +231,53 @@ const ViewSizes = () => {
         pauseOnHover
         theme="colored"
       />
-      <span className="block border-b rounded-[10px_10px_0_0] bg-[#f8f8f9] text-[#303640] h-[50px] p-[8px_16px] text-[23px] font-bold">
+      <span className="flex justify-between border-b rounded-[10px_10px_0_0] bg-[#f8f8f9] text-[#303640] h-[50px] p-[8px_16px] text-[23px] font-bold">
         View Size
+        <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
+
+        <Modal open={open} onClose={() => setOpen(false)} center>
+        <div className="w-[90%] mx-auto">
+        <table className="w-full my-[20px]">
+          <thead>
+            <tr className="text-left border-b">
+              <th>
+                <button onClick={handleMultiDlt} className="bg-red-400 rounded-sm px-2 py-1">Empty Bin</button>
+                <input onChange={handleMasterCheckbox} checked={isMasterSelectChecked} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
+                />
+              </th>
+              <th>Sno</th>
+              <th>Size Name</th>
+              <th>Size Order</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              DeletedSizes.map((size, index) => (
+                <tr className="border-b">
+                  <td>
+                    <input value={size._id} checked={isChildSelectChecked[index]} onChange={(e) => handleChildCheckbox(e, index)}
+                      type="checkbox"
+                      name="delete"
+                      className="accent-[#5351c9] cursor-pointer input"
+                    />
+                  </td>
+                  <td>{index + 1}</td>
+                  <td>{size.name}</td>
+                  <td>{size.order}</td>
+                  <td className="flex gap-[5px]">
+                    <MdDelete onClick={() => handleDlt(size._id, size.name)} className="my-[5px] text-red-500 cursor-pointer" /> |{" "}
+                      <BiRecycle onClick={() => handleRecover(size._id,size.name)} className="my-[5px] text-yellow-500 cursor-pointer" />
+                  </td>
+
+                </tr>
+              ))
+            }
+
+          </tbody>
+        </table>
+      </div>
+        </Modal>
       </span>
       <div className="w-[90%] mx-auto">
         <table className="w-full my-[20px]">

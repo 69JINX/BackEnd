@@ -1,5 +1,14 @@
 const express = require('express');
-const { createParentCategory, readParentCategory, updateStatusParentCategory, deleteParentCategory, deleteParentCategories, parentCategoryByID, updateParentCategory } = require('./../../controllers/controllers')
+const { createParentCategory,
+    readParentCategory,
+    updateStatusParentCategory,
+    deleteParentCategory,
+    deleteParentCategories,
+    parentCategoryByID,
+    updateParentCategory,
+    deletedParentCategories,
+    recoverParentCategory} = require('./../../controllers/controllers')
+
 const parentCategoryRouter = express.Router();
 
 parentCategoryRouter.post('/create-category', createParentCategory);
@@ -9,5 +18,8 @@ parentCategoryRouter.put('/delete-category/:_id', deleteParentCategory);
 parentCategoryRouter.put('/delete-categories', deleteParentCategories);
 parentCategoryRouter.get('/read-category/:_id', parentCategoryByID);
 parentCategoryRouter.put('/update-category/:_id', updateParentCategory)
+parentCategoryRouter.get('/deleted-categories', deletedParentCategories);
+parentCategoryRouter.put('/recover-category/:_id', recoverParentCategory);
+
 
 module.exports = parentCategoryRouter;

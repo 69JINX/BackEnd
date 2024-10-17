@@ -66,3 +66,7 @@ input::-webkit-outer-spin-button {
 }
 
 @tailwind utilities;
+
+.react-responsive-modal-modal{
+  width: 80vw;
+}

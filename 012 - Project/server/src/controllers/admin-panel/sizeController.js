@@ -91,4 +91,34 @@ const updateSize = async (req, res) => {
     }
 }
 
-module.exports = { createSize, readSize, updateStatusSize, deleteSize, deleteSizes, sizeByID, updateSize };
+const deletedSizes = async (req, res) => {
+    try {
+        const data = await sizeModel.find({ deleted_at: { $ne: null } });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+const recoverSize = async (req, res) => {
+    try {
+        const response = await sizeModel.findByIdAndUpdate(req.params._id, { deleted_at: null })
+        res.status(200).json({ message: 'successfully Updated', response });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+module.exports = {
+    createSize,
+    readSize,
+    updateStatusSize,
+    deleteSize,
+    deleteSizes,
+    sizeByID,
+    updateSize,
+    deletedSizes,
+    recoverSize
+};

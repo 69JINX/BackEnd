@@ -90,5 +90,35 @@ const updateParentCategory = async (req, res) => {
     }
 }
 
+const deletedParentCategories = async (req, res) => {
+    try {
+        const data = await parentCategoryModel.find({ deleted_at: { $ne: null } });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
 
-module.exports = { createParentCategory, readParentCategory, updateStatusParentCategory, deleteParentCategory, deleteParentCategories, parentCategoryByID, updateParentCategory };
+const recoverParentCategory = async (req, res) => {
+    try {
+        const response = await parentCategoryModel.findByIdAndUpdate(req.params._id, { deleted_at: null })
+        res.status(200).json({ message: 'successfully Updated', response });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+
+module.exports = {
+    createParentCategory,
+    readParentCategory,
+    updateStatusParentCategory,
+    deleteParentCategory,
+    deleteParentCategories,
+    parentCategoryByID,
+    updateParentCategory,
+    deletedParentCategories,
+    recoverParentCategory
+};

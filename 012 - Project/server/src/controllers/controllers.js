@@ -1,7 +1,35 @@
-const { testAdmin, adminLogin, registerAdmin } = require('./admin-panel/adminControllers')
-const { addColor, readColor, updateStatusColor, deleteColor, deleteColors, colorByID, updateColor } = require('./admin-panel/colorController')
-const { createParentCategory, readParentCategory, updateStatusParentCategory, deleteParentCategory, deleteParentCategories, parentCategoryByID, updateParentCategory } = require('./admin-panel/parentCategoryController')
-const { createSize, readSize, updateStatusSize, deleteSize, deleteSizes, sizeByID, updateSize } = require('./admin-panel/sizeController')
+const { testAdmin,
+    adminLogin,
+    registerAdmin } = require('./admin-panel/adminControllers')
+const { addColor,
+    readColor,
+    updateStatusColor,
+    deleteColor,
+    deleteColors,
+    colorByID,
+    updateColor, 
+    deletedColors,
+    recoverColor} = require('./admin-panel/colorController')
+const { createParentCategory,
+    readParentCategory,
+    updateStatusParentCategory,
+    deleteParentCategory,
+    deleteParentCategories,
+    parentCategoryByID,
+    updateParentCategory,
+    deletedParentCategories,
+    recoverParentCategory } = require('./admin-panel/parentCategoryController')
+const { createSize,
+    readSize,
+    updateStatusSize,
+    deleteSize,
+    deleteSizes,
+    sizeByID,
+    updateSize, 
+    deletedSizes,
+    recoverSize} = require('./admin-panel/sizeController')
+
+
 module.exports = {
     testAdmin,
     adminLogin,
@@ -26,5 +54,11 @@ module.exports = {
     colorByID,
     updateColor,
     sizeByID,
-    updateSize
+    updateSize,
+    deletedParentCategories,
+    recoverParentCategory,
+    deletedSizes,
+    recoverSize,
+    deletedColors,
+    recoverColor
 }

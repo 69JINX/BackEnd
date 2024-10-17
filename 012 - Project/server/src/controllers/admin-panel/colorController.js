@@ -91,4 +91,34 @@ const updateColor = async (req, res) => {
     }
 }
 
-module.exports = { addColor, readColor, updateStatusColor, deleteColor, deleteColors, colorByID, updateColor }
+const deletedColors = async (req, res) => {
+    try {
+        const data = await colorModel.find({ deleted_at: { $ne: null } });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+const recoverColor = async (req, res) => {
+    try {
+        const response = await colorModel.findByIdAndUpdate(req.params._id, { deleted_at: null })
+        res.status(200).json({ message: 'successfully Updated', response });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+module.exports = {
+    addColor,
+    readColor,
+    updateStatusColor,
+    deleteColor,
+    deleteColors,
+    colorByID,
+    updateColor,
+    deletedColors,
+    recoverColor
+}
