@@ -29,7 +29,7 @@ const ViewCategory = () => {
 
 
   let fetchParentCategories = () => {
-    axios.get('http://localhost:4000/api/admin-panel/parent-category/read-category')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/read-category`)
       .then((response) => {
         setparentCategories(response.data.data);
       })
@@ -39,7 +39,7 @@ const ViewCategory = () => {
   }
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
-    axios.put(`http://localhost:4000/api/admin-panel/parent-category/update-status/${e.target.value}`, { status })
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/update-status/${e.target.value}`, { status })
       .then((response) => {
         console.log(response.data);
         setparentCategories((prev) => (
@@ -59,7 +59,7 @@ const ViewCategory = () => {
   }
 
   const fetchDeletedParentCategories = () => {
-    axios.get('http://localhost:4000/api/admin-panel/parent-category/deleted-categories')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/deleted-categories`)
       .then((response) => {
         console.log(response.data);
         setDeletedParentCategories(response.data.data);
@@ -123,7 +123,7 @@ const ViewCategory = () => {
     }).then((result) => {
       if (result.isConfirmed) {
 
-        axios.put(`http://localhost:4000/api/admin-panel/parent-category/delete-category/${id}`)
+        axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/delete-category/${id}`)
           .then((response) => {
             console.log(response.data);
             fetchParentCategories();

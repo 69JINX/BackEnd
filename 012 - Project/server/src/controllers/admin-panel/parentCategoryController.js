@@ -110,6 +110,16 @@ const recoverParentCategory = async (req, res) => {
     }
 }
 
+const activatedParentCategories = async (req, res) => {
+    try {
+        const data = await parentCategoryModel.find({ status: true, deleted_at: null });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 
 module.exports = {
     createParentCategory,
@@ -120,5 +130,6 @@ module.exports = {
     parentCategoryByID,
     updateParentCategory,
     deletedParentCategories,
-    recoverParentCategory
+    recoverParentCategory,
+    activatedParentCategories
 };

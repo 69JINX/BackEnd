@@ -7,7 +7,8 @@ const { createParentCategory,
     parentCategoryByID,
     updateParentCategory,
     deletedParentCategories,
-    recoverParentCategory} = require('./../../controllers/controllers')
+    recoverParentCategory,
+    activatedParentCategories } = require('./../../controllers/controllers')
 
 const parentCategoryRouter = express.Router();
 
@@ -20,6 +21,7 @@ parentCategoryRouter.get('/read-category/:_id', parentCategoryByID);
 parentCategoryRouter.put('/update-category/:_id', updateParentCategory)
 parentCategoryRouter.get('/deleted-categories', deletedParentCategories);
 parentCategoryRouter.put('/recover-category/:_id', recoverParentCategory);
+parentCategoryRouter.get('/activated-categories', activatedParentCategories);
 
 
 module.exports = parentCategoryRouter;

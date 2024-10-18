@@ -22,7 +22,7 @@ const ViewSizes = () => {
   const [checkedSizeIDs, setcheckedSizeIDs] = useState([]);
 
   const fetchSizes = () => {
-    axios.get(`http://localhost:4000/api/admin-panel/size/read-sizes`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/read-sizes`)
       .then((response) => {
         console.log(response.data);
         setSize(response.data.data);
@@ -33,7 +33,7 @@ const ViewSizes = () => {
   }
 
   const fetchDeletedSizes = () => {
-    axios.get('http://localhost:4000/api/admin-panel/size/deleted-sizes')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/deleted-sizes`)
       .then((response) => {
         console.log(response.data);
         setDeletedSizes(response.data.data);
@@ -45,7 +45,7 @@ const ViewSizes = () => {
 
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
-    axios.put(`http://localhost:4000/api/admin-panel/size/update-status/${e.target.value}`, { status })
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/update-status/${e.target.value}`, { status })
       .then((response) => {
         console.log(response.data);
         setSize((prev) => (
@@ -119,7 +119,7 @@ const ViewSizes = () => {
     }).then((result) => {
       if (result.isConfirmed) {
 
-        axios.put(`http://localhost:4000/api/admin-panel/size/delete-size/${id}`)
+        axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/delete-size/${id}`)
           .then((response) => {
             console.log(response.data);
             fetchSizes();

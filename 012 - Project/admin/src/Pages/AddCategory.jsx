@@ -11,7 +11,7 @@ const AddCategory = () => {
 
   const handleCreateCategory = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:4000/api/admin-panel/parent-category/create-category", {
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/create-category`, {
       name: e.target.name.value,
       description: e.target.description.value,
       status: e.target.status.value

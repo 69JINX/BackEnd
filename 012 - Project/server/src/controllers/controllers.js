@@ -1,15 +1,20 @@
+//Admin controllers
 const { testAdmin,
     adminLogin,
     registerAdmin } = require('./admin-panel/adminControllers')
+
+//Color controllers
 const { addColor,
     readColor,
     updateStatusColor,
     deleteColor,
     deleteColors,
     colorByID,
-    updateColor, 
+    updateColor,
     deletedColors,
-    recoverColor} = require('./admin-panel/colorController')
+    recoverColor } = require('./admin-panel/colorController')
+
+//Parent Category controllers
 const { createParentCategory,
     readParentCategory,
     updateStatusParentCategory,
@@ -18,16 +23,23 @@ const { createParentCategory,
     parentCategoryByID,
     updateParentCategory,
     deletedParentCategories,
-    recoverParentCategory } = require('./admin-panel/parentCategoryController')
+    recoverParentCategory,
+    activatedParentCategories } = require('./admin-panel/parentCategoryController')
+
+//Product Category controllers
+const { createProductCategory,
+    readProductCategory } = require('./admin-panel/productCategoryControllers')
+
+//Size controllers
 const { createSize,
     readSize,
     updateStatusSize,
     deleteSize,
     deleteSizes,
     sizeByID,
-    updateSize, 
+    updateSize,
     deletedSizes,
-    recoverSize} = require('./admin-panel/sizeController')
+    recoverSize } = require('./admin-panel/sizeController')
 
 
 module.exports = {
@@ -60,5 +72,8 @@ module.exports = {
     deletedSizes,
     recoverSize,
     deletedColors,
-    recoverColor
+    recoverColor,
+    activatedParentCategories,
+    createProductCategory,
+    readProductCategory
 }

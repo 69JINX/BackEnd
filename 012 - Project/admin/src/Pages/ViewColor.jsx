@@ -22,7 +22,7 @@ const ViewColor = () => {
   const [checkedColorsIDs, setcheckedColorsIDs] = useState([]);
 
   const fetchColor = () => {
-    axios.get(`http://localhost:4000/api/admin-panel/color/read-color`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/read-color`)
       .then((response) => {
         console.log(response.data);
         setColor(response.data.data);
@@ -33,7 +33,7 @@ const ViewColor = () => {
   }
 
   const fetchDeletedColors = () => {
-    axios.get(`http://localhost:4000/api/admin-panel/color/deleted-colors`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/deleted-colors`)
       .then((response) => {
         console.log(response.data);
         setDeletedColors(response.data.data);
@@ -45,7 +45,7 @@ const ViewColor = () => {
 
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
-    axios.put(`http://localhost:4000/api/admin-panel/color/update-status/${e.target.value}`, { status })
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/update-status/${e.target.value}`, { status })
       .then((response) => {
         console.log(response.data);
         setColor((prev) => (
@@ -189,7 +189,7 @@ const ViewColor = () => {
   }
 
   const handleRecover = (id, name) => {
-    axios.put(`http://localhost:4000/api/admin-panel/color/recover-color/${id}`)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/recover-color/${id}`)
       .then((response) => {
         console.log(response.data.data);
         fetchColor();

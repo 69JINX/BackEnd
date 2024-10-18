@@ -48,7 +48,7 @@ function Color() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`http://localhost:4000/api/admin-panel/color/add-color`, {
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/add-color`, {
       name: e.target.color.value,
       code: e.target.color_code.value
     })

@@ -6,7 +6,7 @@ const AddSizes = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post(`http://localhost:4000/api/admin-panel/size/create-size`, {
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/create-size`, {
       name: e.target.size.value,
       order: e.target.size_order.value,
       status: e.target.status.value
