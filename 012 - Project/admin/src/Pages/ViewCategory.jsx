@@ -69,8 +69,6 @@ const ViewCategory = () => {
       });
   }
 
-
-
   useEffect(() => {
     fetchParentCategories();
     fetchDeletedParentCategories();
@@ -168,7 +166,7 @@ const ViewCategory = () => {
       }).then((result) => {
         if (result.isConfirmed) {
 
-          axios.put('http://localhost:4000/api/admin-panel/parent-category/delete-categories', { checkedCategoriesIDs })
+          axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/delete-categories`, { checkedCategoriesIDs })
             .then((response) => {
               console.log(response.data);
               fetchParentCategories();
@@ -199,7 +197,7 @@ const ViewCategory = () => {
   }
 
   const handleRecover = (id,name) => {
-    axios.put(`http://localhost:4000/api/admin-panel/parent-category/recover-category/${id}`)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/recover-category/${id}`)
       .then((response) => {
         console.log(response.data.data);
         fetchParentCategories();

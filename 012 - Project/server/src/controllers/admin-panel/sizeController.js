@@ -56,7 +56,6 @@ const deleteSizes = async (req, res) => {
             }
         });
         res.status(200).json({ message: 'Successfully Deleted', response });
-        // console.log(req.body.checkedCategoriesIDs);
 
     }
     catch (error) {

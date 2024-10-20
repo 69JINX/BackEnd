@@ -28,7 +28,15 @@ const { createParentCategory,
 
 //Product Category controllers
 const { createProductCategory,
-    readProductCategory } = require('./admin-panel/productCategoryControllers')
+    readProductCategory,
+    updateStatusProductCategory,
+    updateIsFeaturedProductCategory,
+    deleteProductCategory,
+    deleteProductCategories, 
+    deletedProductCategories,
+    recoverProductCategory,
+    productCategoryByID,
+    updateProductCategory} = require('./admin-panel/productCategoryControllers')
 
 //Size controllers
 const { createSize,
@@ -75,5 +83,13 @@ module.exports = {
     recoverColor,
     activatedParentCategories,
     createProductCategory,
-    readProductCategory
+    readProductCategory,
+    updateStatusProductCategory,
+    updateIsFeaturedProductCategory,
+    deleteProductCategory,
+    deleteProductCategories,
+    deletedProductCategories,
+    recoverProductCategory,
+    productCategoryByID,
+    updateProductCategory
 }

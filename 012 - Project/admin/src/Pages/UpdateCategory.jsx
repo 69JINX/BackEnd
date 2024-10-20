@@ -77,7 +77,6 @@ const UpdateCategory = () => {
               onChange={(e) => setparentCategory({ ...parentCategory, name: e.target.value })}
               id="categoryName"
               placeholder="Category Name"
-
               className="input border p-1 w-full rounded-[5px] my-[10px]"
             />
           </div>

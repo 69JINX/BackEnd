@@ -37,6 +37,9 @@ const AddPCategory = () => {
           theme: "colored",
         });
         e.target.reset();
+        let imagePreview = document.querySelector("#image_preview");
+        imagePreview.src = '';
+
       })
       .catch((error) => {
         console.error(error);
