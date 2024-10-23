@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { DNA } from "react-loader-spinner";
 
 
 function Profile() {
@@ -18,6 +19,10 @@ function Profile() {
   const [show, setShow] = useState(false);
   const [Admin, setAdmin] = useState({});
   const [preIMGs, setpreIMGs] = useState({});
+  const [otpBtnText, setotpBtnText] = useState('Generate OTP');
+  const [showOTPfield, setshowOTPfield] = useState(false);
+  const [loader, setloader] = useState(false);
+  const [otpBtnFormating, setotpBtnFormating] = useState(false);
 
 
 
@@ -77,6 +82,41 @@ function Profile() {
     });
   }
 
+  const handleOTP = () => {
+
+    setloader(true);
+
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/admin/generate-otp`, { email: Admin.email })
+      .then((response) => {
+        console.log(response.data);
+        setloader(false);
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "OTP sent Successfully to you current Email Address",
+          showConfirmButton: false,
+          timer: 1500
+        });
+        setotpBtnFormating(true);
+        setshowOTPfield(true);
+        let count = 10;
+        setotpBtnText(`Generate OTP in ${count}`)
+        let interval = setInterval(() => {
+          count--;
+          setotpBtnText(`Generate OTP in ${count}`)
+          if (count < 1) {
+            clearInterval(interval);
+            setotpBtnFormating(false);
+            setotpBtnText('Generate OTP')
+          }
+        }, 1000)
+
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+
+  }
   return (
     <div>
       <div className="w-[90%] mx-auto  mt-[140px] mb-[20px] bg-white border rounded-[10px]">
@@ -195,37 +235,36 @@ function Profile() {
                 className="w-full border h-[35px] rounded-[5px] p-2 input"
               />
             </div>
-            <div className="w-full mb-[10px]">
+
+            <button
+              type="button"
+              onClick={handleOTP}
+              disabled={otpBtnFormating}
+              className={`w-[150px] h-[40px] ${otpBtnFormating ? 'bg-blue-300' : 'bg-blue-600'}  rounded-md text-white  my-[30px]`}>
+              {otpBtnText}
+            </button>
+            <div className={`w-full mb-[10px] ${showOTPfield ? 'block' : 'hidden'}`}>
               <span className="block m-[15px_0]">OTP</span>
-              <input
-                type="text"
-                placeholder="Enter OTP"
-                name='userotp'
-
-                className="w-full border h-[35px] rounded-[5px] p-2 input"
-              />
-              <input
-                type="text"
-                placeholder="Enter new email"
-                name='newemail'
-
-                className="w-full border h-[35px] rounded-[5px] p-2 input"
-              />
+              <input type="text" placeholder="Enter OTP" name='userotp' className="my-2 w-full border h-[35px] rounded-[5px] p-2 input" />
+              <input type="text" placeholder="Enter new email" name='newemail' className="my-2 w-full border h-[35px] rounded-[5px] p-2 input" />
+              <button type="button" className={`w-[150px] block h-[40px] rounded-md text-white bg-[#5351c9]  my-[30px]`}>
+                Update Email
+              </button>
             </div>
-            <button
-              type="button"
-
-              className={`w-[150px] h-[40px] rounded-md text-white  my-[30px]`}>
-              {'otpBtnText'}
-            </button>
-
-            <button
-
-              type="button"
-
-              className={`w-[150px] block h-[40px] rounded-md text-white bg-[#5351c9]  my-[30px]`}>
-              Update Email
-            </button>
+            <DNA
+              visible={loader}
+              height="100vh"
+              width="100vw"
+              ariaLabel="dna-loading"
+              wrapperStyle={{
+                position: 'fixed',
+                top: '0%',
+                zIndex: 99,
+                left: '0%',
+                backgroundColor: 'rgba(0,0,0,0.3)',
+              }}
+              wrapperClass="dna-wrapper"
+            />
           </form>
         </div>
       </div>
