@@ -5,6 +5,7 @@ const path = require('path');
 const nodemailer = require('nodemailer');
 const AdminModel = require("../../models/adminModel");
 
+const otpData = new Map();
 
 const testAdmin = (req, res) => {
     res.status(200).json({ message: 'test successful' });
@@ -13,9 +14,15 @@ const testAdmin = (req, res) => {
 const registerAdmin = async () => {
     try {
         const isAvailable = await AdminModel.findOne({
-            email: process.env.ADMIN_EMAIL,
-            password: process.env.ADMIN_PASSWORD
-        })
+            _id: '6707bd76e54a18f497f92492'          // Register an admin in the initial level with its Email & Password and put the _id of the registered admin from the mongooseDB in the findOne condition || 
+            /*
+            email : process.env.ADMIN_EMAIL         // previously the code was this but we changed it to _id:'' because of the below problem :
+            password : process.env.ADMIN_PASSWORD   
+            
+            Because when updating emial in profile page.... it is grabbing old email from process.env.EMAIL, and because of that it is updating the old user and when reconnecting with database, it can't find the user with the email process.env.ADMIN_EMAIL, so it created a new user with process.env.ADMIN_EMAIL, 
+            not updating the old email in env file (if it did, then it needed to update in env file too which we are not doing), 
+            so when the database is getting connected, it doesn't find the old email (because we have updated it), so when registering, it created a new user with old email and password and new _id */
+        });
 
         if (isAvailable) return console.log(isAvailable);
 
@@ -103,7 +110,12 @@ const updateAdmin = async (req, res) => {
 
 const generateOTP = async (req, res) => {
     try {
+        otpData.clear();
+        
         const otp = Math.floor(Math.random() * 900000);
+        console.log(otpData);
+        otpData.set(req.body.email, otp);
+        console.log(otpData);
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -113,19 +125,22 @@ const generateOTP = async (req, res) => {
             }
         })
 
-        // mail with html attribute, but if included, will overwrite the text attribute
-
         const info = await transporter.sendMail({
             from: '"Frank and Oak" <frankandoak@gmail.com>',
             to: 'avimationss39228@gmail.com',
             subject: 'OTP for Email Change for Frank and Oak',
-            text: ``, // can't add html
-            body: `<i><b>Your OTP is : ${otp}</b></i>`, // doesn't show anywhere in the mail
+            text: ``, // can't add html, only plan text
+            body: `<i><b>Your OTP is : ${otp}</b></i>`, // doesn't show anywhere in the mail  // mail with html attribute, but if included, will overwrite the text attribute
             html: `
             <!doctype html> <html lang="en">
             <head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>OTP Email Template</title> <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <link rel="stylesheet" href="/style.css"> <style> body {font-family: Arial, sans-serif;background-color: #f4f4f4;padding: 0;margin: 0}.container-sec {background-color: #ffffff;border-radius: 8px;padding: 20px;margin-top: 30px;box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);max-width: 600px;} .otp-code { font-size: 24px; font-weight: bold; background-color: #f8f9fa; padding: 15px; text-align: center; border-radius: 8px; border: 1px dashed #007bff; color: #007bff; } .footer-text { color: #6c757d; font-size: 14px; text-align: center; margin-top: 20px; } .footer-text a { color: #007bff; text-decoration: none; } .otp-lock { color: #333; font-size: 80px; } .welcome-section { background: #144fa9db; padding: 30px; border-radius: 4px; color: #fff; font-size: 20px; margin: 20px 0px; }i.fas.fa-envelope-open { font-size: 35px !important; color: #ffffff; } </style> </head>
             <body> <div class="container-sec"> <div class="text-center"><h2 class="text-center">Hello</h2> <p>Your One-Time Password (OTP) for verification is:</p> <div class="otp-code">${otp}</div> <p class="mt-4">Please use this OTP to complete your verification. The OTP is valid for the next 10 minutes.</p> </div> <div class="footer-text"> <p>If you did not request this OTP, please <a href="#">contact us</a> immediately.</p> <p>Thank you, <br>Frank And Oak Team</p> </div> </div> </body> </html>`
         })
+        console.log(otp);
+        setTimeout(() => {
+            otpData.delete(req.body.email);
+        }, 120000);
+
         res.status(200).json({ message: "OTP Send Successfully", info });
     }
     catch (error) {
@@ -134,4 +149,20 @@ const generateOTP = async (req, res) => {
     }
 }
 
-module.exports = { testAdmin, registerAdmin, adminLogin, updateAdmin, generateOTP };
+const updateEmail = async (req, res) => {
+    try {
+        const generatedOtp = otpData.get(req.body.email);
+
+        if (!generatedOtp) return res.status(401).json({ message: 'OTP Expired! Generate OTP again' });
+        if (generatedOtp !== Number(req.body.OTP)) return res.status(403).json({ message: 'Invalid OTP!' });
+        const response = await AdminModel.findByIdAndUpdate(req.body._id, { email: req.body.newEmail });
+
+        res.status(200).json({ message: 'Email updated successfully', data: response });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error', error });
+    }
+}
+
+module.exports = { testAdmin, registerAdmin, adminLogin, updateAdmin, generateOTP, updateEmail };

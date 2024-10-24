@@ -10,6 +10,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { DNA } from "react-loader-spinner";
+import { toast, ToastContainer } from "react-toastify";
 
 
 function Profile() {
@@ -82,7 +83,7 @@ function Profile() {
     });
   }
 
-  const handleOTP = () => {
+  const generateOTP = () => {
 
     setloader(true);
 
@@ -99,11 +100,11 @@ function Profile() {
         });
         setotpBtnFormating(true);
         setshowOTPfield(true);
-        let count = 10;
-        setotpBtnText(`Generate OTP in ${count}`)
+        let count = 120;
+        setotpBtnText(`OTP will Expire in ${count}`)
         let interval = setInterval(() => {
           count--;
-          setotpBtnText(`Generate OTP in ${count}`)
+          setotpBtnText(`OTP will Expire in ${count}`)
           if (count < 1) {
             clearInterval(interval);
             setotpBtnFormating(false);
@@ -115,11 +116,96 @@ function Profile() {
       .catch((error) => {
         console.log(error);
       })
-
   }
+
+  const updateEmail = () => {
+    if (Admin.email == Admin.newEmail) {
+      toast.error("New Email is same as Current Email", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    else {
+      axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/admin/update-email`, Admin)
+        .then((response) => {
+          console.log(response.data);
+
+          Swal.fire({
+            title: "Are you sure want to Updated your Email address ?",
+            text: "You will be logged out!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, Update !"
+          }).then((result) => {
+            if (result.isConfirmed) {
+
+              Cookies.remove('admin');
+              nav('/');
+
+              Swal.fire({
+                title: "Updated!",
+                text: "Your Email has been updated and you have been logged out.",
+                icon: "success"
+              });
+            }
+          });
+
+        })
+        .catch((error) => {
+          if (error.status == 403 || error.status == 401) {
+            toast.error(error.response.data.message, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          }
+
+          console.log(error);
+        })
+    }
+  }
+
   return (
     <div>
-      <div className="w-[90%] mx-auto  mt-[140px] mb-[20px] bg-white border rounded-[10px]">
+      <div className="w-[90%] mx-auto mt-[140px] mb-[20px] bg-white border rounded-[10px]">
+        <DNA
+          visible={loader}
+          height="100vh"
+          width="80%"
+          ariaLabel="dna-loading"
+          wrapperStyle={{
+            position: 'fixed',
+            top: '0%',
+            zIndex: 99,
+            right: '0%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+          }}
+          wrapperClass="dna-wrapper"
+        />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
         <span className="block text-[#303640] bg-[#f8f8f9] rounded-[10px_10px_0_0] h-[60px] p-[15px_15px] box-border font-bold text-[25px] border-b">
           Profile
         </span>
@@ -238,33 +324,19 @@ function Profile() {
 
             <button
               type="button"
-              onClick={handleOTP}
+              onClick={generateOTP}
               disabled={otpBtnFormating}
-              className={`w-[150px] h-[40px] ${otpBtnFormating ? 'bg-blue-300' : 'bg-blue-600'}  rounded-md text-white  my-[30px]`}>
+              className={` p-2 h-[40px] ${otpBtnFormating ? 'bg-blue-300' : 'bg-blue-600'}  rounded-md text-white  my-[30px]`}>
               {otpBtnText}
             </button>
             <div className={`w-full mb-[10px] ${showOTPfield ? 'block' : 'hidden'}`}>
               <span className="block m-[15px_0]">OTP</span>
-              <input type="text" placeholder="Enter OTP" name='userotp' className="my-2 w-full border h-[35px] rounded-[5px] p-2 input" />
-              <input type="text" placeholder="Enter new email" name='newemail' className="my-2 w-full border h-[35px] rounded-[5px] p-2 input" />
-              <button type="button" className={`w-[150px] block h-[40px] rounded-md text-white bg-[#5351c9]  my-[30px]`}>
+              <input type="text" value={Admin.OTP} onChange={(e) => setAdmin({ ...Admin, OTP: e.target.value })} placeholder="Enter OTP" name='userotp' className="my-2 w-full border h-[35px] rounded-[5px] p-2 input" />
+              <input type="text" value={Admin.newEmail} onChange={(e) => setAdmin({ ...Admin, newEmail: e.target.value })} placeholder="Enter new email" name='newemail' className="my-2 w-full border h-[35px] rounded-[5px] p-2 input" />
+              <button type="button" onClick={updateEmail} className={`w-[150px] block h-[40px] rounded-md text-white bg-[#5351c9]  my-[30px]`}>
                 Update Email
               </button>
             </div>
-            <DNA
-              visible={loader}
-              height="100vh"
-              width="100vw"
-              ariaLabel="dna-loading"
-              wrapperStyle={{
-                position: 'fixed',
-                top: '0%',
-                zIndex: 99,
-                left: '0%',
-                backgroundColor: 'rgba(0,0,0,0.3)',
-              }}
-              wrapperClass="dna-wrapper"
-            />
           </form>
         </div>
       </div>
