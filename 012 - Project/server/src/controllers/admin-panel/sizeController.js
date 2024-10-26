@@ -110,6 +110,16 @@ const recoverSize = async (req, res) => {
     }
 }
 
+const activatedSizes = async (req, res) => {
+    try {
+        const data = await sizeModel.find({ status: true, deleted_at: null });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     createSize,
     readSize,
@@ -119,5 +129,6 @@ module.exports = {
     sizeByID,
     updateSize,
     deletedSizes,
-    recoverSize
+    recoverSize,
+    activatedSizes
 };

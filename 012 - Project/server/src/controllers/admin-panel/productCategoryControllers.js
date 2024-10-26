@@ -139,6 +139,26 @@ const updateProductCategory = async (req, res) => {
     }
 }
 
+const activatedProductCategories = async (req, res) => {
+    try {
+        const data = await productCategoryModel.find({ status: true, deleted_at: null });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+const activeProductCategoriesByParentCategory = async (req, res) => {
+    try {
+        const data = await productCategoryModel.find({ status: true, deleted_at: null, parent_category: req.params._id }).populate('parent_category');
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     createProductCategory,
     readProductCategory,
@@ -149,5 +169,7 @@ module.exports = {
     deletedProductCategories,
     recoverProductCategory,
     productCategoryByID,
-    updateProductCategory
+    updateProductCategory,
+    activatedProductCategories,
+    activeProductCategoriesByParentCategory
 };

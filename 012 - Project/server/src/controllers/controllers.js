@@ -15,7 +15,8 @@ const { addColor,
     colorByID,
     updateColor,
     deletedColors,
-    recoverColor } = require('./admin-panel/colorController')
+    recoverColor, 
+    activatedColors} = require('./admin-panel/colorController')
 
 //Parent Category controllers
 const { createParentCategory,
@@ -39,7 +40,9 @@ const { createProductCategory,
     deletedProductCategories,
     recoverProductCategory,
     productCategoryByID,
-    updateProductCategory} = require('./admin-panel/productCategoryControllers')
+    updateProductCategory,
+    activatedProductCategories,
+    activeProductCategoriesByParentCategory} = require('./admin-panel/productCategoryControllers')
 
 //Size controllers
 const { createSize,
@@ -50,7 +53,8 @@ const { createSize,
     sizeByID,
     updateSize,
     deletedSizes,
-    recoverSize } = require('./admin-panel/sizeController')
+    recoverSize, 
+    activatedSizes} = require('./admin-panel/sizeController')
 
 
 module.exports = {
@@ -97,5 +101,9 @@ module.exports = {
     updateProductCategory,
     updateAdmin,
     generateOTP,
-    updateEmail
+    updateEmail,
+    activatedProductCategories,
+    activatedSizes,
+    activatedColors,
+    activeProductCategoriesByParentCategory
 }

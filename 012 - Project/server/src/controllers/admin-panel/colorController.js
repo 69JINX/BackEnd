@@ -111,6 +111,16 @@ const recoverColor = async (req, res) => {
     }
 }
 
+const activatedColors = async (req, res) => {
+    try {
+        const data = await colorModel.find({ status: true, deleted_at: null });
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     addColor,
     readColor,
@@ -120,5 +130,6 @@ module.exports = {
     colorByID,
     updateColor,
     deletedColors,
-    recoverColor
+    recoverColor,
+    activatedColors
 }

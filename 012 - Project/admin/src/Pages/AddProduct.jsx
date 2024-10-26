@@ -1,6 +1,65 @@
-import React from "react";
+import axios from "axios";
+import Multiselect from "multiselect-react-dropdown"; // npm i multiselect-react-dropdown
+import React, { useEffect, useState } from "react";
 
 const AddProduct = () => {
+
+  const [ParentCategories, setParentCategories] = useState([]);
+  const [ProductCategories, setProductCategories] = useState([]);
+  const [Colors, setColors] = useState([]);
+  const [Sizes, setSizes] = useState([]);
+  const [SelectedSizes, setSelectedSizes] = useState([]);
+  const [SelectedColors, setSelectedColors] = useState([]);
+
+  const fetchParenteCategories = () => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/activated-categories`)
+      .then((response) => {
+        setParentCategories(response.data.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  const fetchSizes = () => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/activated-sizes`)
+      .then((response) => {
+        setSizes(response.data.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  const fetchColors = () => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/activated-colors`)
+      .then((response) => {
+        setColors(response.data.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+
+  const ProductCategoriesByParentCategory = (e) => {
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/product-categories-by-parent-category/${e.target.value}`)
+      .then((response) => {
+        setProductCategories(response.data.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  useEffect(() => {
+    fetchParenteCategories();
+    fetchColors();
+    fetchSizes();
+  }, [])
+
+
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <span className="block border-b bg-[#f8f8f9] text-[#303640] text-[20px] font-bold p-[8px_16px] h-[40px] rounded-[10px_10px_0_0]">
@@ -112,20 +171,16 @@ const AddProduct = () => {
             <label htmlFor="parent_category" className="block text-[#303640]">
               Select Parent Category
             </label>
-            <select
-              id="parent_category"
-              name="parent_category"
-              className="w-full input border p-2 rounded-[5px] my-[10px] cursor-pointer"
-            >
-              <option value="default" selected disabled hidden>
+            <select name="parent_category" onChange={ProductCategoriesByParentCategory} id="parent_category" className="border p-1 w-full rounded-[5px] my-[10px] category input">
+              <option value="default" selected>
                 --Select Parent Category--
               </option>
-              <option value="men" className="cursor-pointer">
-                Men
-              </option>
-              <option value="women" className="cursor-pointer">
-                Women
-              </option>
+
+              {
+                ParentCategories.map((parentCategory) => (
+                  <option value={parentCategory._id}>{parentCategory.name}</option>
+                ))
+              }
             </select>
           </div>
           <div className="w-full my-[10px]">
@@ -137,15 +192,14 @@ const AddProduct = () => {
               name="product_category"
               className="w-full input border p-2 rounded-[5px] my-[10px] cursor-pointer"
             >
-              <option value="default" selected disabled hidden>
+              <option value="default" selected >
                 --Select Product Category--
               </option>
-              <option value="tShirt" className="cursor-pointer">
-                T-shirt
-              </option>
-              <option value="shirt" className="cursor-pointer">
-                Shirt
-              </option>
+              {
+                ProductCategories.map((productCategory) => (
+                  <option value={productCategory._id}>{`${productCategory.name} (${productCategory.parent_category.name})`}</option>
+                ))
+              }
             </select>
           </div>
           <div className="w-full grid grid-cols-[2fr_2fr] gap-[20px]">
@@ -161,8 +215,8 @@ const AddProduct = () => {
                 <option value="default" selected disabled hidden>
                   --Select Stock--
                 </option>
-                <option value="inStock">In Stock</option>
-                <option value="outStock">Out of Stock</option>
+                <option value={true}>In Stock</option>
+                <option value={false}>Out of Stock</option>
               </select>
             </div>
             <div>
@@ -183,38 +237,27 @@ const AddProduct = () => {
               <label htmlFor="size" className="block text-[#303640]">
                 Size
               </label>
-              <select
+              <Multiselect
                 name="size"
                 id="size"
-                className="p-2 input w-full border rounded-[5px] my-[10px]"
-              >
-                <option value="default" selected disabled hidden>
-                  --Select Size--
-                </option>
-                <option value="s">S</option>
-                <option value="m">M</option>
-                <option value="l">L</option>
-                <option value="xl">XL</option>
-                <option value="xxl">XXL</option>
-              </select>
+                options={Sizes} // Options to display in the dropdown
+                onSelect={(e) => setSelectedSizes({ ...SelectedSizes, e })} // Function will trigger on select event
+                // onRemove={this.onRemove} // Function will trigger on remove event
+                displayValue="name" // Property name to display in the dropdown options
+              />
             </div>
             <div>
               <label htmlFor="color" className="block text-[#303640]">
                 Color
               </label>
-              <select
+              <Multiselect
                 name="color"
                 id="color"
-                className="p-2 input w-full border rounded-[5px] my-[10px]"
-              >
-                <option value="default" selected disabled hidden>
-                  --Select Color--
-                </option>
-                <option value="red">Red</option>
-                <option value="orange">Orange</option>
-                <option value="yellow">Yellow</option>
-                <option value="white">White</option>
-              </select>
+                options={Colors} // Options to display in the dropdown
+                onSelect={(e) => setSelectedColors({ ...SelectedColors, e })} // Function will trigger on select event
+                // onRemove={this.onRemove} // Function will trigger on remove event
+                displayValue="name" // Property name to display in the dropdown options
+              />
             </div>
           </div>
           <div className="w-full my-[10px] ">
