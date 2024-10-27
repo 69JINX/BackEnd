@@ -2,7 +2,6 @@ const colorModel = require("../../models/colorModel");
 
 const addColor = async (req, res) => {
     try {
-        console.log('hello')
         console.log(req.body);
         const dataToSave = new colorModel(req.body);
         const savedData = await dataToSave.save();
@@ -12,6 +11,8 @@ const addColor = async (req, res) => {
         if (error.code === 11000) { // MongoDB duplicate key error
             return res.status(400).send({ message: "Color already exists." });
         }
+
+        if (error.name == 'ValidationError') return res.status(400).json({ message: 'required fields are missing!' })
 
         res.status(500).json({ message: 'Internal Server Error' });
     }

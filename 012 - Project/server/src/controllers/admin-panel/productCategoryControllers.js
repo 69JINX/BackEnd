@@ -13,8 +13,12 @@ const createProductCategory = async (req, res) => {
         res.status(200).json({ message: 'successful', data: response });
     }
     catch (error) {
+        if (error.code === 11000) { // MongoDB duplicate key error
+            return res.status(400).send({ message: "Category already exists." });
+        }
+
         if (error.name == 'ValidationError') return res.status(400).json({ message: 'required fields are missing!' })
-        res.status(500).json({ message: 'Internal server error' })
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
 

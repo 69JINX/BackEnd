@@ -13,7 +13,16 @@ const createSize = async (req, res) => {
             return res.status(400).send({ message: "Size already exists." });
         }
         console.log(error);
+
+        if (error.code === 11000) { // MongoDB duplicate key error
+            return res.status(400).send({ message: "Category already exists." });
+        }
+
+        if (error.name == 'ValidationError') return res.status(400).json({ message: 'required fields are missing!' })
+
         res.status(500).json({ message: 'Internal Server Error' });
+
+        
     }
 }
 

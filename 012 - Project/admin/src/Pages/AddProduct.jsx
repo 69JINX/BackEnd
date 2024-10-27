@@ -1,6 +1,6 @@
 import axios from "axios";
-import Multiselect from "multiselect-react-dropdown"; // npm i multiselect-react-dropdown
 import React, { useEffect, useState } from "react";
+import Select from 'react-select'
 
 const AddProduct = () => {
 
@@ -10,6 +10,23 @@ const AddProduct = () => {
   const [Sizes, setSizes] = useState([]);
   const [SelectedSizes, setSelectedSizes] = useState([]);
   const [SelectedColors, setSelectedColors] = useState([]);
+  const [keepStyleofReactSelect, setkeepStyleofReactSelect] = useState(false);
+
+  const customStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      color: state.data.code, // Use the color code from each option's data
+      fontWeight: 'bold',
+      // backgroundColor: state.isSelected ? 'lightgray' : 'white',
+    }),
+    multiValueLabel: (provided, state) => ({
+      ...provided,
+      color: state.data.code, // Use the color code from each option's data
+      fontWeight: 'bold',
+      // backgroundColor: state.isSelected ? 'lightgray' : 'white',
+    }),
+    width: 50
+  };
 
   const fetchParenteCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/activated-categories`)
@@ -24,7 +41,8 @@ const AddProduct = () => {
   const fetchSizes = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/activated-sizes`)
       .then((response) => {
-        setSizes(response.data.data);
+        const newArr = response.data.data.map(size => ({ ...size, label: size.name, value: size._id })); // adding label and value keys to all ojects because the react-select will only show value which is in the label key and will pass valaue which is in the value key
+        setSizes(newArr);
       })
       .catch((error) => {
         console.error(error);
@@ -34,7 +52,8 @@ const AddProduct = () => {
   const fetchColors = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/activated-colors`)
       .then((response) => {
-        setColors(response.data.data);
+        const newArr = response.data.data.map(color => ({ ...color, label: color.name, value: color._id })); // adding label and value keys to all ojects because the react-select will only show value which is in the label key and will pass valaue which is in the value key
+        setColors(newArr);
       })
       .catch((error) => {
         console.error(error);
@@ -58,7 +77,7 @@ const AddProduct = () => {
     fetchSizes();
   }, [])
 
-
+  useEffect(() => { console.log(Colors) }, [Colors])
 
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
@@ -202,7 +221,7 @@ const AddProduct = () => {
               }
             </select>
           </div>
-          <div className="w-full grid grid-cols-[2fr_2fr] gap-[20px]">
+          <div className=" grid grid-cols-[2fr_2fr] gap-[20px]">
             <div>
               <label htmlFor="stock" className="block text-[#303640]">
                 Manage Stock
@@ -232,32 +251,32 @@ const AddProduct = () => {
               />
             </div>
           </div>
-          <div className="w-full grid grid-cols-[2fr_2fr] gap-[20px]">
-            <div>
-              <label htmlFor="size" className="block text-[#303640]">
-                Size
-              </label>
-              <Multiselect
-                name="size"
-                id="size"
-                options={Sizes} // Options to display in the dropdown
-                onSelect={(e) => setSelectedSizes({ ...SelectedSizes, e })} // Function will trigger on select event
-                // onRemove={this.onRemove} // Function will trigger on remove event
-                displayValue="name" // Property name to display in the dropdown options
+          <div className="my-3">
+            <label htmlFor="size" className="block text-[#303640]">
+              Size
+            </label>
+            <Select
+              options={Sizes}
+              onChange={setSelectedSizes}
+              isMulti
+            />
+          </div>
+          <div className="my-3">
+            <label htmlFor="color" className="block text-[#303640]">
+              Color
+            </label>
+            <div className="flex">
+              <Select
+                className="w-[90%]"
+                options={Colors}
+                onChange={setSelectedColors}
+                isMulti
+                styles={keepStyleofReactSelect ? customStyles : ''}
               />
-            </div>
-            <div>
-              <label htmlFor="color" className="block text-[#303640]">
-                Color
-              </label>
-              <Multiselect
-                name="color"
-                id="color"
-                options={Colors} // Options to display in the dropdown
-                onSelect={(e) => setSelectedColors({ ...SelectedColors, e })} // Function will trigger on select event
-                // onRemove={this.onRemove} // Function will trigger on remove event
-                displayValue="name" // Property name to display in the dropdown options
-              />
+              <div className="my-2 flex ps-4">
+                <input className="cursor-pointer" onChange={() => setkeepStyleofReactSelect(!keepStyleofReactSelect)} id="swapReactSelectStyle" type="checkbox" />
+                <label className="cursor-pointer px-2" for="swapReactSelectStyle">style</label>
+              </div>
             </div>
           </div>
           <div className="w-full my-[10px] ">
@@ -267,20 +286,20 @@ const AddProduct = () => {
             <input
               type="radio"
               name="status"
-              id="status"
+              id="Display"
               value="0"
               className="my-[10px] mx-[20px] accent-[#5351c9]"
             />
-            <span>Display</span>
+            <label for="Display">Display</label>
             <input
               type="radio"
               name="status"
-              id="status"
+              id="Hide"
               value="1"
               className="my-[10px] mx-[20px] accent-[#5351c9]"
               checked
             />
-            <span>Hide</span>
+            <label for="Hide">Hide</label>
           </div>
           <div className="w-full p-[8px_16px] my-[30px] ">
             <button className="bg-[#5351c9] rounded-md text-white w-[100px] h-[35px]">
