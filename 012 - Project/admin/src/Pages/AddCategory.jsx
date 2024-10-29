@@ -114,7 +114,7 @@ const AddCategory = () => {
               name="status"
               id="categoryStatus"
               value={true}
-
+              checked
               className="input my-[10px] mx-[10px] accent-[#5351c9] cursor-pointer"
             />
             <span>Display</span>

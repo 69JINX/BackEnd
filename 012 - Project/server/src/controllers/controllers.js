@@ -43,6 +43,7 @@ const { createProductCategory,
     updateProductCategory,
     activatedProductCategories,
     activeProductCategoriesByParentCategory} = require('./admin-panel/productCategoryControllers')
+const { createProduct, readProduct } = require('./admin-panel/productControllers')
 
 //Size controllers
 const { createSize,
@@ -105,5 +106,7 @@ module.exports = {
     activatedProductCategories,
     activatedSizes,
     activatedColors,
-    activeProductCategoriesByParentCategory
+    activeProductCategoriesByParentCategory,
+    createProduct,
+    readProduct
 }

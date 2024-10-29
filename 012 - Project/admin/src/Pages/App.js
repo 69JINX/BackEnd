@@ -10,9 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   const nav = useNavigate();
   const [User, setUser] = useState({});
-
-
-
+  
   useEffect(() => {
     let admin = Cookies.get('admin')
     if (admin) nav('/dashboard');

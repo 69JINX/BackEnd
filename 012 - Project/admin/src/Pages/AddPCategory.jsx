@@ -185,6 +185,7 @@ const AddPCategory = () => {
               name="is_featured"
               id="is_featured"
               value={false}
+              checked
               className="input my-[10px] mx-[10px] accent-[#5351c9] cursor-pointer"
             />
             <span>Not Featured</span>
@@ -209,6 +210,7 @@ const AddPCategory = () => {
               name="status"
               id="categoryStatus"
               value={false}
+              checked
               className="input my-[10px] mx-[10px] accent-[#5351c9] cursor-pointer"
             />
             <span>Hide</span>
