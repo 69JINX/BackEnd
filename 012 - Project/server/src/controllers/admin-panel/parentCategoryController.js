@@ -1,4 +1,6 @@
 const parentCategoryModel = require("../../models/parentCategoryModel");
+const productCategoryModel = require("../../models/productCategoryModel");
+const productModel = require("../../models/productModel");
 
 const createParentCategory = async (req, res) => {
     try {
@@ -37,7 +39,7 @@ const updateStatusParentCategory = async (req, res) => {
     }
 }
 
-const deleteParentCategory = async (req, res) => {
+const deleteParentCategory = async (req, res) => { // soft delete
     try {
         const response = await parentCategoryModel.findByIdAndUpdate(req.params._id, { deleted_at: Date.now() })
         res.status(200).json({ message: 'successfully Deleted', response });
@@ -121,6 +123,20 @@ const activatedParentCategories = async (req, res) => {
     }
 }
 
+const permanentDeleteParentCategory = async (req, res) => {
+    try {
+        await productModel.deleteMany({ parent_category: req.params._id })
+        await productCategoryModel.deleteMany({ parent_category: req.params._id })
+        await parentCategoryModel.deleteOne(req.params);
+
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 
 module.exports = {
     createParentCategory,
@@ -132,5 +148,6 @@ module.exports = {
     updateParentCategory,
     deletedParentCategories,
     recoverParentCategory,
-    activatedParentCategories
+    activatedParentCategories,
+    permanentDeleteParentCategory
 };

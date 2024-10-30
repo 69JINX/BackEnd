@@ -25,7 +25,8 @@ const createProductCategory = async (req, res) => {
 const readProductCategory = async (req, res) => {
     try {
         const data = await productCategoryModel.find({ deleted_at: null }).populate('parent_category');
-        const filepath = `${req.protocol}://${req.get('host')}/frankandoakservices/admin-panel/`;
+        const filepath = `${req.protocol}://${req.get('host')}/frankandoakservices/admin-panel/product-category/`;
+        
         res.status(200).json({ message: 'successful', data, filepath });
     }
     catch (error) {

@@ -374,6 +374,7 @@ const AddProduct = () => {
             </label>
             <Select
               name="size"
+              value={SelectedSizes || ''}
               options={Sizes}
               onChange={setSelectedSizes}
               isMulti
@@ -386,6 +387,7 @@ const AddProduct = () => {
             <div className="flex">
               <Select
                 name="color"
+                value={SelectedColors || ''}
                 className="w-[90%]"
                 options={Colors}
                 onChange={setSelectedColors}

@@ -18,11 +18,11 @@ const productSchema = mongoose.Schema({
     brand: String,
     size: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'size'
+        ref: 'size',
     }],
     color: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'color'
+        ref: 'color',
     }],
     status: {
         type: Boolean,
