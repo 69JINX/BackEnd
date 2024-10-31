@@ -112,6 +112,19 @@ const recoverProduct = async (req, res) => {
     }
 }
 
+const readProductByID = async (req, res) => {
+    try {
+        const data = await productModel.find(req.params).populate('parent_category').populate('product_category').populate('size').populate('color');
+        const filepath = `${req.protocol}://${req.get('host')}/frankandoakservices/admin-panel/product/`;
+
+        res.status(200).json({ message: 'successful', data, filepath });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
 const permanentDeleteProduct = async (req, res) => {
     try {
         const data = await productModel.deleteOne(req.params); // The deleteOne method in Mongoose only returns information about the delete operation's success but does not provide the details of the deleted document itself. To get the details of the deleted document, you can use findOneAndDelete instead, which will delete the document and return its details in a single operation
@@ -123,6 +136,8 @@ const permanentDeleteProduct = async (req, res) => {
     }
 }
 
+
+
 module.exports = {
     createProduct,
     readProducts,
@@ -131,6 +146,7 @@ module.exports = {
     deleteProduct,
     deletedProducts,
     recoverProduct,
-    deleteProducts
+    deleteProducts,
+    readProductByID
 }
 

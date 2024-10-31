@@ -226,6 +226,7 @@ const UpdateProduct = () => {
               name="status"
               id="status"
               value="0"
+              checked
               className="my-[10px] mx-[20px] accent-[#5351c9]"
             />
             <span>Display</span>
@@ -235,7 +236,6 @@ const UpdateProduct = () => {
               id="status"
               value="1"
               className="my-[10px] mx-[20px] accent-[#5351c9]"
-              checked
             />
             <span>Hide</span>
           </div>

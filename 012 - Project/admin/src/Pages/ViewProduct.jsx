@@ -16,6 +16,7 @@ const ViewProduct = () => {
   const [Products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
   const [DetailesOpen, setDetailesOpen] = useState(false);
+  // const [DetailsProduct, setDetailsProduct] = useState({});
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
   const [checkedProductsIDs, setcheckedProductsIDs] = useState([]);
@@ -297,11 +298,10 @@ const ViewProduct = () => {
         </Modal>
       </span>
 
-
       <div className="w-[90%] mx-auto my-[20px]">
         <table className="w-full">
           <thead>
-            <tr className="border-b text-left">
+            <tr className="border-b text-center">
               <th className="flex gap-[5px]">
                 <button onClick={handleMultiDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete</button>
                 <input onChange={handleMasterCheckbox} checked={isMasterSelectChecked}
@@ -312,10 +312,12 @@ const ViewProduct = () => {
                 />
               </th>
               <th>Sno</th>
-              <th>Product Name</th>
-              <th>Parent Category</th>
-              <th>Product Category</th>
+              <th>Product <br /> Name</th>
+              <th>Parent <br /> Category</th>
+              <th>Product <br /> Category</th>
               <th>Thumbnail</th>
+              <th>Price</th>
+              <th>MRP</th>
               <th>Action</th>
               <th>Status</th>
             </tr>
@@ -323,7 +325,7 @@ const ViewProduct = () => {
           <tbody>
             {
               Products.map((product, index) => (
-                <tr className="border-b">
+                <tr className="border-b text-center">
                   <td>
                     <input value={product._id} checked={isChildSelectChecked[index]} onChange={(e) => handleChildCheckbox(e, index)}
                       type="checkbox"
@@ -332,29 +334,45 @@ const ViewProduct = () => {
                       className="input accent-[#5351c9] cursor"
                     />
                   </td>
-                  <td>{index + 1}</td>
+                  <td className="w-[50px] p-2">{index + 1}</td>
                   <td>{product.name}</td>
-                  <td className="w-[200px] p-2">
+                  <td className="w-[100px] p-2">
                     {product.parent_category.name}
                   </td>
-                  <td className="w-[200px] p-2">
+                  <td className="w-[130px] p-2">
                     {product.product_category.name}
                   </td>
-                  <td className="object-contain cursor-pointer"
-                    onClick={() => setDetailesOpen(true)} data-tooltip-id="details-tooltip" data-tooltip-content='Click for Details'>
-                    <Tooltip id="details-tooltip" />
+                  <td className="object-contain text-center cursor-pointer"
+                    onClick={() => setDetailesOpen(true)} data-tooltip-id={`details-tooltip-of-${product._id}`}>
+                    <Tooltip
+                      className="z-50"
+                      id={`details-tooltip-of-${product._id}`}
+                      content={
+                        <DetailedProduct
+                          name={product.name}
+                          id={product._id}
+                          description={product.description}
+                          short_description={product.short_description}
+                          color={product.color}
+                          size={product.size}
+                          image_on_hover={product.image_on_hover}
+                          gallery={product.gallery}
+                          filepath={filepath} />}
+                    />
                     {product.thumbnail ?
                       <img
                         src={filepath + product.thumbnail}
                         alt="men's t-shirt"
                         width={80}
                         height={80}
-                        className="rounded-[5px]"
+                        className="rounded-[5px] inline"
                       /> :
-                      <span className="flex align-middle"> <CiWarning color="orange" size={25} /> Image Not Found</span>
+                      <span className="flex align-middle text-center"> <CiWarning color="orange" size={25} /> Image Not Found</span>
                     }
 
                   </td>
+                  <td className="px-4">{product.price}&#8377;</td>
+                  <td className="px-4">{product.mrp}&#8377;</td>
                   <td>
                     <MdDelete onClick={() => handleDlt(product._id, product.name)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
                     |{" "}
@@ -378,5 +396,76 @@ const ViewProduct = () => {
     </div>
   );
 };
+
+const DetailedProduct = (props) => {
+  return (
+    <div className="bg-black w-[90vw]" >
+      <div className="w-[90%] mx-auto my-[20px]">
+        <table className=" w-full">
+          <thead>
+            <tr className="border-b text-center">
+              <th>Product Name</th>
+              <th>Description</th>
+              <th>Short Description</th>
+              <th>Image On Hover</th>
+              <th>Sizes</th>
+              <th>Colors</th>
+              <th>Gallery</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+
+              <tr className="border-b">
+                <td className="w-[20px] p-2">
+                  {props.name}
+                </td>
+                <td className="w-[200px] p-2">
+                  {props.description}
+                </td>
+                <td className="w-[200px] p-2">
+                  {props.short_description}
+                </td>
+                <td className="object-contain flex justify-around cursor-pointer">
+                  {props.image_on_hover ?
+                    <img
+                      src={props.filepath + props.image_on_hover}
+                      alt="men's t-shirt"
+                      width={80}
+                      height={80}
+                      className="rounded-[5px] inline"
+                    /> :
+                    <span className="flex text-center align-middle"> <CiWarning color="orange" size={25} /> Image Not Found</span>
+                  }
+                </td>
+                <td>
+                  {props.size.map((size) => (size.name)).join(' , ')}
+                </td>
+                <td>
+                  {props.color.map((color) => (color.name)).join(' , ')}
+                </td>
+                <td className="flex justify-around flex-wrap">
+                  {
+                    props.gallery ? props.gallery.map((img) => (
+                      <img
+                        src={props.filepath + img}
+                        alt="men's t-shirt"
+                        width={80}
+                        height={80}
+                        className="rounded-[5px] self-center"
+                      />
+                    )) : <span className="flex text-center align-middle"> <CiWarning color="orange" size={25} /> Images Not Found</span>
+                  }
+                </td>
+              </tr>
+            }
+
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  )
+}
 
 export default ViewProduct;
