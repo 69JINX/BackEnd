@@ -48,7 +48,12 @@ const { createProductCategory,
 //Product controllers
 const { createProduct,
     readProducts, 
-    permanentDeleteProduct} = require('./admin-panel/productControllers')
+    permanentDeleteProduct,
+    updateStatusProduct,
+    deleteProduct,
+    deletedProducts,
+    recoverProduct,
+    deleteProducts} = require('./admin-panel/productControllers')
 
 //Size controllers
 const { createSize,
@@ -115,5 +120,10 @@ module.exports = {
     createProduct,
     readProducts,
     permanentDeleteParentCategory,
-    permanentDeleteProduct
+    permanentDeleteProduct,
+    updateStatusProduct,
+    deleteProduct,
+    deletedProducts,
+    recoverProduct,
+    deleteProducts
 }

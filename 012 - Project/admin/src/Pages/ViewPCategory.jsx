@@ -250,7 +250,7 @@ const ViewCategory = () => {
         pauseOnHover
         theme="colored"
       />
-      <span className="flex  justify-between h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] p-[8px_16px] border-b rounded-[10px_10px_0_0]">
+      <span className="flex justify-between h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] p-[8px_16px] border-b rounded-[10px_10px_0_0]">
         View Category
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
         <Modal open={open} onClose={() => setOpen(false)} center>
