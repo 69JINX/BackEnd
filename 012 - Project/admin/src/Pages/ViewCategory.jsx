@@ -231,7 +231,7 @@ const ViewCategory = () => {
 
         Swal.fire({
           title: "Deleted!",
-          text: "Parent Category deleted successfully, along with all linked Products and Product Categories.!.",
+          text: "Parent Category deleted successfully, along with all linked Products and Product Categories.!",
           icon: "success"
         });
       }

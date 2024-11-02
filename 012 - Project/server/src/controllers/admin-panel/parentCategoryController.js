@@ -1,6 +1,8 @@
 const parentCategoryModel = require("../../models/parentCategoryModel");
 const productCategoryModel = require("../../models/productCategoryModel");
 const productModel = require("../../models/productModel");
+const fs = require('fs');
+const path = require('path');
 
 const createParentCategory = async (req, res) => {
     try {
@@ -125,6 +127,44 @@ const activatedParentCategories = async (req, res) => {
 
 const permanentDeleteParentCategory = async (req, res) => {
     try {
+
+        // Deleting all products and product categorries that use the current deleting parent category (the thumbnail and other images also need to be deleted of all products and product categories of connected parent category)
+
+        const products = await productModel.find({ parent_category: req.params._id });
+        const productCategories = await productCategoryModel.find({ parent_category: req.params._id });
+
+        products.map((product) => {
+            if (product.thumbnail) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.thumbnail)); // deleting old file if it exists
+                }
+            }
+
+            if (product.image_on_hover) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.image_on_hover))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.image_on_hover)); // deleting old file if it exists
+                }
+            }
+
+            if (product.gallery) {
+                product.gallery.map((img) => {
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img)); // deleting old file if it exists
+                    }
+                })
+            }
+        })
+
+
+        productCategories.map((productCategory) => {
+            if (productCategory.thumbnail) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail)); // deleting old file if it exists
+                }
+            }
+        })
+
+
         await productModel.deleteMany({ parent_category: req.params._id })
         await productCategoryModel.deleteMany({ parent_category: req.params._id })
         await parentCategoryModel.deleteOne(req.params);

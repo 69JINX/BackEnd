@@ -43,7 +43,8 @@ const { createProductCategory,
     productCategoryByID,
     updateProductCategory,
     activatedProductCategories,
-    activeProductCategoriesByParentCategory } = require('./admin-panel/productCategoryControllers')
+    activeProductCategoriesByParentCategory, 
+    permanentDeleteProductCategory} = require('./admin-panel/productCategoryControllers')
 
 //Product controllers
 const { createProduct,
@@ -129,5 +130,6 @@ module.exports = {
     recoverProduct,
     deleteProducts,
     readProductByID,
-    updateProduct
+    updateProduct,
+    permanentDeleteProductCategory
 }

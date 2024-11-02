@@ -1,5 +1,14 @@
 const express = require('express');
-const { createProduct, readProducts, permanentDeleteProduct, updateStatusProduct, deleteProduct, deletedProducts, recoverProduct, deleteProducts, readProductByID, updateProduct } = require('../../controllers/controllers');
+const { createProduct,
+    readProducts,
+    permanentDeleteProduct,
+    updateStatusProduct,
+    deleteProduct,
+    deletedProducts,
+    recoverProduct,
+    deleteProducts,
+    readProductByID,
+    updateProduct } = require('../../controllers/controllers');
 const upload = require('../../middlewares/multer');
 
 const productRoutes = express();

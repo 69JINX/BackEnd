@@ -191,33 +191,33 @@ const permanentDeleteProduct = async (req, res) => {
         const oldData = await productModel.findById(req.params);
 
         if (oldData) {
-            if (oldData.thumbnail) {
+            
                 if (oldData.thumbnail) { // checking if there is a thumbnail key in the old data
                     if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
                         fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail)); // deleting old file if it exists
                     }
                 }
-            }
-            if (oldData.image_on_hover) {
-                if (oldData.image_on_hover) { // checking if there is a image_on_hover key in the old data
-                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
-                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover)); // deleting old file if it exists
+            
+            
+                if (oldData.image_on_hover) { 
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover))) { 
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover)); 
                     }
                 }
-            }
-            if (oldData.gallery) {
-                if (oldData.gallery) { // checking if there is a gallery key in the old data
+            
+            
+                if (oldData.gallery) { 
                     oldData.gallery.map((img) => {
-                        if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
-                            fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img)); // deleting old file if it exists
+                        if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) { 
+                            fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img)); 
                         }
                     })
 
                 }
-            }
+
         }
 
-        const data = await productModel.deleteOne(req.params); // The deleteOne method in Mongoose only returns information about the delete operation's success but does not provide the details of the deleted document itself. To get the details of the deleted document, you can use findOneAndDelete instead, which will delete the document and return its details in a single operation
+        const data = await productModel.findOneAndDelete(req.params); // The deleteOne method in Mongoose only returns information about the delete operation's success but does not provide the details of the deleted document itself. To get the details of the deleted document, you can use findOneAndDelete instead, which will delete the document and return its details in a single operation
         res.status(200).json({ message: 'product deleted permanently', data });
     }
     catch (error) {
@@ -231,13 +231,13 @@ const permanentDeleteProduct = async (req, res) => {
 module.exports = {
     createProduct,
     readProducts,
-    permanentDeleteProduct,
     updateStatusProduct,
     deleteProduct,
     deletedProducts,
     recoverProduct,
     deleteProducts,
     readProductByID,
-    updateProduct
+    updateProduct,
+    permanentDeleteProduct
 }
 

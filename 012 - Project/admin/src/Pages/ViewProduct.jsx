@@ -220,6 +220,50 @@ const ViewProduct = () => {
       })
   }
 
+
+  const handlePermanentDlt = (id, name) => {
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Deleting this Product will permanently remove it.!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        axios.delete(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/permanent-delete-product/${id}`)
+          .then((response) => {
+            console.log(response.data.data);
+            fetchProducts();
+            fetchDeletedProducts();
+            toast.success(`${name} Product Deleted Permanently`, {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "colored",
+            });
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "Product deleted successfully",
+          icon: "success"
+        });
+      }
+    });
+
+
+  }
   return (
     <div className="w-[90%] mx-auto my-[150px] rounded-[10px] bg-white border">
       <ToastContainer
@@ -279,7 +323,7 @@ const ViewProduct = () => {
 
                       </td>
                       <td>
-                        <MdDelete onClick={() => handleDlt(product._id, product.name)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
+                        <MdDelete onClick={() => handlePermanentDlt(product._id, product.name)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
                         |{" "}
                         <BiRecycle onClick={() => handleRecover(product._id, product.name)} className="my-[5px] text-yellow-500 cursor-pointer inline" />
                       </td>
