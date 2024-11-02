@@ -54,7 +54,8 @@ const { createProduct,
     deletedProducts,
     recoverProduct,
     deleteProducts,
-    readProductByID} = require('./admin-panel/productControllers')
+    readProductByID,
+    updateProduct} = require('./admin-panel/productControllers')
 
 //Size controllers
 const { createSize,
@@ -127,5 +128,6 @@ module.exports = {
     deletedProducts,
     recoverProduct,
     deleteProducts,
-    readProductByID
+    readProductByID,
+    updateProduct
 }

@@ -88,8 +88,7 @@ const AddProduct = () => {
     axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/create-product`, e.target)
       .then((response) => {
         console.log(response);
-
-
+        
         toast.success(`Category Added Successfully`, {
           position: "top-right",
           autoClose: 5000,
@@ -129,11 +128,10 @@ const AddProduct = () => {
   }, [preIMGs.gallery])
 
   const handlePreview = (e) => {
-    console.log(isArray);
     setpreIMGs({ ...preIMGs, [e.target.name]: '' }); // Removing preview if input file clicked but no file is selected
     try {
       if (e.target.files.length == 1) { // single file preview
-        setisArray(false);
+        if (e.target.name == 'gallery') setisArray(false);
         const reader = new FileReader();
         reader.readAsDataURL(e.target.files[0]);
         reader.onload = () => {
@@ -396,7 +394,7 @@ const AddProduct = () => {
               />
               <div className="my-2 flex ps-4">
                 <input className="cursor-pointer" onChange={() => setkeepStyleofReactSelect(!keepStyleofReactSelect)} id="swapReactSelectStyle" type="checkbox" />
-                <label className="cursor-pointer px-2" for="swapReactSelectStyle">style</label>
+                <label className="cursor-pointer px-2" for="swapReactSelectStyle">preview</label>
               </div>
             </div>
           </div>
@@ -419,7 +417,7 @@ const AddProduct = () => {
               id="Hide"
               value={false}
               className="my-[10px] mx-[20px] accent-[#5351c9]"
-             
+
             />
             <label for="Hide">Hide</label>
           </div>

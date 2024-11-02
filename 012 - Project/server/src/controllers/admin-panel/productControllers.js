@@ -1,4 +1,6 @@
 const productModel = require("../../models/productModel");
+const fs = require('fs');
+const path = require('path');
 
 const createProduct = async (req, res) => {
     try {
@@ -125,8 +127,96 @@ const readProductByID = async (req, res) => {
     }
 }
 
+
+const updateProduct = async (req, res) => {
+    try {
+
+        console.log(req.files);
+        console.log(req.body);
+        console.log(req.params);
+
+        const oldData = await productModel.findById(req.params);
+        const data = req.body;
+        if (req.files) {
+            if (req.files.thumbnail) {
+                if (oldData.thumbnail) { // checking if there is a thumbnail key in the old data
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail)); // deleting old file if it exists
+                    }
+                }
+                data.thumbnail = req.files.thumbnail[0].filename;
+            }
+            if (req.files.image_on_hover) {
+                if (oldData.image_on_hover) { // checking if there is a image_on_hover key in the old data
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover)); // deleting old file if it exists
+                    }
+                }
+                data.image_on_hover = req.files.image_on_hover[0].filename;
+            }
+            if (req.files.gallery) {
+                if (oldData.gallery) { // checking if there is a gallery key in the old data
+                    oldData.gallery.map((img) => {
+                        if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                            fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img)); // deleting old file if it exists
+                        }
+                    })
+
+                }
+                data.gallery = req.files.gallery.map((img) => (img.filename));
+            }
+        }
+        const response = await productModel.findByIdAndUpdate(req.params._id, data)
+        res.status(200).json({ message: 'successfully Updated', response });
+    }
+    catch (error) {
+        console.log(error);
+        // console.log(error.kind);
+        // console.log(error.path);
+        // console.log(error.reason.path);
+        if (error.code === 11000) { // MongoDB duplicate key error
+            return res.status(400).send({ message: "Product already exists with the same name." });
+        }
+        if (error.name == 'ValidationError') return res.status(400).json({ message: 'required fields are missing!' })
+        if (error.kind == '[ObjectId]' && error.reason.path == 'size') return res.status(400).json({ message: 'size is required!' });
+        if (error.kind == '[ObjectId]' && error.reason.path == 'color') return res.status(400).json({ message: 'color is required!' });
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
+
 const permanentDeleteProduct = async (req, res) => {
     try {
+
+        const oldData = await productModel.findById(req.params);
+
+        if (oldData) {
+            if (oldData.thumbnail) {
+                if (oldData.thumbnail) { // checking if there is a thumbnail key in the old data
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail)); // deleting old file if it exists
+                    }
+                }
+            }
+            if (oldData.image_on_hover) {
+                if (oldData.image_on_hover) { // checking if there is a image_on_hover key in the old data
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover)); // deleting old file if it exists
+                    }
+                }
+            }
+            if (oldData.gallery) {
+                if (oldData.gallery) { // checking if there is a gallery key in the old data
+                    oldData.gallery.map((img) => {
+                        if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                            fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img)); // deleting old file if it exists
+                        }
+                    })
+
+                }
+            }
+        }
+
         const data = await productModel.deleteOne(req.params); // The deleteOne method in Mongoose only returns information about the delete operation's success but does not provide the details of the deleted document itself. To get the details of the deleted document, you can use findOneAndDelete instead, which will delete the document and return its details in a single operation
         res.status(200).json({ message: 'product deleted permanently', data });
     }
@@ -147,6 +237,7 @@ module.exports = {
     deletedProducts,
     recoverProduct,
     deleteProducts,
-    readProductByID
+    readProductByID,
+    updateProduct
 }
 

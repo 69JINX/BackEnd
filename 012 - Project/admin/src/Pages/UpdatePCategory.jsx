@@ -11,10 +11,12 @@ const UpdatePCategory = () => {
   const [filepath, setfilepath] = useState('');
   const [imgBase64, setimgBase64] = useState('');
 
+
   const nav = useNavigate();
   const fetchParentCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/activated-categories`)
       .then((response) => {
+
         setParentCategories(response.data.data);
       })
       .catch((error) => {
@@ -22,9 +24,7 @@ const UpdatePCategory = () => {
       });
   }
 
-  fetchParentCategories();
-
-  useEffect(() => {
+  const fetchProductCategory = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/read-category/${id}`)
       .then((response) => {
         setfilepath(response.data.filepath);
@@ -33,6 +33,11 @@ const UpdatePCategory = () => {
       .catch((error) => {
         console.log(error);
       });
+  }
+
+  useEffect(() => {
+    fetchProductCategory();
+    fetchParentCategories();
 
   }, [])
 
@@ -62,12 +67,20 @@ const UpdatePCategory = () => {
   }
 
   const handlePreview = (e) => {
-    console.log(e.target.files[0]);
-    const reader = new FileReader();
 
-    reader.readAsDataURL(e.target.files[0]);
-    reader.onload = () => {
-      setimgBase64(reader.result);
+    try {
+      // setProductCategory({ ...ProductCategory, thumbnail: '' });
+      setimgBase64('');
+      console.log(e.target.files[0]);
+      const reader = new FileReader();
+
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onload = () => {
+        setimgBase64(reader.result);
+      }
+    }
+    catch (error) {
+      console.log(error);
     }
   }
 
@@ -114,7 +127,9 @@ const UpdatePCategory = () => {
             <label htmlFor="categoryThumb" className="block text-[#303640]">
               Category Image
             </label>
-            <img src={imgBase64 || (filepath + ProductCategory.thumbnail)} width={200}></img>
+            <a href={imgBase64 || (filepath + ProductCategory.thumbnail)} target="_blank">
+              <img src={imgBase64 || (filepath + ProductCategory.thumbnail)} width={200} />
+            </a>
           </div>
 
           <div className="w-full my-[10px]">
@@ -163,8 +178,8 @@ const UpdatePCategory = () => {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

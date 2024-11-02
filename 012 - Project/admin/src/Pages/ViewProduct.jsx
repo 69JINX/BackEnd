@@ -357,6 +357,8 @@ const ViewProduct = () => {
                           size={product.size}
                           image_on_hover={product.image_on_hover}
                           gallery={product.gallery}
+                          stock={product.isStockAvail}
+                          brand={product.brand}
                           filepath={filepath} />}
                     />
                     {product.thumbnail ?
@@ -369,14 +371,13 @@ const ViewProduct = () => {
                       /> :
                       <span className="flex align-middle text-center"> <CiWarning color="orange" size={25} /> Image Not Found</span>
                     }
-
                   </td>
                   <td className="px-4">{product.price}&#8377;</td>
                   <td className="px-4">{product.mrp}&#8377;</td>
                   <td>
                     <MdDelete onClick={() => handleDlt(product._id, product.name)} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
                     |{" "}
-                    <Link to="/dashboard/products/update-product">
+                    <Link to={`/dashboard/products/update-product/${product._id}`}>
                       <CiEdit className="my-[5px] text-yellow-500 cursor-pointer inline" />
                     </Link>
                   </td>
@@ -388,6 +389,7 @@ const ViewProduct = () => {
                   </td>
                 </tr>
               ))
+
             }
 
           </tbody>
@@ -399,7 +401,7 @@ const ViewProduct = () => {
 
 const DetailedProduct = (props) => {
   return (
-    <div className="bg-black w-[90vw]" >
+    <div className="bg-black w-[95vw]" >
       <div className="w-[90%] mx-auto my-[20px]">
         <table className=" w-full">
           <thead>
@@ -411,32 +413,36 @@ const DetailedProduct = (props) => {
               <th>Sizes</th>
               <th>Colors</th>
               <th>Gallery</th>
+              <th>Stock</th>
+              <th>Brand</th>
             </tr>
           </thead>
           <tbody>
             {
 
-              <tr className="border-b">
-                <td className="w-[20px] p-2">
+              <tr className="border-b w-[95vw]">
+                <td className="w-[100px] break-all p-2">
                   {props.name}
                 </td>
-                <td className="w-[200px] p-2">
+                <td className="w-[200px] break-all p-2">
                   {props.description}
                 </td>
-                <td className="w-[200px] p-2">
+                <td className="w-[200px] break-all p-2">
                   {props.short_description}
                 </td>
-                <td className="object-contain flex justify-around cursor-pointer">
-                  {props.image_on_hover ?
-                    <img
-                      src={props.filepath + props.image_on_hover}
-                      alt="men's t-shirt"
-                      width={80}
-                      height={80}
-                      className="rounded-[5px] inline"
-                    /> :
-                    <span className="flex text-center align-middle"> <CiWarning color="orange" size={25} /> Image Not Found</span>
-                  }
+                <td className="object-contain cursor-pointer">
+                  <div>
+                    {props.image_on_hover ?
+                      <img
+                        src={props.filepath + props.image_on_hover}
+                        alt="men's t-shirt"
+                        width={80}
+                        height={80}
+                        className="rounded-[5px] inline"
+                      /> :
+                      <span className="flex text-center align-middle"> <CiWarning color="orange" size={25} /> Image Not Found</span>
+                    }
+                  </div>
                 </td>
                 <td>
                   {props.size.map((size) => (size.name)).join(' , ')}
@@ -456,6 +462,12 @@ const DetailedProduct = (props) => {
                       />
                     )) : <span className="flex text-center align-middle"> <CiWarning color="orange" size={25} /> Images Not Found</span>
                   }
+                </td>
+                <td>
+                  {props.stock ? 'Available' : 'Out of Stock'}
+                </td>
+                <td>
+                  {props.brand}
                 </td>
               </tr>
             }

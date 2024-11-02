@@ -105,7 +105,7 @@ const recoverProductCategory = async (req, res) => {
 const productCategoryByID = async (req, res) => {
     try {
         const data = await productCategoryModel.find({ _id: req.params._id }).populate('parent_category');
-        const filepath = `${req.protocol}://${req.get('host')}/frankandoakservices/admin-panel/`;
+        const filepath = `${req.protocol}://${req.get('host')}/frankandoakservices/admin-panel/product-category/`;
         res.status(200).json({ message: 'data by ID', data, filepath })
     }
     catch (error) {
