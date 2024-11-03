@@ -129,6 +129,17 @@ const activatedSizes = async (req, res) => {
     }
 }
 
+const permanentDeleteSize = async (req, res) => {
+    try {
+        await sizeModel.deleteOne(req.params);
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     createSize,
     readSize,
@@ -139,5 +150,6 @@ module.exports = {
     updateSize,
     deletedSizes,
     recoverSize,
-    activatedSizes
+    activatedSizes,
+    permanentDeleteSize
 };

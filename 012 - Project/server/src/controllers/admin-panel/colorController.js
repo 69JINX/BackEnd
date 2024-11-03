@@ -122,6 +122,17 @@ const activatedColors = async (req, res) => {
     }
 }
 
+const permanentDeleteColor = async (req, res) => {
+    try {
+        await colorModel.deleteOne(req.params);
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     addColor,
     readColor,
@@ -132,5 +143,6 @@ module.exports = {
     updateColor,
     deletedColors,
     recoverColor,
-    activatedColors
+    activatedColors,
+    permanentDeleteColor
 }
