@@ -285,10 +285,7 @@ const ViewCategory = () => {
             <table className="w-full">
               <thead>
                 <tr className="text-left border-b">
-                  <th>
-                    <button className="bg-red-400 rounded-sm px-2 py-1">Empty Bin</button>
-                    <input type="checkbox" name="deleteAll" id="deleteAllCat" className="accent-[#5351c9]" />
-                  </th>
+                
                   <th>Sno</th>
                   <th>Category Name</th>
 
@@ -300,9 +297,6 @@ const ViewCategory = () => {
                 {
                   DeletedParentCategories.map((parentCategory, index) => (
                     <tr className="border-b">
-                      <td>
-                        <input type="checkbox" name={`checkbox${index}`} id="delete1" className="accent-[#5351c9] cursor-pointer" />
-                      </td>
                       <td>{index + 1}</td>
                       <td>{parentCategory.name}</td>
                       <td>

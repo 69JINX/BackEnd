@@ -28,8 +28,9 @@ const ViewSizes = () => {
   const fetchSizes = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/read-sizes`)
       .then((response) => {
-        console.log(response.data);
         setSize(response.data.data);
+        setcheckedSizeIDsInBin([]);
+        setcheckedSizeIDs([]);
       })
       .catch((error) => {
         console.log(error);
@@ -41,6 +42,8 @@ const ViewSizes = () => {
       .then((response) => {
         console.log(response.data);
         setDeletedSizes(response.data.data);
+        setcheckedSizeIDsInBin([]);
+        setcheckedSizeIDs([]);
       })
       .catch((error) => {
         console.log(error);
@@ -84,10 +87,6 @@ const ViewSizes = () => {
   }, [DeletedSizes])
 
 
-  useEffect(() => {
-    console.log(checkedSizeIDsInBin);
-  }, [checkedSizeIDsInBin])
-
   const handleMasterCheckbox = (e) => {
     const newMasterCheckedState = !isMasterSelectChecked;
     setisMasterSelectChecked(newMasterCheckedState);
@@ -116,17 +115,15 @@ const ViewSizes = () => {
     setisMasterSelectChecked(allChecked);
   }
 
-
-
   const handleMasterCheckboxInBin = (e) => {
     const newMasterCheckedState = !isMasterSelectCheckedInBin;
     setisMasterSelectCheckedInBin(newMasterCheckedState);
 
-    if (e.target.checked) setcheckedSizeIDsInBin(Size.map((size) => size._id));
+    if (e.target.checked) setcheckedSizeIDsInBin(DeletedSizes.map((size) => size._id));
     if (!e.target.checked) setcheckedSizeIDsInBin([]);
 
     // Set all checkboxes to the same state as master checkbox
-    setisChildSelectCheckedInBin(new Array(Size.length).fill(newMasterCheckedState));
+    setisChildSelectCheckedInBin(new Array(DeletedSizes.length).fill(newMasterCheckedState));
   }
 
   const handleChildCheckboxInBin = (e, index) => {
@@ -194,8 +191,8 @@ const ViewSizes = () => {
   }
 
   const handleMultiDlt = () => {
-    if (checkedSizeIDs.length > 0) {
 
+    if (checkedSizeIDs.length > 0) {
       Swal.fire({
         title: "Are you sure?",
         text: "Deleted items will be moved to Recycle bin!",
@@ -207,7 +204,7 @@ const ViewSizes = () => {
       }).then((result) => {
         if (result.isConfirmed) {
 
-          axios.put('http://localhost:4000/api/admin-panel/size/delete-sizes', { checkedSizeIDs })
+          axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/delete-sizes`, { checkedSizeIDs })
             .then((response) => {
               console.log(response.data);
               fetchSizes();
@@ -239,7 +236,7 @@ const ViewSizes = () => {
 
 
   const handleRecover = (id, name) => {
-    axios.put(`http://localhost:4000/api/admin-panel/size/recover-size/${id}`)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/recover-size/${id}`)
       .then((response) => {
         console.log(response.data.data);
         fetchSizes();
@@ -261,7 +258,46 @@ const ViewSizes = () => {
   }
 
   const handleMultiRecover = () => {
+    if (checkedSizeIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Selected items will be recovered!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
 
+          axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/recover-sizes`, { checkedSizeIDsInBin })
+            .then((response) => {
+              console.log(response.data);
+              fetchSizes();
+              fetchDeletedSizes();
+              toast.success(`All ${checkedSizeIDsInBin.length} Sizes Recovered Successfully`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Recovered!",
+            text: "Recovered succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
   }
 
 
@@ -310,7 +346,61 @@ const ViewSizes = () => {
   }
 
   const handleMultiPermanentDlt = () => {
+    console.log(checkedSizeIDsInBin);
+    if (checkedSizeIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        html: "Selected items will be Deleted Permanently<br>THE CHANGES CAN'T BE REVERT!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
 
+            /* 
+            DELETE requests with a body require specifying data in axios. By default, axios.delete expects any payload to be provided this way. Here’s the correct syntax:
+            axios.delete(
+            `${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, 
+              { data: { ArrayofCheckedIDs } });
+
+            This will ensure that ArrayofCheckedIDs is included in the request body, and the backend should receive it under req.body.ArrayofCheckedIDs.
+            Alternatively, if the backend is expecting it as a query parameter, you could structure it this way:
+            axios.delete(
+            `${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, 
+              { params: { ArrayofCheckedIDs } });
+            However, using data is the more common approach for sending arrays in a DELETE request body.
+            */
+
+          axios.delete(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, { data: { checkedSizeIDsInBin } })
+            .then((response) => {
+              console.log(response.data);
+              fetchSizes();
+              fetchDeletedSizes();
+              toast.success(`All ${checkedSizeIDsInBin.length} Sizes Deleted Permanently`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "Deleted succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
   }
 
   return (
@@ -337,8 +427,8 @@ const ViewSizes = () => {
               <thead>
                 <tr className="text-left border-b">
                   <th>
-                    <button onClick={handleMultiRecover} className="bg-red-400 rounded-sm px-2 mb-2 py-1">Recover</button><br/>
-                    <button onClick={handleMultiPermanentDlt}  className="bg-red-400 rounded-sm px-2 py-1">Delete Permanent</button>
+                    <button onClick={handleMultiRecover} className="bg-red-400 rounded-sm px-2 mb-2 py-1">Recover</button><br />
+                    <button onClick={handleMultiPermanentDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete Permanent</button>
                     <input onChange={handleMasterCheckboxInBin} checked={isMasterSelectCheckedInBin} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
                     />
                   </th>

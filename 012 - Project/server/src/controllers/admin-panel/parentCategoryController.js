@@ -178,6 +178,8 @@ const permanentDeleteParentCategory = async (req, res) => {
 }
 
 
+
+
 module.exports = {
     createParentCategory,
     readParentCategory,

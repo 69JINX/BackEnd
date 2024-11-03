@@ -278,16 +278,7 @@ const ViewColor = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b text-left">
-                  <th className="flex p-2">
-                    <button onClick={handleMultiDlt} className="bg-[#5351c9] font-light text-white rounded-md p-1 w-[80px] h-[35px] my-[10px] mr-[10px]">
-                      Delete
-                    </button>
-                    <input onChange={handleMasterCheckbox} checked={isMasterSelectChecked}
-                      type="checkbox"
-                      name="deleteAll"
-                      className="cursor-pointer accent-[#5351c9] input"
-                    />
-                  </th>
+                  
                   <th className="p-2">Sno.</th>
                   <th className="p-2">Color Name</th>
                   <th className="p-2">Color</th>
@@ -298,13 +289,6 @@ const ViewColor = () => {
                 {
                   DeletedColors.map((color, index) => (
                     <tr className="border-b">
-                      <td className="p-2">
-                        <input value={color._id} checked={isChildSelectChecked[index]} onChange={(e) => handleChildCheckbox(e, index)}
-                          type="checkbox"
-                          name="delete"
-                          className="cursor-pointer accent-[#5351c9] input"
-                        />
-                      </td>
                       <td className="p-2">{index + 1}</td>
                       <td className="p-2">{color.name}</td>
                       <td className="p-2">

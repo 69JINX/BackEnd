@@ -70,7 +70,9 @@ const { createSize,
     deletedSizes,
     recoverSize,
     activatedSizes, 
-    permanentDeleteSize} = require('./admin-panel/sizeController')
+    permanentDeleteSize,
+    recoverSizes,
+    permanentDeleteSizes} = require('./admin-panel/sizeController')
 
 
 module.exports = {
@@ -135,5 +137,7 @@ module.exports = {
     updateProduct,
     permanentDeleteProductCategory,
     permanentDeleteSize,
-    permanentDeleteColor
+    permanentDeleteColor,
+    recoverSizes,
+    permanentDeleteSizes
 }

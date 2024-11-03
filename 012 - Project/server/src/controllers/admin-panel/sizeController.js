@@ -22,7 +22,7 @@ const createSize = async (req, res) => {
 
         res.status(500).json({ message: 'Internal Server Error' });
 
-        
+
     }
 }
 
@@ -119,6 +119,23 @@ const recoverSize = async (req, res) => {
     }
 }
 
+const recoverSizes = async (req, res) => {
+    try {
+        const response = await sizeModel.updateMany(
+            { _id: req.body.checkedSizeIDsInBin },
+            {
+                $set: {
+                    deleted_at: null
+                }
+            });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
 const activatedSizes = async (req, res) => {
     try {
         const data = await sizeModel.find({ status: true, deleted_at: null });
@@ -140,6 +157,17 @@ const permanentDeleteSize = async (req, res) => {
     }
 }
 
+const permanentDeleteSizes = async (req, res) => {
+    try {
+        await sizeModel.deleteMany({ _id: { $in: req.body.checkedSizeIDsInBin } });
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     createSize,
     readSize,
@@ -151,5 +179,7 @@ module.exports = {
     deletedSizes,
     recoverSize,
     activatedSizes,
-    permanentDeleteSize
+    permanentDeleteSize,
+    recoverSizes,
+    permanentDeleteSizes
 };
