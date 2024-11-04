@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BiRecycle } from "react-icons/bi";
-import { CiEdit, CiWarning } from "react-icons/ci";
+import { CiEdit, CiLogin, CiWarning } from "react-icons/ci";
 import { FaTrash } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Modal from "react-responsive-modal";
@@ -14,13 +14,22 @@ const ViewProduct = () => {
   let [showDesc1, setShowDesc1] = useState(false);
   let [showShortDesc1, setShowShortDesc1] = useState(false);
   const [Products, setProducts] = useState([]);
+  const [DeletedProducts, setDeletedProducts] = useState([]);
+
   const [open, setOpen] = useState(false);
   const [DetailesOpen, setDetailesOpen] = useState(false);
+
   // const [DetailsProduct, setDetailsProduct] = useState({});
+
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
   const [checkedProductsIDs, setcheckedProductsIDs] = useState([]);
-  const [DeletedProducts, setDeletedProducts] = useState([]);
+
+  const [isChildSelectCheckedInBin, setisChildSelectCheckedInBin] = useState([]);
+  const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
+  const [checkedProductsIDsInBin, setcheckedProductsIDsInBin] = useState([]);
+  
+
   const [filepath, setfilepath] = useState('');
 
   const fetchProducts = () => {
@@ -28,6 +37,8 @@ const ViewProduct = () => {
       .then((response) => {
         setfilepath(response.data.filepath);
         setProducts(response.data.data);
+        setcheckedProductsIDs([]);
+        setcheckedProductsIDsInBin([]);
       })
       .catch((error) => {
         console.log(error);
@@ -38,6 +49,8 @@ const ViewProduct = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/deleted-products`)
       .then((response) => {
         setDeletedProducts(response.data.data);
+        setcheckedProductsIDs([]);
+        setcheckedProductsIDsInBin([]);
       })
       .catch((error) => {
         console.log(error);
@@ -49,14 +62,8 @@ const ViewProduct = () => {
     fetchDeletedProducts();
   }, [])
 
-  useEffect(() => {
-    console.log(Products);
-  }, [Products])
 
-
-  useEffect(() => {
-    console.log('Deleted Products', DeletedProducts);
-  }, [DeletedProducts])
+  
 
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
@@ -84,6 +91,11 @@ const ViewProduct = () => {
     setisChildSelectChecked(new Array(Products.length).fill(false));
     if (Products.length === 0) setisMasterSelectChecked(false);
   }, [Products])
+
+  useEffect(() => {
+    setisChildSelectCheckedInBin(new Array(DeletedProducts.length).fill(false));
+    if (DeletedProducts.length === 0) setisMasterSelectCheckedInBin(false);
+  }, [DeletedProducts])
 
   const handleMasterCheckbox = (e) => {
     const newMasterCheckedState = !isMasterSelectChecked;
@@ -220,7 +232,6 @@ const ViewProduct = () => {
       })
   }
 
-
   const handlePermanentDlt = (id, name) => {
 
     Swal.fire({
@@ -264,6 +275,127 @@ const ViewProduct = () => {
 
 
   }
+
+  
+  const handleMasterCheckboxInBin = (e) => {
+    const newMasterCheckedState = !isMasterSelectCheckedInBin;
+    setisMasterSelectCheckedInBin(newMasterCheckedState);
+
+    if (e.target.checked) setcheckedProductsIDsInBin(DeletedProducts.map((size) => size._id));
+    if (!e.target.checked) setcheckedProductsIDsInBin([]);
+
+    // Set all checkboxes to the same state as master checkbox
+    setisChildSelectCheckedInBin(new Array(DeletedProducts.length).fill(newMasterCheckedState));
+  }
+
+  const handleChildCheckboxInBin = (e, index) => {
+
+    if (e.target.checked) setcheckedProductsIDsInBin(((prev) => [...prev, e.target.value]));
+    if (!e.target.checked) {
+      const temp_array = checkedProductsIDsInBin;
+      const index = temp_array.indexOf(e.target.value);
+      if (index > -1) temp_array.splice(index, 1);
+      setcheckedProductsIDsInBin(temp_array);
+    }
+
+    const updatedCheckedStates = isChildSelectCheckedInBin.map((checked, i) => i === index ? !checked : checked);
+    setisChildSelectCheckedInBin(updatedCheckedStates);
+    // If all checkboxes are checked, set master checkbox to true, otherwise false
+    const allChecked = updatedCheckedStates.every((checked) => checked === true);
+    setisMasterSelectCheckedInBin(allChecked);
+  }
+
+  const handleMultiRecover = () => {
+    if (checkedProductsIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Selected items will be recovered!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, recover!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/recover-products`, { checkedProductsIDsInBin })
+            .then((response) => {
+              console.log(response.data);
+              fetchProducts();
+              fetchDeletedProducts();
+              toast.success(`All ${checkedProductsIDsInBin.length} Products Recovered Successfully`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Recovered!",
+            text: "Recovered succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
+  const handleMultiPermanentDlt = () => {
+    if (checkedProductsIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        html: "Deleting these Product Category will permanently remove it.!<br>THIS ACTION CAN'T BE REVERT",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+
+          axios.delete(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/permanent-delete-products`, { data: { checkedProductsIDsInBin } })
+            .then((response) => {
+              console.log(response.data);
+              fetchProducts();
+              fetchDeletedProducts();
+              toast.success(`All ${checkedProductsIDsInBin.length} Parent Category Deleted Permanently`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "Products deleted successfully.!",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
+  useEffect(()=>{
+    console.log(checkedProductsIDsInBin);
+  },[checkedProductsIDsInBin])
+
   return (
     <div className="w-[90%] mx-auto my-[150px] rounded-[10px] bg-white border">
       <ToastContainer
@@ -282,10 +414,16 @@ const ViewProduct = () => {
         View Product
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
         <Modal classNames='TrashBin' open={open} onClose={() => setOpen(false)} center >
-          <div className="w-[90%] mx-auto my-[20px]">
+          <div className="w-[100%] mx-auto my-[20px]">
             <table className=" w-full">
               <thead>
                 <tr className="border-b text-left">
+                  <th className="text-left">
+                    <button onClick={handleMultiRecover} className="bg-red-400 rounded-sm px-2 mb-2 py-1">Recover</button><br />
+                    <button onClick={handleMultiPermanentDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete Permanent</button>
+                    <input onChange={handleMasterCheckboxInBin} checked={isMasterSelectCheckedInBin} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
+                    />
+                  </th>
                   <th>Sno</th>
                   <th>Product Name</th>
                   <th>Parent Category</th>
@@ -298,13 +436,19 @@ const ViewProduct = () => {
                 {
                   DeletedProducts.map((product, index) => (
                     <tr className="border-b">
-
+                      <td>
+                        <input value={product._id} checked={isChildSelectCheckedInBin[index]} onChange={(e) => handleChildCheckboxInBin(e, index)}
+                          type="checkbox"
+                          name="delete"
+                          className="accent-[#5351c9] cursor-pointer input"
+                        />
+                        </td>
                       <td>{index + 1}</td>
                       <td>{product.name}</td>
-                      <td className="w-[200px] p-2">
+                      <td className="w-[100px] p-2">
                         {product.parent_category.name}
                       </td>
-                      <td className="w-[200px] p-2">
+                      <td className="w-[100px] p-2">
                         {product.product_category.name}
                       </td>
                       <td className="object-contain cursor-pointer"
@@ -313,7 +457,6 @@ const ViewProduct = () => {
                         {product.thumbnail ?
                           <img
                             src={filepath + product.thumbnail}
-                            alt="men's t-shirt"
                             width={80}
                             height={80}
                             className="rounded-[5px]"

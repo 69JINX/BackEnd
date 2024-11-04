@@ -177,6 +177,35 @@ const permanentDeleteParentCategory = async (req, res) => {
     }
 }
 
+const recoverParentCategories = async (req, res) => {
+    try {
+        const response = await parentCategoryModel.updateMany(
+            { _id: req.body.checkedCategoriesIDsInBin },
+            {
+                $set: {
+                    deleted_at: null
+                }
+            });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+const permanentDeleteParentCategories = async (req, res) => {
+    try {
+        await parentCategoryModel.deleteMany({ _id: { $in: req.body.checkedCategoriesIDsInBin } });
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 
 
 
@@ -191,5 +220,7 @@ module.exports = {
     deletedParentCategories,
     recoverParentCategory,
     activatedParentCategories,
-    permanentDeleteParentCategory
+    permanentDeleteParentCategory,
+    recoverParentCategories,
+    permanentDeleteParentCategories
 };

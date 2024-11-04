@@ -64,6 +64,7 @@ function Color() {
           progress: undefined,
           theme: "colored",
         });
+        setSelectedColor('#000000')
       })
       .catch((error) => {
         console.log(error);
@@ -83,6 +84,7 @@ function Color() {
           });
         }
       })
+      e.target.reset();
   }
 
 

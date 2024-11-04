@@ -16,16 +16,25 @@ const ViewColor = () => {
 
   const [Color, setColor] = useState([]);
   const [DeletedColors, setDeletedColors] = useState([]);
+  
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
-
   const [checkedColorsIDs, setcheckedColorsIDs] = useState([]);
+
+  const [isChildSelectCheckedInBin, setisChildSelectCheckedInBin] = useState([]);
+  const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
+  const [checkedColorsIDsInBin, setcheckedColorsIDsInBin] = useState([]);
+
+  
+  
 
   const fetchColor = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/read-color`)
       .then((response) => {
         console.log(response.data);
         setColor(response.data.data);
+        setcheckedColorsIDs([]);
+        setcheckedColorsIDsInBin([]);
       })
       .catch((error) => {
         console.log(error);
@@ -37,6 +46,8 @@ const ViewColor = () => {
       .then((response) => {
         console.log(response.data);
         setDeletedColors(response.data.data);
+        setcheckedColorsIDs([]);
+        setcheckedColorsIDsInBin([]);
       })
       .catch((error) => {
         console.log(error);
@@ -73,6 +84,11 @@ const ViewColor = () => {
     setisChildSelectChecked(new Array(Color.length).fill(false));
     if (Color.length === 0) setisMasterSelectChecked(false);
   }, [Color])
+
+  useEffect(() => {
+    setisChildSelectCheckedInBin(new Array(DeletedColors.length).fill(false));
+    if (DeletedColors.length === 0) setisMasterSelectCheckedInBin(false);
+  }, [DeletedColors])
 
   const handleMasterCheckbox = (e) => {
     const newMasterCheckedState = !isMasterSelectChecked;
@@ -255,6 +271,123 @@ const ViewColor = () => {
   }
 
 
+
+  const handleMasterCheckboxInBin = (e) => {
+    const newMasterCheckedState = !isMasterSelectCheckedInBin;
+    setisMasterSelectCheckedInBin(newMasterCheckedState);
+
+    if (e.target.checked) setcheckedColorsIDsInBin(DeletedColors.map((size) => size._id));
+    if (!e.target.checked) setcheckedColorsIDsInBin([]);
+
+    // Set all checkboxes to the same state as master checkbox
+    setisChildSelectCheckedInBin(new Array(DeletedColors.length).fill(newMasterCheckedState));
+  }
+
+  const handleChildCheckboxInBin = (e, index) => {
+
+    if (e.target.checked) setcheckedColorsIDsInBin(((prev) => [...prev, e.target.value]));
+    if (!e.target.checked) {
+      const temp_array = checkedColorsIDsInBin;
+      const index = temp_array.indexOf(e.target.value);
+      if (index > -1) temp_array.splice(index, 1);
+      setcheckedColorsIDsInBin(temp_array);
+    }
+
+    const updatedCheckedStates = isChildSelectCheckedInBin.map((checked, i) => i === index ? !checked : checked);
+    setisChildSelectCheckedInBin(updatedCheckedStates);
+    // If all checkboxes are checked, set master checkbox to true, otherwise false
+    const allChecked = updatedCheckedStates.every((checked) => checked === true);
+    setisMasterSelectCheckedInBin(allChecked);
+  }
+
+  const handleMultiRecover = () => {
+    if (checkedColorsIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Selected items will be recovered!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, recover!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/recover-colors`, { checkedColorsIDsInBin })
+            .then((response) => {
+              console.log(response.data);
+              fetchColor();
+              fetchDeletedColors();
+              toast.success(`All ${checkedColorsIDsInBin.length} Colors Recovered Successfully`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Recovered!",
+            text: "Recovered succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
+  const handleMultiPermanentDlt = () => {
+    if (checkedColorsIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        html: "Selected items will be Deleted Permanently<br>THE CHANGES CAN'T BE REVERT!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+
+          axios.delete(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/permanent-delete-colors`, { data: { checkedColorsIDsInBin } })
+            .then((response) => {
+              console.log(response.data);
+              fetchColor();
+              fetchDeletedColors();
+              toast.success(`All ${checkedColorsIDsInBin.length} Colors Deleted Permanently`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "Deleted succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
+
   return (
     <div className="w-[90%] bg-white rounded-[10px] border mx-auto my-[150px]">
       <ToastContainer
@@ -278,7 +411,12 @@ const ViewColor = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b text-left">
-                  
+                <th>
+                    <button onClick={handleMultiRecover} className="bg-red-400 rounded-sm px-2 mb-2 py-1">Recover</button><br />
+                    <button onClick={handleMultiPermanentDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete Permanent</button>
+                    <input onChange={handleMasterCheckboxInBin} checked={isMasterSelectCheckedInBin} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
+                    />
+                  </th>
                   <th className="p-2">Sno.</th>
                   <th className="p-2">Color Name</th>
                   <th className="p-2">Color</th>
@@ -289,6 +427,13 @@ const ViewColor = () => {
                 {
                   DeletedColors.map((color, index) => (
                     <tr className="border-b">
+                      <td>
+                        <input value={color._id} checked={isChildSelectCheckedInBin[index]} onChange={(e) => handleChildCheckboxInBin(e, index)}
+                          type="checkbox"
+                          name="delete"
+                          className="accent-[#5351c9] cursor-pointer input"
+                        />
+                      </td>
                       <td className="p-2">{index + 1}</td>
                       <td className="p-2">{color.name}</td>
                       <td className="p-2">

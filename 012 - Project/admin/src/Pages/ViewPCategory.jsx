@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { BiRecycle } from "react-icons/bi";
-import { CiEdit } from "react-icons/ci";
+import { CiEdit, CiWarning } from "react-icons/ci";
 import { FaTrash } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import Modal from "react-responsive-modal";
@@ -14,19 +14,27 @@ const ViewCategory = () => {
   let [show1, setShow1] = useState(false);
   let [show2, setShow2] = useState(false);
   const [ProductCategories, setProductCategories] = useState([]);
+  const [DeletedProductCategories, setDeletedProductCategories] = useState([]);
+
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
   const [checkedCategoriesIDs, setcheckedCategoriesIDs] = useState([]);
-  const [DeletedProductCategories, setDeletedProductCategories] = useState([]);
+
+  const [isChildSelectCheckedInBin, setisChildSelectCheckedInBin] = useState([]);
+  const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
+  const [checkedCategoriesIDsInBin, setcheckedCategoriesIDsInBin] = useState([]);
+
   const [filepath, setfilepath] = useState('');
   const [open, setOpen] = useState(false);
 
   const fetchProductCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/read-category`)
       .then((response) => {
+        console.log(response.data.data);
         setfilepath(response.data.filepath);
         setProductCategories(response.data.data);
-        console.log(response.data.data)
+        setcheckedCategoriesIDs([]);
+        setcheckedCategoriesIDsInBin([]);
       })
       .catch((error) => {
         console.error(error);
@@ -36,9 +44,9 @@ const ViewCategory = () => {
   const fetchDeletedProductCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/deleted-categories`)
       .then((response) => {
-        console.log('Deleted Product Categories');
-        console.log(response.data.data);
         setDeletedProductCategories(response.data.data);
+        setcheckedCategoriesIDs([]);
+        setcheckedCategoriesIDsInBin([]);
       })
       .catch((error) => {
         console.log(error);
@@ -51,10 +59,16 @@ const ViewCategory = () => {
   }, [])
 
 
+
   useEffect(() => {
     setisChildSelectChecked(new Array(ProductCategories.length).fill(false));
     if (ProductCategories.length === 0) setisMasterSelectChecked(false);
   }, [ProductCategories])
+
+  useEffect(() => {
+    setisChildSelectCheckedInBin(new Array(DeletedProductCategories.length).fill(false));
+    if (DeletedProductCategories.length === 0) setisMasterSelectCheckedInBin(false);
+  }, [DeletedProductCategories])
 
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
@@ -280,6 +294,122 @@ const ViewCategory = () => {
 
   }
 
+
+  const handleMasterCheckboxInBin = (e) => {
+    const newMasterCheckedState = !isMasterSelectCheckedInBin;
+    setisMasterSelectCheckedInBin(newMasterCheckedState);
+
+    if (e.target.checked) setcheckedCategoriesIDsInBin(DeletedProductCategories.map((size) => size._id));
+    if (!e.target.checked) setcheckedCategoriesIDsInBin([]);
+
+    // Set all checkboxes to the same state as master checkbox
+    setisChildSelectCheckedInBin(new Array(DeletedProductCategories.length).fill(newMasterCheckedState));
+  }
+
+  const handleChildCheckboxInBin = (e, index) => {
+
+    if (e.target.checked) setcheckedCategoriesIDsInBin(((prev) => [...prev, e.target.value]));
+    if (!e.target.checked) {
+      const temp_array = checkedCategoriesIDsInBin;
+      const index = temp_array.indexOf(e.target.value);
+      if (index > -1) temp_array.splice(index, 1);
+      setcheckedCategoriesIDsInBin(temp_array);
+    }
+
+    const updatedCheckedStates = isChildSelectCheckedInBin.map((checked, i) => i === index ? !checked : checked);
+    setisChildSelectCheckedInBin(updatedCheckedStates);
+    // If all checkboxes are checked, set master checkbox to true, otherwise false
+    const allChecked = updatedCheckedStates.every((checked) => checked === true);
+    setisMasterSelectCheckedInBin(allChecked);
+  }
+
+  const handleMultiRecover = () => {
+    if (checkedCategoriesIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Selected items will be recovered!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, recover!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/recover-categories`, { checkedCategoriesIDsInBin })
+            .then((response) => {
+              console.log(response.data);
+              fetchProductCategories();
+              fetchDeletedProductCategories();
+              toast.success(`All ${checkedCategoriesIDsInBin.length} Product Categories Recovered Successfully`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Recovered!",
+            text: "Recovered succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
+  const handleMultiPermanentDlt = () => {
+    if (checkedCategoriesIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        html: "Deleting these Product Category will permanently remove it, along with all linked Products.!<br>THIS ACTION CAN'T BE REVERT",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+
+          axios.delete(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/permanent-delete-categories`, { data: { checkedCategoriesIDsInBin } })
+            .then((response) => {
+              console.log(response.data);
+              fetchProductCategories();
+              fetchDeletedProductCategories();
+              toast.success(`All ${checkedCategoriesIDsInBin.length} Parent Category Deleted Permanently`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "Product Category deleted successfully, along with all linked Products.!",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <ToastContainer
@@ -298,10 +428,16 @@ const ViewCategory = () => {
         View Category
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
         <Modal open={open} onClose={() => setOpen(false)} center>
-          <div className="w-[90%] mx-auto my-[20px]">
+          <div className="w-[100%] mx-auto my-[20px]">
             <table className="w-full">
               <thead>
                 <tr className="text-center border-b">
+                  <th className="text-left">
+                    <button onClick={handleMultiRecover} className="bg-red-400 rounded-sm px-2 mb-2 py-1">Recover</button><br />
+                    <button onClick={handleMultiPermanentDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete Permanent</button>
+                    <input onChange={handleMasterCheckboxInBin} checked={isMasterSelectCheckedInBin} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
+                    />
+                  </th>
                   <th>Sno</th>
                   <th>Category Name</th>
                   <th>Parent Category</th>
@@ -315,17 +451,26 @@ const ViewCategory = () => {
 
                   DeletedProductCategories.map((category, index) => (
                     <tr className="border-b">
+                      <td>
+                        <input value={category._id} checked={isChildSelectCheckedInBin[index]} onChange={(e) => handleChildCheckboxInBin(e, index)}
+                          type="checkbox"
+                          name="delete"
+                          className="accent-[#5351c9] cursor-pointer input"
+                        />
+                      </td>
                       <td>{index + 1}</td>
                       <td>{category.name}</td>
                       <td>{category.parent_category.name}</td>
                       <td>{category.slug}</td>
                       <td className="object-contain p-2">
-                        <img
-                          src={`${filepath + category.thumbnail}`}
-                          alt="product men's t-shirt"
-                          width={80}
-                          height={80}
-                        />
+                        {category.thumbnail ?
+                          <img
+                            src={`${filepath + category.thumbnail}`}
+                            width={80}
+                            height={80}
+                          /> :
+                          <span className="flex align-middle"> <CiWarning color="orange" size={25} /> Image Not Found</span>
+                        }
                       </td>
 
                       <td>
@@ -383,14 +528,17 @@ const ViewCategory = () => {
                   <td>{category.parent_category.name}</td>
                   <td>{category.slug}</td>
                   <td className="object-contain p-2">
-                    <img
-                      src={`${filepath + category.thumbnail}`}
-                      alt="product men's t-shirt"
-                      width={80}
-                      height={80}
-                    />
+                    {category.thumbnail ?
+                      <img
+                        src={`${filepath + category.thumbnail}`}
+                        alt="product men's t-shirt"
+                        width={80}
+                        height={80}
+                      /> :
+                      <span style={{width:'100px',margin:'0px',padding:'0px'}} className="flex align-middle"> <CiWarning color="orange" size={20} /> Image Not Found</span>
+                    }
                   </td>
-                  <td className="w-[100px] flex-wrap p-1">
+                  <td className="w-[80px] flex-wrap">
                     {category.description}
                   </td>
                   <td>

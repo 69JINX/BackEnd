@@ -14,6 +14,12 @@ const createProductCategory = async (req, res) => {
         res.status(200).json({ message: 'successful', data: response });
     }
     catch (error) {
+
+        if (req.files && req.files.thumbnail) { // If a thumbnail image is selected and an error occurs while submitting the form(eg. required field is missing), Multer will still store the file on the backend. If the user corrects the error and submits again, there will be two images with different names. To prevent this, we will delete the stored file immediately if any error occurs during submission.
+            if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', req.files.thumbnail[0].filename)))
+                fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', req.files.thumbnail[0].filename));
+        }
+
         if (error.code === 11000) { // MongoDB duplicate key error
             return res.status(400).send({ message: "Category already exists." });
         }
@@ -217,6 +223,46 @@ const permanentDeleteProductCategory = async (req, res) => {
     }
 }
 
+const recoverProductCategories = async (req, res) => {
+    try {
+        const response = await productCategoryModel.updateMany(
+            { _id: req.body.checkedCategoriesIDsInBin },
+            {
+                $set: {
+                    deleted_at: null
+                }
+            });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+const permanentDeleteProductCategories = async (req, res) => {
+    try {
+
+        const productCategories = await productCategoryModel.find({ _id: { $in: req.body.checkedCategoriesIDsInBin } });
+
+        productCategories.map((productCategory) => {
+            if (productCategory.thumbnail) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail)); // deleting old file if it exists
+                }
+            }
+        })
+
+        await productCategoryModel.deleteMany({ _id: { $in: req.body.checkedCategoriesIDsInBin } });
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     createProductCategory,
     readProductCategory,
@@ -230,5 +276,7 @@ module.exports = {
     updateProductCategory,
     activatedProductCategories,
     activeProductCategoriesByParentCategory,
-    permanentDeleteProductCategory
+    permanentDeleteProductCategory,
+    recoverProductCategories,
+    permanentDeleteProductCategories
 };

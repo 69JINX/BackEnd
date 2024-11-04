@@ -11,9 +11,9 @@ const websiteRoutes = express.Router();
 const appRoutes = express.Router();
 
 adminPanelRoutes.use('/admin', adminRoutes);
-adminPanelRoutes.use('/parent-category', parentCategoryRouter);
 adminPanelRoutes.use('/color', colorRoutes);
 adminPanelRoutes.use('/size', sizeRouter);
+adminPanelRoutes.use('/parent-category', parentCategoryRouter);
 adminPanelRoutes.use('/product-category', productCategoryRoutes);
 adminPanelRoutes.use('/product', productRoutes);
 

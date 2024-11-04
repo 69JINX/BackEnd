@@ -18,6 +18,27 @@ const createProduct = async (req, res) => {
     }
     catch (error) {
 
+        if (req.files) { // If a thumbnail image is selected and an error occurs while submitting the form(eg. required field is missing), Multer will still store the file on the backend. If the user corrects the error and submits again, there will be two images with different names. To prevent this, we will delete the stored file immediately if any error occurs during submission.
+            if (req.files.thumbnail) {
+                fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', req.files.thumbnail[0].filename));
+                fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', req.files.thumbnail[0].filename));
+            }
+
+            if (req.files.image_on_hover) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', req.files.image_on_hover[0].filename))) {
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', req.files.image_on_hover[0].filename));
+                }
+            }
+
+            if (req.files.gallery) {
+                req.files.gallery.map((img) => {
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img.filename))) {
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img.filename));
+                    }
+                })
+            }
+        }
+
         if (error.errors) {
             if (error.errors.price && error.errors.price.kind == 'Number' || error.errors.mrp && error.errors.mrp.kind == 'Number') return res.status(400).json({ message: 'price/mrp should be in a Number!' })
         }
@@ -191,29 +212,29 @@ const permanentDeleteProduct = async (req, res) => {
         const oldData = await productModel.findById(req.params);
 
         if (oldData) {
-            
-                if (oldData.thumbnail) { // checking if there is a thumbnail key in the old data
-                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
-                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail)); // deleting old file if it exists
-                    }
-                }
-            
-            
-                if (oldData.image_on_hover) { 
-                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover))) { 
-                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover)); 
-                    }
-                }
-            
-            
-                if (oldData.gallery) { 
-                    oldData.gallery.map((img) => {
-                        if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) { 
-                            fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img)); 
-                        }
-                    })
 
+            if (oldData.thumbnail) { // checking if there is a thumbnail key in the old data
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.thumbnail)); // deleting old file if it exists
                 }
+            }
+
+
+            if (oldData.image_on_hover) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover))) {
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', oldData.image_on_hover));
+                }
+            }
+
+
+            if (oldData.gallery) {
+                oldData.gallery.map((img) => {
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) {
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img));
+                    }
+                })
+
+            }
 
         }
 
@@ -227,6 +248,61 @@ const permanentDeleteProduct = async (req, res) => {
 }
 
 
+const recoverProducts = async (req, res) => {
+    try {
+        const response = await productModel.updateMany(
+            { _id: req.body.checkedProductsIDsInBin },
+            {
+                $set: {
+                    deleted_at: null
+                }
+            });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+const permanentDeleteProducts = async (req, res) => {
+    try {
+
+        const productCategories = await productModel.find({ _id: { $in: req.body.checkedProductsIDsInBin } });
+
+        productCategories.map((productCategory) => {
+            if (productCategory.thumbnail) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail)); // deleting old file if it exists
+                }
+            }
+
+            if (productCategory.image_on_hover) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', productCategory.image_on_hover))) {
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', productCategory.image_on_hover));
+                }
+            }
+
+            if (productCategory.gallery) {
+                productCategory.gallery.map((img) => {
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) {
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img));
+                    }
+                })
+
+            }
+        })
+
+        await productModel.deleteMany({ _id: { $in: req.body.checkedProductsIDsInBin } });
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 
 module.exports = {
     createProduct,
@@ -238,6 +314,8 @@ module.exports = {
     deleteProducts,
     readProductByID,
     updateProduct,
-    permanentDeleteProduct
+    permanentDeleteProduct,
+    recoverProducts,
+    permanentDeleteProducts
 }
 

@@ -8,7 +8,9 @@ const { createProduct,
     recoverProduct,
     deleteProducts,
     readProductByID,
-    updateProduct } = require('../../controllers/controllers');
+    updateProduct, 
+    recoverProducts,
+    permanentDeleteProducts} = require('../../controllers/controllers');
 const upload = require('../../middlewares/multer');
 
 const productRoutes = express();
@@ -23,5 +25,7 @@ productRoutes.get('/deleted-products', deletedProducts);
 productRoutes.put('/recover-product/:_id', recoverProduct);
 productRoutes.put('/update-product/:_id', upload('product'), updateProduct);
 productRoutes.delete('/permanent-delete-product/:_id', permanentDeleteProduct);
+productRoutes.put('/recover-products', recoverProducts);
+productRoutes.delete('/permanent-delete-products', permanentDeleteProducts);
 
 module.exports = productRoutes

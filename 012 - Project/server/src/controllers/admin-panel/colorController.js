@@ -133,6 +133,34 @@ const permanentDeleteColor = async (req, res) => {
     }
 }
 
+const recoverColors = async (req, res) => {
+    try {
+        const response = await colorModel.updateMany(
+            { _id: req.body.checkedColorsIDsInBin },
+            {
+                $set: {
+                    deleted_at: null
+                }
+            });
+        res.status(200).json({ message: 'Successfully Deleted', response });
+
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+const permanentDeleteColors = async (req, res) => {
+    try {
+        await colorModel.deleteMany({ _id: { $in: req.body.checkedColorsIDsInBin } });
+        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     addColor,
     readColor,
@@ -144,5 +172,7 @@ module.exports = {
     deletedColors,
     recoverColor,
     activatedColors,
-    permanentDeleteColor
+    permanentDeleteColor,
+    recoverColors,
+    permanentDeleteColors
 }

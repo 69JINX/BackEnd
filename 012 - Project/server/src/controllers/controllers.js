@@ -16,8 +16,10 @@ const { addColor,
     updateColor,
     deletedColors,
     recoverColor,
-    activatedColors, 
-    permanentDeleteColor} = require('./admin-panel/colorController')
+    activatedColors,
+    permanentDeleteColor,
+    recoverColors,
+    permanentDeleteColors } = require('./admin-panel/colorController')
 
 //Parent Category controllers
 const { createParentCategory,
@@ -30,7 +32,9 @@ const { createParentCategory,
     deletedParentCategories,
     recoverParentCategory,
     activatedParentCategories,
-    permanentDeleteParentCategory, } = require('./admin-panel/parentCategoryController')
+    permanentDeleteParentCategory,
+    recoverParentCategories,
+    permanentDeleteParentCategories } = require('./admin-panel/parentCategoryController')
 
 //Product Category controllers
 const { createProductCategory,
@@ -44,12 +48,14 @@ const { createProductCategory,
     productCategoryByID,
     updateProductCategory,
     activatedProductCategories,
-    activeProductCategoriesByParentCategory, 
-    permanentDeleteProductCategory} = require('./admin-panel/productCategoryControllers')
+    activeProductCategoriesByParentCategory,
+    permanentDeleteProductCategory,
+    recoverProductCategories,
+    permanentDeleteProductCategories } = require('./admin-panel/productCategoryControllers')
 
 //Product controllers
 const { createProduct,
-    readProducts, 
+    readProducts,
     permanentDeleteProduct,
     updateStatusProduct,
     deleteProduct,
@@ -57,7 +63,9 @@ const { createProduct,
     recoverProduct,
     deleteProducts,
     readProductByID,
-    updateProduct} = require('./admin-panel/productControllers')
+    updateProduct,
+    recoverProducts,
+    permanentDeleteProducts } = require('./admin-panel/productControllers')
 
 //Size controllers
 const { createSize,
@@ -69,10 +77,10 @@ const { createSize,
     updateSize,
     deletedSizes,
     recoverSize,
-    activatedSizes, 
+    activatedSizes,
     permanentDeleteSize,
     recoverSizes,
-    permanentDeleteSizes} = require('./admin-panel/sizeController')
+    permanentDeleteSizes } = require('./admin-panel/sizeController')
 
 
 module.exports = {
@@ -139,5 +147,13 @@ module.exports = {
     permanentDeleteSize,
     permanentDeleteColor,
     recoverSizes,
-    permanentDeleteSizes
+    permanentDeleteSizes,
+    recoverColors,
+    permanentDeleteColors,
+    recoverParentCategories,
+    permanentDeleteParentCategories,
+    recoverProductCategories,
+    permanentDeleteProductCategories,
+    recoverProducts,
+    permanentDeleteProducts
 }

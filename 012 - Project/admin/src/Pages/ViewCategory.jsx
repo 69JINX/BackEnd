@@ -22,17 +22,24 @@ const ViewCategory = () => {
 
   const [parentCategories, setparentCategories] = useState([]);
   const [DeletedParentCategories, setDeletedParentCategories] = useState([]);
+
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
-
   const [checkedCategoriesIDs, setcheckedCategoriesIDs] = useState([]);
+
+  const [isChildSelectCheckedInBin, setisChildSelectCheckedInBin] = useState([]);
+  const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
+  const [checkedCategoriesIDsInBin, setcheckedCategoriesIDsInBin] = useState([]);
 
 
   let fetchParentCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/read-category`)
       .then((response) => {
         setparentCategories(response.data.data);
+        setcheckedCategoriesIDs([]);
+        setcheckedCategoriesIDsInBin([]);
       })
+
       .catch((error) => {
         console.log(error);
       });
@@ -63,6 +70,8 @@ const ViewCategory = () => {
       .then((response) => {
         console.log(response.data);
         setDeletedParentCategories(response.data.data);
+        setcheckedCategoriesIDs([]);
+        setcheckedCategoriesIDsInBin([]);
       })
       .catch((error) => {
         console.log(error);
@@ -78,6 +87,11 @@ const ViewCategory = () => {
     setisChildSelectChecked(new Array(parentCategories.length).fill(false));
     if (parentCategories.length === 0) setisMasterSelectChecked(false);
   }, [parentCategories])
+
+  useEffect(() => {
+    setisChildSelectCheckedInBin(new Array(DeletedParentCategories.length).fill(false));
+    if (DeletedParentCategories.length === 0) setisMasterSelectCheckedInBin(false);
+  }, [DeletedParentCategories])
 
   const handleMasterCheckbox = (e) => {
     const newMasterCheckedState = !isMasterSelectChecked;
@@ -107,6 +121,7 @@ const ViewCategory = () => {
     const allChecked = updatedCheckedStates.every((checked) => checked === true);
     setisMasterSelectChecked(allChecked);
   }
+
 
 
   const handleDlt = (id, name) => {
@@ -262,6 +277,122 @@ const ViewCategory = () => {
       })
   }
 
+
+  const handleMasterCheckboxInBin = (e) => {
+    const newMasterCheckedState = !isMasterSelectCheckedInBin;
+    setisMasterSelectCheckedInBin(newMasterCheckedState);
+
+    if (e.target.checked) setcheckedCategoriesIDsInBin(DeletedParentCategories.map((size) => size._id));
+    if (!e.target.checked) setcheckedCategoriesIDsInBin([]);
+
+    // Set all checkboxes to the same state as master checkbox
+    setisChildSelectCheckedInBin(new Array(DeletedParentCategories.length).fill(newMasterCheckedState));
+  }
+
+  const handleChildCheckboxInBin = (e, index) => {
+
+    if (e.target.checked) setcheckedCategoriesIDsInBin(((prev) => [...prev, e.target.value]));
+    if (!e.target.checked) {
+      const temp_array = checkedCategoriesIDsInBin;
+      const index = temp_array.indexOf(e.target.value);
+      if (index > -1) temp_array.splice(index, 1);
+      setcheckedCategoriesIDsInBin(temp_array);
+    }
+
+    const updatedCheckedStates = isChildSelectCheckedInBin.map((checked, i) => i === index ? !checked : checked);
+    setisChildSelectCheckedInBin(updatedCheckedStates);
+    // If all checkboxes are checked, set master checkbox to true, otherwise false
+    const allChecked = updatedCheckedStates.every((checked) => checked === true);
+    setisMasterSelectCheckedInBin(allChecked);
+  }
+
+  const handleMultiRecover = () => {
+    if (checkedCategoriesIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Selected items will be recovered!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, recover!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/recover-categories`, { checkedCategoriesIDsInBin })
+            .then((response) => {
+              console.log(response.data);
+              fetchParentCategories();
+              fetchDeletedParentCategories();
+              toast.success(`All ${checkedCategoriesIDsInBin.length} Colors Recovered Successfully`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Recovered!",
+            text: "Recovered succefully.",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
+  const handleMultiPermanentDlt = () => {
+    if (checkedCategoriesIDsInBin.length > 0) {
+      Swal.fire({
+        title: "Are you sure?",
+        html: "Deleting these Parent Category will permanently remove it, along with all linked Products and Product Categories.!<br>THIS ACTION CAN'T BE REVERT",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+
+          axios.delete(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/permanent-delete-categories`, { data: { checkedCategoriesIDsInBin } })
+            .then((response) => {
+              console.log(response.data);
+              fetchParentCategories();
+              fetchDeletedParentCategories();
+              toast.success(`All ${checkedCategoriesIDsInBin.length} Parent Category Deleted Permanently`, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            })
+
+          Swal.fire({
+            title: "Deleted!",
+            text: "Parent Category deleted successfully, along with all linked Products and Product Categories.!",
+            icon: "success"
+          });
+        }
+      });
+    }
+  }
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <ToastContainer
@@ -285,7 +416,12 @@ const ViewCategory = () => {
             <table className="w-full">
               <thead>
                 <tr className="text-left border-b">
-                
+                  <th>
+                    <button onClick={handleMultiRecover} className="bg-red-400 rounded-sm px-2 mb-2 py-1">Recover</button><br />
+                    <button onClick={handleMultiPermanentDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete Permanent</button>
+                    <input onChange={handleMasterCheckboxInBin} checked={isMasterSelectCheckedInBin} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
+                    />
+                  </th>
                   <th>Sno</th>
                   <th>Category Name</th>
 
@@ -297,6 +433,13 @@ const ViewCategory = () => {
                 {
                   DeletedParentCategories.map((parentCategory, index) => (
                     <tr className="border-b">
+                      <td>
+                      <input value={parentCategory._id} checked={isChildSelectCheckedInBin[index]} onChange={(e) => handleChildCheckboxInBin(e, index)}
+                        type="checkbox"
+                        name="delete"
+                        className="accent-[#5351c9] cursor-pointer input"
+                      />
+                    </td>
                       <td>{index + 1}</td>
                       <td>{parentCategory.name}</td>
                       <td>
