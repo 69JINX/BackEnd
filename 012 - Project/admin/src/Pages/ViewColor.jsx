@@ -16,7 +16,7 @@ const ViewColor = () => {
 
   const [Color, setColor] = useState([]);
   const [DeletedColors, setDeletedColors] = useState([]);
-  
+
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
   const [checkedColorsIDs, setcheckedColorsIDs] = useState([]);
@@ -25,8 +25,8 @@ const ViewColor = () => {
   const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
   const [checkedColorsIDsInBin, setcheckedColorsIDsInBin] = useState([]);
 
-  
-  
+  const [noSearchFound, setnoSearchFound] = useState(false);
+
 
   const fetchColor = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/read-color`)
@@ -35,6 +35,7 @@ const ViewColor = () => {
         setColor(response.data.data);
         setcheckedColorsIDs([]);
         setcheckedColorsIDsInBin([]);
+        setnoSearchFound(false);
       })
       .catch((error) => {
         console.log(error);
@@ -387,7 +388,18 @@ const ViewColor = () => {
     }
   }
 
-
+  const handleSearch = (e) => { // it is recommended to call handleSearch on the search button 🔍 Click instead of onChange/onInput of input box, because it won't have that much pressure of server
+    if (e.target.value == '') return fetchColor();
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/search-colors/${e.target.value}`)
+      .then((response) => {
+        setColor(response.data.data);
+        if (response.data.data.length == 0) return setnoSearchFound(true);
+        setnoSearchFound(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
   return (
     <div className="w-[90%] bg-white rounded-[10px] border mx-auto my-[150px]">
       <ToastContainer
@@ -402,6 +414,16 @@ const ViewColor = () => {
         pauseOnHover
         theme="colored"
       />
+      <div className="m-3">
+        <input
+          type="text"
+          name="search"
+          id="categoryName"
+          placeholder="search..."
+          className="input border p-2 w-full rounded-[5px] my-[10px]"
+          onInput={handleSearch}
+        />
+      </div>
       <span className="flex justify-between h-[40px] border-b rounded-[10px_10px_0_0] bg-[#f8f8f9] text-[#303640] p-[8px_16px] text-[20px]">
         View Color
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
@@ -411,7 +433,7 @@ const ViewColor = () => {
             <table className="w-full">
               <thead>
                 <tr className="border-b text-left">
-                <th>
+                  <th>
                     <button onClick={handleMultiRecover} className="bg-red-400 rounded-sm px-2 mb-2 py-1">Recover</button><br />
                     <button onClick={handleMultiPermanentDlt} className="bg-red-400 rounded-sm px-2 py-1">Delete Permanent</button>
                     <input onChange={handleMasterCheckboxInBin} checked={isMasterSelectCheckedInBin} type="checkbox" name="deleteAll" className="m-[0_10px] accent-[#5351c9] cursor-pointer input"
@@ -514,6 +536,19 @@ const ViewColor = () => {
 
           </tbody>
         </table>
+      </div>
+      <div className="No-Seach-Data-Found m-auto" style={
+        {
+          display: noSearchFound ? 'block' : 'none',
+          backgroundSize: 'cover',
+          width: '60vw',
+          fontSize: '50px',
+          textAlign: 'center',
+          color: 'black',
+          alignContent: 'center',
+        }
+      }>
+        404 : No Data Found
       </div>
     </div>
   );

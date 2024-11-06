@@ -263,6 +263,25 @@ const permanentDeleteProductCategories = async (req, res) => {
     }
 }
 
+const searchProductCategories = async (req, res) => {
+    try {
+        const data = await productCategoryModel.find({
+            deleted_at: null,
+            $or: [
+                { name: { $regex: new RegExp(req.params.key, 'i') } },
+                { description: { $regex: new RegExp(req.params.key, 'i') } },
+                { slug: { $regex: new RegExp(req.params.key, 'i') } }
+            ]
+        }).populate('parent_category');
+        console.log(data);
+        res.status(200).json({ message: 'succes', data: data });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     createProductCategory,
     readProductCategory,
@@ -278,5 +297,6 @@ module.exports = {
     activeProductCategoriesByParentCategory,
     permanentDeleteProductCategory,
     recoverProductCategories,
-    permanentDeleteProductCategories
+    permanentDeleteProductCategories,
+    searchProductCategories
 };

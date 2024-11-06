@@ -27,6 +27,8 @@ const ViewCategory = () => {
   const [filepath, setfilepath] = useState('');
   const [open, setOpen] = useState(false);
 
+  const [noSearchFound, setnoSearchFound] = useState(false);
+
   const fetchProductCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/read-category`)
       .then((response) => {
@@ -34,7 +36,8 @@ const ViewCategory = () => {
         setfilepath(response.data.filepath);
         setProductCategories(response.data.data);
         setcheckedCategoriesIDs([]);
-        setcheckedCategoriesIDsInBin([]);
+        setcheckedCategoriesIDsInBin([]); 
+        setnoSearchFound(false);
       })
       .catch((error) => {
         console.error(error);
@@ -410,6 +413,19 @@ const ViewCategory = () => {
     }
   }
 
+  const handleSearch = (e) => { // it is recommended to call handleSearch on the search button 🔍 Click instead of onChange/onInput of input box, because it won't have that much pressure of server
+    if (e.target.value == '') return fetchProductCategories();
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/search-categories/${e.target.value}`)
+      .then((response) => {
+        setProductCategories(response.data.data);
+        if (response.data.data.length == 0) return setnoSearchFound(true);
+        setnoSearchFound(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <ToastContainer
@@ -424,6 +440,16 @@ const ViewCategory = () => {
         pauseOnHover
         theme="colored"
       />
+      <div className="m-3">
+        <input
+          type="text"
+          name="search"
+          id="categoryName"
+          placeholder="search..."
+          className="input border p-2 w-full rounded-[5px] my-[10px]"
+          onInput={handleSearch}
+        />
+      </div>
       <span className="flex justify-between h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] p-[8px_16px] border-b rounded-[10px_10px_0_0]">
         View Category
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
@@ -565,6 +591,19 @@ const ViewCategory = () => {
             }
           </tbody>
         </table>
+      </div>
+      <div className="No-Seach-Data-Found m-auto" style={
+        {
+          display: noSearchFound ? 'block' : 'none',
+          backgroundSize: 'cover',
+          width: '60vw',
+          fontSize: '50px',
+          textAlign: 'center',
+          color: 'black',
+          alignContent: 'center',
+        }
+      }>
+          404 : No Data Found
       </div>
     </div>
   );

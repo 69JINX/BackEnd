@@ -161,6 +161,24 @@ const permanentDeleteColors = async (req, res) => {
     }
 }
 
+const searchColors = async (req, res) => {
+    try {
+        const data = await colorModel.find({
+            deleted_at: null,
+            $or: [
+                { name: { $regex: new RegExp(req.params.key, 'i') } },
+                { code: { $regex: new RegExp(req.params.key, 'i') } }
+            ]
+        })
+        console.log(data);
+        res.status(200).json({ message: 'succes', data: data });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     addColor,
     readColor,
@@ -174,5 +192,6 @@ module.exports = {
     activatedColors,
     permanentDeleteColor,
     recoverColors,
-    permanentDeleteColors
+    permanentDeleteColors,
+    searchColors
 }

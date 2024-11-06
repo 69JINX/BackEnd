@@ -1,5 +1,5 @@
 const express = require('express');
-const { addColor, readColor, updateStatusColor, deleteColor, deleteColors, colorByID, updateColor, deletedColors, recoverColor, activatedColors, permanentDeleteColor, recoverColors, permanentDeleteColors } = require('../../controllers/controllers');
+const { addColor, readColor, updateStatusColor, deleteColor, deleteColors, colorByID, updateColor, deletedColors, recoverColor, activatedColors, permanentDeleteColor, recoverColors, permanentDeleteColors, searchColors } = require('../../controllers/controllers');
 
 const colorRoutes = express.Router();
 
@@ -16,6 +16,6 @@ colorRoutes.get('/activated-colors', activatedColors);
 colorRoutes.delete('/permanent-delete-color/:_id', permanentDeleteColor);
 colorRoutes.put('/recover-colors', recoverColors);
 colorRoutes.delete('/permanent-delete-colors', permanentDeleteColors);
-
+colorRoutes.post('/search-colors/:key', searchColors);
 
 module.exports = colorRoutes;

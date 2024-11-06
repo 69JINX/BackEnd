@@ -166,6 +166,23 @@ const permanentDeleteSizes = async (req, res) => {
     }
 }
 
+const searchSizes = async (req, res) => {
+    try {
+        const data = await sizeModel.find({
+            deleted_at: null,
+            $or: [
+                { name: { $regex: new RegExp(req.params.key, 'i') } },
+                { order: { $regex: new RegExp(req.params.key, 'i') } }
+            ]
+        })
+        res.status(200).json({ message: 'succes', data: data });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 module.exports = {
     createSize,
     readSize,
@@ -179,5 +196,6 @@ module.exports = {
     activatedSizes,
     permanentDeleteSize,
     recoverSizes,
-    permanentDeleteSizes
+    permanentDeleteSizes,
+    searchSizes
 };

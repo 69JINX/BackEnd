@@ -206,6 +206,24 @@ const permanentDeleteParentCategories = async (req, res) => {
     }
 }
 
+const searchParentCategories = async (req, res) => {
+    try {
+        const data = await parentCategoryModel.find({
+            deleted_at: null,
+            $or: [ // or is defined so when the searched key match with name or description. If we wouldn't have added $or, then it would try to match all three conditions (deleted_at, name, description). It wil try to match the search text which match both name and description 
+                { name: { $regex: new RegExp(req.params.key, 'i') } },  // $or operator take conditions as objects in an array
+                { description: { $regex: new RegExp(req.params.key, 'i') } }
+            ]
+        })
+        console.log(data);
+        res.status(200).json({ message: 'succes', data: data });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 
 
 
@@ -222,5 +240,6 @@ module.exports = {
     activatedParentCategories,
     permanentDeleteParentCategory,
     recoverParentCategories,
-    permanentDeleteParentCategories
+    permanentDeleteParentCategories,
+    searchParentCategories
 };

@@ -12,6 +12,7 @@ import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
 import { FaTrash } from "react-icons/fa";
 
+
 const ViewCategory = () => {
   let [show1, setShow1] = useState(false);
   let [show2, setShow2] = useState(false);
@@ -31,6 +32,8 @@ const ViewCategory = () => {
   const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
   const [checkedCategoriesIDsInBin, setcheckedCategoriesIDsInBin] = useState([]);
 
+  const [noSearchFound, setnoSearchFound] = useState(false);
+
 
   let fetchParentCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/read-category`)
@@ -38,6 +41,7 @@ const ViewCategory = () => {
         setparentCategories(response.data.data);
         setcheckedCategoriesIDs([]);
         setcheckedCategoriesIDsInBin([]);
+        setnoSearchFound(false);
       })
 
       .catch((error) => {
@@ -121,8 +125,6 @@ const ViewCategory = () => {
     const allChecked = updatedCheckedStates.every((checked) => checked === true);
     setisMasterSelectChecked(allChecked);
   }
-
-
 
   const handleDlt = (id, name) => {
     Swal.fire({
@@ -393,6 +395,19 @@ const ViewCategory = () => {
     }
   }
 
+  const handleSearch = (e) => { // it is recommended to call handleSearch on the search button 🔍 Click instead of onChange/onInput of input box, because it won't have that much pressure of server
+    if (e.target.value == '') return fetchParentCategories();
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/search-categories/${e.target.value}`)
+      .then((response) => {
+        setparentCategories(response.data.data);
+        if (response.data.data.length == 0) return setnoSearchFound(true);
+        setnoSearchFound(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <ToastContainer
@@ -407,10 +422,19 @@ const ViewCategory = () => {
         pauseOnHover
         theme="colored"
       />
+      <div className="m-3">
+        <input
+          type="text"
+          name="search"
+          id="categoryName"
+          placeholder="search..."
+          className="input border p-2 w-full rounded-[5px] my-[10px]"
+          onInput={handleSearch}
+        />
+      </div>
       <span className="flex justify-between h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] p-[8px_16px] border-b rounded-[10px_10px_0_0]">
         View Category
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
-
         <Modal open={open} onClose={() => setOpen(false)} center>
           <div className="w-[90%] mx-auto my-[20px]">
             <table className="w-full">
@@ -434,12 +458,12 @@ const ViewCategory = () => {
                   DeletedParentCategories.map((parentCategory, index) => (
                     <tr className="border-b">
                       <td>
-                      <input value={parentCategory._id} checked={isChildSelectCheckedInBin[index]} onChange={(e) => handleChildCheckboxInBin(e, index)}
-                        type="checkbox"
-                        name="delete"
-                        className="accent-[#5351c9] cursor-pointer input"
-                      />
-                    </td>
+                        <input value={parentCategory._id} checked={isChildSelectCheckedInBin[index]} onChange={(e) => handleChildCheckboxInBin(e, index)}
+                          type="checkbox"
+                          name="delete"
+                          className="accent-[#5351c9] cursor-pointer input"
+                        />
+                      </td>
                       <td>{index + 1}</td>
                       <td>{parentCategory.name}</td>
                       <td>
@@ -450,8 +474,6 @@ const ViewCategory = () => {
                     </tr>
                   ))
                 }
-
-
               </tbody>
 
 
@@ -521,6 +543,19 @@ const ViewCategory = () => {
 
 
         </table>
+      </div>
+      <div className="No-Seach-Data-Found m-auto" style={
+        {
+          display: noSearchFound ? 'block' : 'none',
+          backgroundSize: 'cover',
+          width: '60vw',
+          fontSize: '50px',
+          textAlign: 'center',
+          color: 'black',
+          alignContent: 'center',
+        }
+      }>
+          404 : No Data Found
       </div>
     </div>
   );

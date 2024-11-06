@@ -19,7 +19,8 @@ const { addColor,
     activatedColors,
     permanentDeleteColor,
     recoverColors,
-    permanentDeleteColors } = require('./admin-panel/colorController')
+    permanentDeleteColors,
+    searchColors } = require('./admin-panel/colorController')
 
 //Parent Category controllers
 const { createParentCategory,
@@ -34,7 +35,8 @@ const { createParentCategory,
     activatedParentCategories,
     permanentDeleteParentCategory,
     recoverParentCategories,
-    permanentDeleteParentCategories } = require('./admin-panel/parentCategoryController')
+    permanentDeleteParentCategories,
+    searchParentCategories, } = require('./admin-panel/parentCategoryController')
 
 //Product Category controllers
 const { createProductCategory,
@@ -51,7 +53,8 @@ const { createProductCategory,
     activeProductCategoriesByParentCategory,
     permanentDeleteProductCategory,
     recoverProductCategories,
-    permanentDeleteProductCategories } = require('./admin-panel/productCategoryControllers')
+    permanentDeleteProductCategories,
+    searchProductCategories } = require('./admin-panel/productCategoryControllers')
 
 //Product controllers
 const { createProduct,
@@ -80,7 +83,8 @@ const { createSize,
     activatedSizes,
     permanentDeleteSize,
     recoverSizes,
-    permanentDeleteSizes } = require('./admin-panel/sizeController')
+    permanentDeleteSizes,
+    searchSizes } = require('./admin-panel/sizeController')
 
 
 module.exports = {
@@ -155,5 +159,9 @@ module.exports = {
     recoverProductCategories,
     permanentDeleteProductCategories,
     recoverProducts,
-    permanentDeleteProducts
+    permanentDeleteProducts,
+    searchParentCategories,
+    searchProductCategories,
+    searchColors,
+    searchSizes
 }

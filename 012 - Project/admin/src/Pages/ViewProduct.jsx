@@ -28,9 +28,10 @@ const ViewProduct = () => {
   const [isChildSelectCheckedInBin, setisChildSelectCheckedInBin] = useState([]);
   const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
   const [checkedProductsIDsInBin, setcheckedProductsIDsInBin] = useState([]);
-  
 
   const [filepath, setfilepath] = useState('');
+
+  const [noSearchFound, setnoSearchFound] = useState(false);
 
   const fetchProducts = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/read-products`)
@@ -39,6 +40,7 @@ const ViewProduct = () => {
         setProducts(response.data.data);
         setcheckedProductsIDs([]);
         setcheckedProductsIDsInBin([]);
+        setnoSearchFound(false);
       })
       .catch((error) => {
         console.log(error);
@@ -61,9 +63,6 @@ const ViewProduct = () => {
     fetchProducts();
     fetchDeletedProducts();
   }, [])
-
-
-  
 
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
@@ -276,7 +275,7 @@ const ViewProduct = () => {
 
   }
 
-  
+
   const handleMasterCheckboxInBin = (e) => {
     const newMasterCheckedState = !isMasterSelectCheckedInBin;
     setisMasterSelectCheckedInBin(newMasterCheckedState);
@@ -392,9 +391,19 @@ const ViewProduct = () => {
     }
   }
 
-  useEffect(()=>{
-    console.log(checkedProductsIDsInBin);
-  },[checkedProductsIDsInBin])
+  const handleSearch = (e) => { // it is recommended to call handleSearch on the search button 🔍 Click instead of onChange/onInput of input box, because it won't have that much pressure of server
+    if (e.target.value == '') return fetchProducts();
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/search-sizes/${e.target.value}`)
+      .then((response) => {
+        setProducts(response.data.data);
+        if (response.data.data.length == 0) return setnoSearchFound(true);
+        setnoSearchFound(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
 
   return (
     <div className="w-[90%] mx-auto my-[150px] rounded-[10px] bg-white border">
@@ -410,6 +419,16 @@ const ViewProduct = () => {
         pauseOnHover
         theme="colored"
       />
+      <div className="m-3">
+        <input
+          type="text"
+          name="search"
+          id="categoryName"
+          placeholder="search..."
+          className="input border p-2 w-full rounded-[5px] my-[10px]"
+          onInput={handleSearch}
+        />
+      </div>
       <span className="flex  justify-between h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] font-bold p-[8px_16px] border-b rounded-[10px_10px_0_0]">
         View Product
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
@@ -442,7 +461,7 @@ const ViewProduct = () => {
                           name="delete"
                           className="accent-[#5351c9] cursor-pointer input"
                         />
-                        </td>
+                      </td>
                       <td>{index + 1}</td>
                       <td>{product.name}</td>
                       <td className="w-[100px] p-2">
@@ -582,6 +601,19 @@ const ViewProduct = () => {
           </tbody>
         </table>
       </div>
+      <div className="No-Seach-Data-Found m-auto" style={
+        {
+          display: noSearchFound ? 'block' : 'none',
+          backgroundSize: 'cover',
+          width: '60vw',
+          fontSize: '50px',
+          textAlign: 'center',
+          color: 'black',
+          alignContent: 'center',
+        }
+      }>
+        404 : No Data Found
+      </div>
     </div>
   );
 };
@@ -662,7 +694,6 @@ const DetailedProduct = (props) => {
           </tbody>
         </table>
       </div>
-
     </div>
   )
 }

@@ -25,12 +25,15 @@ const ViewSizes = () => {
   const [isMasterSelectCheckedInBin, setisMasterSelectCheckedInBin] = useState(false);
   const [checkedSizeIDsInBin, setcheckedSizeIDsInBin] = useState([]);
 
+  const [noSearchFound, setnoSearchFound] = useState(false);
+
   const fetchSizes = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/read-sizes`)
       .then((response) => {
         setSize(response.data.data);
         setcheckedSizeIDsInBin([]);
         setcheckedSizeIDs([]);
+        setnoSearchFound(false);
       })
       .catch((error) => {
         console.log(error);
@@ -359,19 +362,19 @@ const ViewSizes = () => {
       }).then((result) => {
         if (result.isConfirmed) {
 
-            /* 
-            DELETE requests with a body require specifying data in axios. By default, axios.delete expects any payload to be provided this way. Here’s the correct syntax:
-            axios.delete(
-            `${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, 
-              { data: { ArrayofCheckedIDs } });
+          /* 
+          DELETE requests with a body require specifying data in axios. By default, axios.delete expects any payload to be provided this way. Here’s the correct syntax:
+          axios.delete(
+          `${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, 
+            { data: { ArrayofCheckedIDs } });
 
-            This will ensure that ArrayofCheckedIDs is included in the request body, and the backend should receive it under req.body.ArrayofCheckedIDs.
-            Alternatively, if the backend is expecting it as a query parameter, you could structure it this way:
-            axios.delete(
-            `${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, 
-              { params: { ArrayofCheckedIDs } });
-            However, using data is the more common approach for sending arrays in a DELETE request body.
-            */
+          This will ensure that ArrayofCheckedIDs is included in the request body, and the backend should receive it under req.body.ArrayofCheckedIDs.
+          Alternatively, if the backend is expecting it as a query parameter, you could structure it this way:
+          axios.delete(
+          `${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, 
+            { params: { ArrayofCheckedIDs } });
+          However, using data is the more common approach for sending arrays in a DELETE request body.
+          */
 
           axios.delete(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/permanent-delete-sizes`, { data: { checkedSizeIDsInBin } })
             .then((response) => {
@@ -403,6 +406,19 @@ const ViewSizes = () => {
     }
   }
 
+  const handleSearch = (e) => { // it is recommended to call handleSearch on the search button 🔍 Click instead of onChange/onInput of input box, because it won't have that much pressure of server
+    if (e.target.value == '') return fetchSizes();
+    axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/search-sizes/${e.target.value}`)
+      .then((response) => {
+        setSize(response.data.data);
+        if (response.data.data.length == 0) return setnoSearchFound(true);
+        setnoSearchFound(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
   return (
     <div className="w-[90%] bg-white mx-auto border rounded-[10px] my-[150px]">
       <ToastContainer
@@ -417,6 +433,16 @@ const ViewSizes = () => {
         pauseOnHover
         theme="colored"
       />
+      <div className="m-3">
+        <input
+          type="text"
+          name="search"
+          id="categoryName"
+          placeholder="search..."
+          className="input border p-2 w-full rounded-[5px] my-[10px]"
+          onInput={handleSearch}
+        />
+      </div>
       <span className="flex justify-between border-b rounded-[10px_10px_0_0] bg-[#f8f8f9] text-[#303640] h-[50px] p-[8px_16px] text-[23px] font-bold">
         View Size
         <FaTrash className="cursor-pointer" size={25} onClick={() => setOpen(true)} />
@@ -514,6 +540,19 @@ const ViewSizes = () => {
 
           </tbody>
         </table>
+      </div>
+      <div className="No-Seach-Data-Found m-auto" style={
+        {
+          display: noSearchFound ? 'block' : 'none',
+          backgroundSize: 'cover',
+          width: '60vw',
+          fontSize: '50px',
+          textAlign: 'center',
+          color: 'black',
+          alignContent: 'center',
+        }
+      }>
+        404 : No Data Found
       </div>
     </div>
   );

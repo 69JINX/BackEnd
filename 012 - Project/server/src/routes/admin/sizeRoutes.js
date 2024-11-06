@@ -10,8 +10,9 @@ const { createSize,
     recoverSize,
     activatedSizes,
     permanentDeleteSize,
-    recoverSizes, 
-    permanentDeleteSizes} = require('../../controllers/controllers');
+    recoverSizes,
+    permanentDeleteSizes,
+    searchSizes } = require('../../controllers/controllers');
 
 const sizeRouter = express.Router();
 
@@ -28,5 +29,8 @@ sizeRouter.put('/recover-sizes', recoverSizes);
 sizeRouter.get('/activated-sizes', activatedSizes);
 sizeRouter.delete('/permanent-delete-size/:_id', permanentDeleteSize);
 sizeRouter.delete('/permanent-delete-sizes', permanentDeleteSizes);
+sizeRouter.post('/search-sizes/:key', searchSizes);
+
+
 
 module.exports = sizeRouter;
