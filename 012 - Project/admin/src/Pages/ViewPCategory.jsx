@@ -15,6 +15,7 @@ const ViewCategory = () => {
   let [show2, setShow2] = useState(false);
   const [ProductCategories, setProductCategories] = useState([]);
   const [DeletedProductCategories, setDeletedProductCategories] = useState([]);
+  const [ParentCategories, setParentCategories] = useState([]);
 
   const [isChildSelectChecked, setisChildSelectChecked] = useState([]);
   const [isMasterSelectChecked, setisMasterSelectChecked] = useState(false);
@@ -29,6 +30,19 @@ const ViewCategory = () => {
 
   const [noSearchFound, setnoSearchFound] = useState(false);
 
+  const fetchParentCategories = () => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/read-category`)
+      .then((response) => {
+        setParentCategories(response.data.data);
+        setcheckedCategoriesIDs([]);
+        setcheckedCategoriesIDsInBin([]);
+      })
+
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   const fetchProductCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/read-category`)
       .then((response) => {
@@ -36,7 +50,7 @@ const ViewCategory = () => {
         setfilepath(response.data.filepath);
         setProductCategories(response.data.data);
         setcheckedCategoriesIDs([]);
-        setcheckedCategoriesIDsInBin([]); 
+        setcheckedCategoriesIDsInBin([]);
         setnoSearchFound(false);
       })
       .catch((error) => {
@@ -58,9 +72,9 @@ const ViewCategory = () => {
 
   useEffect(() => {
     fetchProductCategories();
+    fetchParentCategories();
     fetchDeletedProductCategories();
   }, [])
-
 
 
   useEffect(() => {
@@ -297,7 +311,6 @@ const ViewCategory = () => {
 
   }
 
-
   const handleMasterCheckboxInBin = (e) => {
     const newMasterCheckedState = !isMasterSelectCheckedInBin;
     setisMasterSelectCheckedInBin(newMasterCheckedState);
@@ -426,6 +439,19 @@ const ViewCategory = () => {
       })
   }
 
+  const handleParentCategoryFilter = (e) => {
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/products-by-parent-category/${e.target.value}`)
+      .then((response) => {
+        setProductCategories(response.data.data);
+        console.log(e.target.value);
+      })
+      .catch((error) => {
+        fetchProductCategories();
+        console.error(error);
+      });
+  }
+
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <ToastContainer
@@ -528,7 +554,16 @@ const ViewCategory = () => {
               </th>
               <th>Sno</th>
               <th>Category Name</th>
-              <th>Parent Category</th>
+              <th className="flex flex-col">Parent Category
+                <select onChange={handleParentCategoryFilter}>
+                  <option>--Select--</option>
+                  {
+                    ParentCategories.map((category) => (
+                      <option value={category._id}>{category.name}</option>
+                    ))
+                  }
+                </select>
+              </th>
               <th>Slug</th>
               <th>Image</th>
               <th>Description</th>
@@ -561,7 +596,7 @@ const ViewCategory = () => {
                         width={80}
                         height={80}
                       /> :
-                      <span style={{width:'100px',margin:'0px',padding:'0px'}} className="flex align-middle"> <CiWarning color="orange" size={20} /> Image Not Found</span>
+                      <span style={{ width: '100px', margin: '0px', padding: '0px' }} className="flex align-middle"> <CiWarning color="orange" size={20} /> Image Not Found</span>
                     }
                   </td>
                   <td className="w-[80px] flex-wrap">
@@ -603,7 +638,7 @@ const ViewCategory = () => {
           alignContent: 'center',
         }
       }>
-          404 : No Data Found
+        404 : No Data Found
       </div>
     </div>
   );

@@ -68,7 +68,8 @@ const { createProduct,
     readProductByID,
     updateProduct,
     recoverProducts,
-    permanentDeleteProducts } = require('./admin-panel/productControllers')
+    permanentDeleteProducts,
+    activeProductsByParentCategory } = require('./admin-panel/productControllers')
 
 //Size controllers
 const { createSize,
@@ -163,5 +164,6 @@ module.exports = {
     searchParentCategories,
     searchProductCategories,
     searchColors,
-    searchSizes
+    searchSizes,
+    activeProductsByParentCategory
 }

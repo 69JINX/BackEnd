@@ -14,6 +14,7 @@ const ViewProduct = () => {
   let [showDesc1, setShowDesc1] = useState(false);
   let [showShortDesc1, setShowShortDesc1] = useState(false);
   const [Products, setProducts] = useState([]);
+  const [ParentCategories, setParentCategories] = useState([]);
   const [DeletedProducts, setDeletedProducts] = useState([]);
 
   const [open, setOpen] = useState(false);
@@ -32,6 +33,18 @@ const ViewProduct = () => {
   const [filepath, setfilepath] = useState('');
 
   const [noSearchFound, setnoSearchFound] = useState(false);
+
+  const fetchParentCategories = () => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/read-category`)
+      .then((response) => {
+        setParentCategories(response.data.data);
+        setcheckedProductsIDs([]);
+        setcheckedProductsIDsInBin([]);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   const fetchProducts = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/read-products`)
@@ -62,6 +75,7 @@ const ViewProduct = () => {
   useEffect(() => {
     fetchProducts();
     fetchDeletedProducts();
+    fetchParentCategories();
   }, [])
 
   const updateStatus = (e) => {
@@ -404,6 +418,18 @@ const ViewProduct = () => {
       })
   }
 
+  const handleParentCategoryFilter = (e) => {
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/product-categories-by-parent-category/${e.target.value}`)
+      .then((response) => {
+        setProducts(response.data.data);
+        console.log(e.target.value);
+      })
+      .catch((error) => {
+        fetchProducts();
+        console.error(error);
+      });
+  }
+
 
   return (
     <div className="w-[90%] mx-auto my-[150px] rounded-[10px] bg-white border">
@@ -519,7 +545,16 @@ const ViewProduct = () => {
               </th>
               <th>Sno</th>
               <th>Product <br /> Name</th>
-              <th>Parent <br /> Category</th>
+              <th className="flex flex-col">Parent <br /> Category
+                <select onChange={handleParentCategoryFilter}>
+                  <option>--Select--</option>
+                  {
+                    ParentCategories.map((category) => (
+                      <option value={category._id}>{category.name}</option>
+                    ))
+                  }
+                </select>
+              </th>
               <th>Product <br /> Category</th>
               <th>Thumbnail</th>
               <th>Price</th>
@@ -555,16 +590,7 @@ const ViewProduct = () => {
                       id={`details-tooltip-of-${product._id}`}
                       content={
                         <DetailedProduct
-                          name={product.name}
-                          id={product._id}
-                          description={product.description}
-                          short_description={product.short_description}
-                          color={product.color}
-                          size={product.size}
-                          image_on_hover={product.image_on_hover}
-                          gallery={product.gallery}
-                          stock={product.isStockAvail}
-                          brand={product.brand}
+                          product={product}
                           filepath={filepath} />}
                     />
                     {product.thumbnail ?
@@ -641,19 +667,19 @@ const DetailedProduct = (props) => {
 
               <tr className="border-b w-[95vw]">
                 <td className="w-[100px] break-all p-2">
-                  {props.name}
+                  {props.product.name}
                 </td>
                 <td className="w-[200px] break-all p-2">
-                  {props.description}
+                  {props.product.description}
                 </td>
                 <td className="w-[200px] break-all p-2">
-                  {props.short_description}
+                  {props.product.short_description}
                 </td>
                 <td className="object-contain cursor-pointer">
                   <div>
-                    {props.image_on_hover ?
+                    {props.product.image_on_hover ?
                       <img
-                        src={props.filepath + props.image_on_hover}
+                        src={props.filepath + props.product.image_on_hover}
                         alt="men's t-shirt"
                         width={80}
                         height={80}
@@ -664,14 +690,14 @@ const DetailedProduct = (props) => {
                   </div>
                 </td>
                 <td>
-                  {props.size.map((size) => (size.name)).join(' , ')}
+                  {props.product.size.map((size) => (size.name)).join(' , ')}
                 </td>
                 <td>
-                  {props.color.map((color) => (color.name)).join(' , ')}
+                  {props.product.color.map((color) => (color.name)).join(' , ')}
                 </td>
                 <td className="flex justify-around flex-wrap">
                   {
-                    props.gallery ? props.gallery.map((img) => (
+                    props.product.gallery ? props.product.gallery.map((img) => (
                       <img
                         src={props.filepath + img}
                         alt="men's t-shirt"
@@ -683,10 +709,10 @@ const DetailedProduct = (props) => {
                   }
                 </td>
                 <td>
-                  {props.stock ? 'Available' : 'Out of Stock'}
+                  {props.product.stock ? 'Available' : 'Out of Stock'}
                 </td>
                 <td>
-                  {props.brand}
+                  {props.product.brand}
                 </td>
               </tr>
             }

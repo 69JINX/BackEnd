@@ -88,7 +88,7 @@ const AddProduct = () => {
     axios.post(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/create-product`, e.target)
       .then((response) => {
         console.log(response);
-        
+
         toast.success(`Category Added Successfully`, {
           position: "top-right",
           autoClose: 5000,

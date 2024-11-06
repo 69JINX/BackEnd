@@ -35,7 +35,7 @@ const ViewCategory = () => {
   const [noSearchFound, setnoSearchFound] = useState(false);
 
 
-  let fetchParentCategories = () => {
+  const fetchParentCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/read-category`)
       .then((response) => {
         setparentCategories(response.data.data);
@@ -48,6 +48,7 @@ const ViewCategory = () => {
         console.log(error);
       });
   }
+  
   const updateStatus = (e) => {
     const status = (e.target.textContent !== 'Active');
     axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/update-status/${e.target.value}`, { status })

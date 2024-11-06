@@ -303,6 +303,16 @@ const permanentDeleteProducts = async (req, res) => {
     }
 }
 
+const activeProductsByParentCategory = async (req, res) => {
+    try {
+        const data = await productModel.find({ deleted_at: null, parent_category: req.params._id }).populate('parent_category').populate('product_category').populate('size').populate('color');
+        res.status(200).json({ message: 'success', data })
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Internal Server Errror' });
+    }
+}
+
 
 module.exports = {
     createProduct,
@@ -316,6 +326,7 @@ module.exports = {
     updateProduct,
     permanentDeleteProduct,
     recoverProducts,
-    permanentDeleteProducts
+    permanentDeleteProducts,
+    activeProductsByParentCategory
 }
 
