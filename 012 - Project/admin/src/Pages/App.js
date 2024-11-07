@@ -67,7 +67,7 @@ function App() {
         Sign-in to your account
       </h3>
       <form>
-        <div className="w-full  grid grid-cols-[20%_auto] my-[10px]">
+        <div className="w-full grid grid-cols-[20%_auto] my-[10px]">
           <label htmlFor="name" className="py-[8px] px-[10px] text-[#303640]">
             User Name
           </label>
@@ -79,7 +79,7 @@ function App() {
             className="p-[10px] rounded-[5px] border input"
           />
         </div>
-        <div className="w-full  grid grid-cols-[20%_auto] my-[10px]">
+        <div className="w-full grid grid-cols-[20%_auto] my-[10px]">
           <label
             htmlFor="password"
             className="py-[8px] px-[10px] text-[#303640]"
