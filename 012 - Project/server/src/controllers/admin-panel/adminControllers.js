@@ -19,7 +19,7 @@ const registerAdmin = async () => {
             email : process.env.ADMIN_EMAIL         // previously the code was this but we changed it to _id:'' because of the below problem :
             password : process.env.ADMIN_PASSWORD   
             
-            Because when updating emial in profile page.... it is grabbing old email from process.env.EMAIL, and because of that it is updating the old user and when reconnecting with database, it can't find the user with the email process.env.ADMIN_EMAIL, so it created a new user with process.env.ADMIN_EMAIL, 
+            Because when updating email in profile page.... it is grabbing old email from process.env.EMAIL, and because of that it is updating the old user and when reconnecting with database, it can't find the user with the email process.env.ADMIN_EMAIL, so it created a new user with process.env.ADMIN_EMAIL, 
             not updating the old email in env file (if it did, then it needed to update in env file too which we are not doing), 
             so when the database is getting connected, it doesn't find the old email (because we have updated it), so when registering, it created a new user with old email and password and new _id */
         });

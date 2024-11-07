@@ -197,5 +197,5 @@ module.exports = {
     permanentDeleteSize,
     recoverSizes,
     permanentDeleteSizes,
-    searchSizes
+    searchSizes,
 };

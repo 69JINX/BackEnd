@@ -65,7 +65,7 @@ const AddProduct = () => {
 
 
   const ProductCategoriesByParentCategory = (e) => {
-    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/product-categories-by-parent-category/${e.target.value}`)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/active-product-categories-by-parent-category/${e.target.value}`)
       .then((response) => {
         setProductCategories(response.data.data);
         console.log(e.target.value);

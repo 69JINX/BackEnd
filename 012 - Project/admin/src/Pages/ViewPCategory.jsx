@@ -440,8 +440,9 @@ const ViewCategory = () => {
   }
 
   const handleParentCategoryFilter = (e) => {
-    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/products-by-parent-category/${e.target.value}`)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/product-categories-by-parent-category/${e.target.value}`)
       .then((response) => {
+        console.log(response.data.data);
         setProductCategories(response.data.data);
         console.log(e.target.value);
       })

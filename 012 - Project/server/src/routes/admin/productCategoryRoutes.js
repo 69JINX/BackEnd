@@ -15,7 +15,8 @@ const { createProductCategory,
     permanentDeleteProductCategory, 
     recoverProductCategories,
     permanentDeleteProductCategories,
-    searchProductCategories} = require('../../controllers/controllers');
+    searchProductCategories,
+    productCategoriesByParentCategory} = require('../../controllers/controllers');
 
 const upload = require('../../middlewares/multer');
 
@@ -32,7 +33,8 @@ productCategoryRoutes.put('/recover-category/:_id', recoverProductCategory);
 productCategoryRoutes.get('/read-category/:_id', productCategoryByID);
 productCategoryRoutes.put('/update-category/:_id', upload('product-category'), updateProductCategory)
 productCategoryRoutes.get('/activated-categories', activatedProductCategories);
-productCategoryRoutes.put('/product-categories-by-parent-category/:_id', activeProductCategoriesByParentCategory);
+productCategoryRoutes.put('/active-product-categories-by-parent-category/:_id', activeProductCategoriesByParentCategory);
+productCategoryRoutes.put('/product-categories-by-parent-category/:_id', productCategoriesByParentCategory);
 productCategoryRoutes.delete('/permanent-delete-category/:_id', permanentDeleteProductCategory);
 productCategoryRoutes.put('/recover-categories', recoverProductCategories);
 productCategoryRoutes.delete('/permanent-delete-categories', permanentDeleteProductCategories);

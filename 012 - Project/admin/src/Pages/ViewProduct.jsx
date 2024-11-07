@@ -40,6 +40,7 @@ const ViewProduct = () => {
         setParentCategories(response.data.data);
         setcheckedProductsIDs([]);
         setcheckedProductsIDsInBin([]);
+        
       })
       .catch((error) => {
         console.log(error);
@@ -419,10 +420,9 @@ const ViewProduct = () => {
   }
 
   const handleParentCategoryFilter = (e) => {
-    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product-category/product-categories-by-parent-category/${e.target.value}`)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/product/products-by-parent-category/${e.target.value}`)
       .then((response) => {
         setProducts(response.data.data);
-        console.log(e.target.value);
       })
       .catch((error) => {
         fetchProducts();

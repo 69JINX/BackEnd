@@ -303,7 +303,7 @@ const permanentDeleteProducts = async (req, res) => {
     }
 }
 
-const activeProductsByParentCategory = async (req, res) => {
+const productsByParentCategory = async (req, res) => {
     try {
         const data = await productModel.find({ deleted_at: null, parent_category: req.params._id }).populate('parent_category').populate('product_category').populate('size').populate('color');
         res.status(200).json({ message: 'success', data })
@@ -327,6 +327,6 @@ module.exports = {
     permanentDeleteProduct,
     recoverProducts,
     permanentDeleteProducts,
-    activeProductsByParentCategory
+    productsByParentCategory
 }
 
