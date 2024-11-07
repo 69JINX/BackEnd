@@ -9,4 +9,4 @@ adminRoutes.put('/update-admin/:_id', upload('admin'), updateAdmin);
 adminRoutes.post('/generate-otp', generateOTP);
 adminRoutes.post('/update-email', updateEmail);
 
-module.exports = { adminRoutes };
+module.exports = adminRoutes;

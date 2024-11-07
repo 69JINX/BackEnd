@@ -6,7 +6,7 @@ const AddPCategory = () => {
 
   const [ParentCategories, setParentCategories] = useState([]);
 
-  const fetchParenteCategories = () => {
+  const fetchParentCategories = () => {
     axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/activated-categories`)
       .then((response) => {
         setParentCategories(response.data.data);
@@ -17,7 +17,7 @@ const AddPCategory = () => {
   }
 
   useEffect(() => {
-    fetchParenteCategories();
+    fetchParentCategories();
   }, [])
 
   const handleCreateCategory = (e) => {
