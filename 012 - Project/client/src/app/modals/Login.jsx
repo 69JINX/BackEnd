@@ -3,15 +3,23 @@ import { IoCloseSharp } from "react-icons/io5";
 import { FaFacebookF } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa";
 import { BsArrowRight } from "react-icons/bs";
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { Atom } from "react-loading-indicators";
+import { ToastContainer, toast } from "react-toastify";
+
+
 
 export default function Login({ loginStatus, setLoginStatus }) {
+
 
   let [compStatus, setCompStatus] = useState(true)
   return (
     <section className={` ${loginStatus ? "block" : "hidden"} w-full h-screen flex bg-[rgba(0,0,0,0.4)] items-center justify-center  fixed  left-0 top-0 z-[9999999]`}>
+
+
+
       <form className='relative lg:w-[42%] md:w-[80%] h-[700px] overflow-scroll  px-10 pt-5 pb-8 bg-[#F9F9F9] overflow-x-hidden mt-5'>
         <button onClick={() => setLoginStatus(false)} className=" z-[999999999] absolute top-3 right-3 border-red-700" >
           <IoCloseSharp className="w-8 h-8" />
@@ -103,6 +111,8 @@ function LoginBox() {
 function SignUpBox({ setCompStatus, compStatus }) {
 
   const [formData, setformData] = useState({});
+  const [showOTPBox, setshowOTPBox] = useState(false);
+  const [loader, setloader] = useState(false);
 
   const handleInput = (e) => {
     setformData({ ...formData, [e.target.name]: e.target.value });
@@ -117,15 +127,22 @@ function SignUpBox({ setCompStatus, compStatus }) {
       return;
     }
 
+    setloader(true);
+
     axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/user/registration`, formData)
       .then((response) => {
         console.log(response.data.data);
         if (response.data.data) {
-          alert('You already have an account with this Email. Please Login!');
+          alert('You already have an account with this Email. Please Login');
+          setloader(false);
         }
         else {
-          alert('You have been Registered Successfully!')
-          window.location.href = '/';
+          setloader(false);
+          setshowOTPBox(true);
+          alert('OTP send to your email address')
+          setTimeout(() => {
+            setshowOTPBox(false);
+          }, 120000);
         }
       })
       .catch((error) => {
@@ -133,6 +150,21 @@ function SignUpBox({ setCompStatus, compStatus }) {
         console.log(error);
       })
   }
+
+  const validateOTP = (e) => {
+    console.log(formData.otp);
+    axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/user/validateOTP`, formData)
+      .then((response) => {
+        console.log(response.data);
+        alert(response.data.message)
+        window.location.href = '/';
+      })
+      .catch((error) => {
+        alert(error.response && error.response.data.message);
+        console.log(error.message);
+      })
+  }
+
 
   return (
     <div className="flex flex-col gap-3 py-6">
@@ -143,11 +175,15 @@ function SignUpBox({ setCompStatus, compStatus }) {
         <div className="py-5 border-t border-gray-300">
           <div className="grid grid-cols-2 gap-5 mb-3">
             <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" name="first_name" value={formData.first_name} onChange={handleInput} placeholder="First Name" />
-            <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" name="last_name" value={formData.last_name} onChange={handleInput} placeholder="Last Name" />
+            <input className="p-3  border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" name="last_name" value={formData.last_name} onChange={handleInput} placeholder="Last Name" />
           </div>
           <div className="flex flex-col gap-3">
             <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="email" name="email" value={formData.email} onChange={handleInput} placeholder="Email Address" />
             <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" name="password" value={formData.password} onChange={handleInput} placeholder="Password" />
+            <div className={` text-center ${loader ? 'block' : 'hidden'}`}>
+              <Atom className="text-center fixed top-0 left-0" color="#32cd32" size="medium" text="" textColor="" />
+            </div>
+            <input className={`p-3 ${showOTPBox ? 'block' : 'hidden'} border text-[#757575] text-[14px] font-semibold border-[#757575]`} type="text" name="otp" onChange={handleInput} placeholder="OTP" />
             <div className="text-[14px] flex gap-5 font-medium">I shop for
               <div className="flex items-center gap-3">
                 <input type="radio" name="iShopFor" onChange={handleInput} value="Men" id="gender" /> Men
@@ -167,7 +203,18 @@ function SignUpBox({ setCompStatus, compStatus }) {
                   Yes, sign me up to the Frank And Oak newsletter to never miss out on product launches and exclusive promotions.
                 </label>
               </div>
-              <button type="button" onClick={handleRegister} className="p-3.5 mt-4 w-full bg-black text-white font-semibold">Sign Up</button>
+              <button
+                type="button"
+                onClick={handleRegister}
+                className={`p-3.5 mt-4 w-full bg-black text-white font-semibold ${showOTPBox ? 'hidden' : 'block'} `}>
+                Generate OTP
+              </button>
+              <button
+                type="button"
+                onClick={validateOTP}
+                className={`p-3.5 mt-4 w-full bg-black text-white font-semibold ${showOTPBox ? 'block' : 'hidden'} `}>
+                Validate OTP
+              </button>
             </div>
           </div>
         </div>

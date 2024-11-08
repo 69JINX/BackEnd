@@ -89,7 +89,7 @@ const { createSize,
     searchSizes } = require('./admin-panel/sizeController')
 
 const {
-    registerUser, loginUser
+    registerUser, loginUser, validateOtp
 } = require('./website/userControllers')
 
 module.exports = {
@@ -111,5 +111,5 @@ module.exports = {
     productsByParentCategory, productCategoriesByParentCategory,
 
     //Website
-    registerUser, loginUser
+    registerUser, loginUser, validateOtp
 }

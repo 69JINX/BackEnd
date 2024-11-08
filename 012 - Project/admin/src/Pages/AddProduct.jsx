@@ -99,6 +99,7 @@ const AddProduct = () => {
           progress: undefined,
           theme: "colored",
         });
+        
         e.target.reset();
         setpreIMGs({});
         setSelectedSizes([]);
