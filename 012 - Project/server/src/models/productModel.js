@@ -40,7 +40,7 @@ productSchema.pre('save', function () {
     this.created_at = new Date();
 })
 
-productSchema.pre('inserOne', function () {
+productSchema.pre('insertOne', function () {
     this.created_at = new Date();
 })
 

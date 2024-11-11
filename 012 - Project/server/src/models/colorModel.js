@@ -13,7 +13,7 @@ colorSchema.pre('save', function () {
     this.created_at = new Date();
 })
 
-colorSchema.pre('inserOne', function () {
+colorSchema.pre('insertOne', function () {
     this.created_at = new Date();
 })
 

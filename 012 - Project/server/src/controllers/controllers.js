@@ -88,9 +88,17 @@ const { createSize,
     permanentDeleteSizes,
     searchSizes } = require('./admin-panel/sizeController')
 
+
+//Website UserControllers
 const {
-    registerUser, loginUser, validateOtp
+    sendOtpOnUserRegistration, loginUser, validateOtpAndRegisterUser
 } = require('./website/userControllers')
+
+//Website ProductControllers
+const {
+    activeProductsForWebsite
+} = require('./website/productControllers')
+
 
 module.exports = {
 
@@ -110,6 +118,9 @@ module.exports = {
     recoverProducts, permanentDeleteProducts, searchParentCategories, searchProductCategories, searchColors, searchSizes,
     productsByParentCategory, productCategoriesByParentCategory,
 
-    //Website
-    registerUser, loginUser, validateOtp
+    //Website User Controllers
+    sendOtpOnUserRegistration, loginUser, validateOtpAndRegisterUser,
+
+    //Website Product Controllers
+    activeProductsForWebsite
 }

@@ -18,8 +18,6 @@ export default function Login({ loginStatus, setLoginStatus }) {
   return (
     <section className={` ${loginStatus ? "block" : "hidden"} w-full h-screen flex bg-[rgba(0,0,0,0.4)] items-center justify-center  fixed  left-0 top-0 z-[9999999]`}>
 
-
-
       <form className='relative lg:w-[42%] md:w-[80%] h-[700px] overflow-scroll  px-10 pt-5 pb-8 bg-[#F9F9F9] overflow-x-hidden mt-5'>
         <button onClick={() => setLoginStatus(false)} className=" z-[999999999] absolute top-3 right-3 border-red-700" >
           <IoCloseSharp className="w-8 h-8" />
@@ -99,7 +97,7 @@ function LoginBox() {
         <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " onChange={handleInput} value={formData.email} type="email" name="email" placeholder="Email Address" />
         <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " onChange={handleInput} value={formData.password} type="tel" name="password" placeholder="Password" />
         <span className="text-[13px] font-semibold underline">Forgot Password?</span>
-        <button type="button" onClick={handleLogin} className="p-3.5 mt-2 bg-black text-white font-semibold">Logg In</button>
+        <button type="button" onClick={handleLogin} className="p-3.5 mt-2 bg-black text-white font-semibold">Log In</button>
       </div>
     </form>
   )
@@ -131,7 +129,6 @@ function SignUpBox({ setCompStatus, compStatus }) {
 
     axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/user/registration`, formData)
       .then((response) => {
-        console.log(response.data.data);
         if (response.data.data) {
           alert('You already have an account with this Email. Please Login');
           setloader(false);

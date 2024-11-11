@@ -13,7 +13,7 @@ parentCategorySchema.pre('save', function () {
     this.created_at = new Date();
 })
 
-parentCategorySchema.pre('inserOne', function () {
+parentCategorySchema.pre('insertOne', function () {
     this.created_at = new Date();
 })
 

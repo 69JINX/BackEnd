@@ -13,7 +13,7 @@ sizeSchema.pre('save', function () {
     this.created_at = new Date();
 })
 
-sizeSchema.pre('inserOne', function () {
+sizeSchema.pre('insertOne', function () {
     this.created_at = new Date();
 })
 

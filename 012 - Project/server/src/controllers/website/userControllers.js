@@ -2,12 +2,11 @@ const UserModel = require("../../models/userModel");
 const otpData = new Map();
 const nodemailer = require('nodemailer');
 
-const registerUser = async (req, res) => {
+const sendOtpOnUserRegistration = async (req, res) => {
     try {
         const isAvailable = await UserModel.findOne({ email: req.body.email });
         console.log(isAvailable);
         if (!isAvailable) {
-
 
             otpData.clear();
 
@@ -25,7 +24,7 @@ const registerUser = async (req, res) => {
 
             const info = await transporter.sendMail({
                 from: '"Frank and Oak" <frankandoak@gmail.com>',
-                to: 'avimationss39228@gmail.com',
+                to: req.body.email,
                 subject: 'OTP for Email Change for Frank and Oak',
                 text: ``, // can't add html, only plan text
                 body: `<i><b>Your OTP is : ${otp}</b></i>`, // doesn't show anywhere in the mail  // mail with html attribute, but if included, will overwrite the text attribute
@@ -39,9 +38,6 @@ const registerUser = async (req, res) => {
                 otpData.delete(req.body.email);
             }, 120000);
 
-
-
-
         }
         res.status(200).json({ message: 'success', data: isAvailable });
     }
@@ -53,7 +49,7 @@ const registerUser = async (req, res) => {
     }
 }
 
-const validateOtp = async (req, res) => {
+const validateOtpAndRegisterUser = async (req, res) => {
     try {
         const generatedOtp = otpData.get(req.body.email);
         console.log(req.body);
@@ -93,7 +89,7 @@ const loginUser = async (req, res) => {
 }
 
 module.exports = {
-    registerUser,
+    sendOtpOnUserRegistration,
     loginUser,
-    validateOtp
+    validateOtpAndRegisterUser
 }

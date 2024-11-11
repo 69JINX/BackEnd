@@ -21,7 +21,7 @@ productCategorySchema.pre('save', function () {
     this.created_at = new Date();
 })
 
-productCategorySchema.pre('inserOne', function () {
+productCategorySchema.pre('insertOne', function () {
     this.created_at = new Date();
 })
 
