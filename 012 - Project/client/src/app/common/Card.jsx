@@ -3,18 +3,33 @@
 import { useEffect, useState } from "react"
 import { QuickAddButton } from "../HomeComponents/ThisJustIn"
 
-export function Card({ product,filepath }) {
+export function Card({ product, filepath }) {
 
+  const [selectedColor, setSelectedColor] = useState('');
 
-  let [quickAdd, setQuickAdd] = useState(false)
+  useEffect(() => {
+    setSelectedColor(product.color[0]._id);
+  }, [product]);
+
+  let [quickAdd, setQuickAdd] = useState(false);
   return (
     <div className='cursor-pointer group'>
       <div className=' w-full h-full'>
+
         <div className='group relative h-[400px]'>
           <span className='bg-black text-white absolute right-2 top-2 z-[9999] text-[8px] sm:text-[10px] font-medium uppercase px-0.5 sm:px-1 py-0.5'>few left</span>
           <img className='h-full w-full object-cover' src={`${filepath + product.thumbnail}`} alt="Womens Denim" />
-          <img className='h-full w-full duration-300 z-[999] absolute top-0 group-hover:block hidden object-cover' src={`${filepath + product.image_on_hover}`} alt="Womens Denim" />
-          <button onClick={() => setQuickAdd(true)} className={`${setQuickAdd ? <QuickAddButton /> : ""} w-[95%] text-center box-border bg-white py-3 text-[14px] font-medium absolute bottom-2 translate-x-[-50%] left-[50%]  group-hover:block hidden`}>Quick Add
+          <img className='h-full w-full duration-300 z-[999] absolute top-0 group-hover:hidden block object-cover' src={`${filepath + product.image_on_hover}`} alt="Womens Denim" />
+          <div className="translate-x-[-50%] left-[50%] absolute text-center flex justify-around bottom-[10px] left-2 bg-white">
+            {
+              product.size.map((size, i) => (
+                <div className="inline p-3 hover:bg-black w-[60px] hover:text-white">{size.name}</div>
+              ))
+            }
+          </div>
+          <button
+            onClick={() => setQuickAdd(true)}
+            className={`${setQuickAdd ? <QuickAddButton /> : ""} group-hover:hidden block z-[999] w-[95%] text-center box-border bg-white py-3 text-[14px] font-medium absolute bottom-2 translate-x-[-50%] left-[50%]`}>Quick Add
           </button>
         </div>
         <h5 className='sm:text-[14px] text-[12px] flex gap-3 mt-2 font-semibold'>{product.name}
@@ -28,12 +43,15 @@ export function Card({ product,filepath }) {
             ₹{product.mrp}
           </span>
         </div>
-        <span className='group-hover:hidden flex sm:text-[16px] text-[12px]'>1 color</span>
+        <span className='group-hover:hidden flex sm:text-[16px] text-[12px]'>{product.color.length} color</span>
         < div className='group-hover:flex gap-2 hidden mt-1' >
           {
-            product.color && product.color.map((color,index) => (
-              <div className={`sm:w-5 sm:h-5 h-3 w-3 rounded-full border border-black flex items-center justify-center`}>
-                <svg xmlns="http://www.w3.org/2000/svg" className='sm:w-3.5 sm:h-3.5 h-1.5 w-1.5' viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" /></svg>
+            product.color && product.color.map((color, index) => (
+              <div
+                value={color._id}
+                onClick={() => setSelectedColor(color._id)}
+                className={`sm:w-5 sm:h-5 h-3 w-3 rounded-full border border-black flex items-center justify-center`}
+                style={{ backgroundColor: color.code, borderWidth: (selectedColor === color._id ? '4px' : '') }}>
               </div>
             ))
           }

@@ -11,7 +11,7 @@ import TextSlider from "./common/TextSlider";
 export default function Home() {
   return (
     <>
-    {/* <TextSlider/> */}
+    <TextSlider/>
     <Banner/>
     <FeaturedCategories/>
     <ThisJustIn/>

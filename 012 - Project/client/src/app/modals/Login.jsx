@@ -10,14 +10,11 @@ import { Atom } from "react-loading-indicators";
 import { ToastContainer, toast } from "react-toastify";
 
 
-
 export default function Login({ loginStatus, setLoginStatus }) {
-
 
   let [compStatus, setCompStatus] = useState(true)
   return (
     <section className={` ${loginStatus ? "block" : "hidden"} w-full h-screen flex bg-[rgba(0,0,0,0.4)] items-center justify-center  fixed  left-0 top-0 z-[9999999]`}>
-
       <form className='relative lg:w-[42%] md:w-[80%] h-[700px] overflow-scroll  px-10 pt-5 pb-8 bg-[#F9F9F9] overflow-x-hidden mt-5'>
         <button onClick={() => setLoginStatus(false)} className=" z-[999999999] absolute top-3 right-3 border-red-700" >
           <IoCloseSharp className="w-8 h-8" />

@@ -60,7 +60,7 @@ const validateOtpAndRegisterUser = async (req, res) => {
         const data = new UserModel(req.body);
         const response = await data.save();
         console.log(response);
-        res.status(200).json({ message: 'OTP Varified. Your Account have been created successfully' });
+        res.status(204).json({ message: 'OTP Varified. Your Account have been created successfully' });
     }
     catch (error) {
         console.log(error);
@@ -74,7 +74,7 @@ const loginUser = async (req, res) => {
         const isAvailable = await UserModel.findOne({ email: req.body.email });
         if (isAvailable) {
             if (isAvailable.password === req.body.password) {
-                return res.status(200).json({ message: 'success', data: isAvailable });
+                return res.status(204).json({ message: 'success', data: isAvailable });
             }
             else {
                 return res.status(403).json({ message: 'incorrect password', data: null });

@@ -13,7 +13,6 @@ const addColor = async (req, res) => {
         }
 
         if (error.name == 'ValidationError') return res.status(400).json({ message: 'required fields are missing!' })
-
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
