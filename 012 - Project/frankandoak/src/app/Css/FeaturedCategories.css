@@ -1,0 +1,14 @@
+  .img{
+    width: 23%;
+}
+img{
+    width: 100%;
+}
+@media only screen and (max-width: 510px) {
+    .img>span{
+        font-size: 10px;
+    }
+    .img{
+        width:45%;
+    }
+  }

@@ -1,0 +1,100 @@
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.box {
+    width: 350px;
+    height: 560px;
+}
+
+@media only screen and (max-width: 1020px) {
+    .box {
+        width: 250px;
+        height: 400px;
+    }
+
+    .image {
+        width: 100% !important;
+        height: 300px !important;
+    }
+}
+
+.image {
+    width: 350px;
+    height: 480px;
+    background-size: cover;
+}
+
+
+.title {
+    font-family: 'CircularStd', sans-serif;
+    font-size: 13px;
+}
+
+.price {
+    font-size: 13px;
+}
+
+.color {
+    font-size: 12px;
+    color: rgb(99, 99, 99);
+    transition: 0.3s;
+}
+
+.show_color {
+    opacity: 0;
+    margin-top: -5px;
+    display: none;
+}
+
+.box:hover .color {
+    max-height: 0;
+    opacity: 0;
+}
+
+.box:hover .show_color {
+    opacity: 1;
+    display: block;
+}
+
+.best-seller {
+    font-size: 10px;
+    right: 0px;
+    top: 0px;
+}
+
+.quick-add {
+    position: relative;
+    width: 90%;
+    display: inline-block;
+    background-color: white;
+    color: rgb(109, 109, 109);
+}
+
+.quick-add-size {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    background-color: white;
+    display: none;
+}
+
+.quick-add:hover .quick-add-size {
+    display: block;
+}
+
+.size {
+    display: inline-block;
+    margin: 5px;
+    padding: 10px;
+    transition: 0.3s;
+    font-size: 13px;
+    width: 50px;
+}
+
+.size:hover {
+    background-color: black;
+    color: white;
+}

@@ -1,0 +1,10 @@
+.Sub-Categories {
+    max-height: 75vh;
+}
+
+.collections .products::-webkit-scrollbar {
+    display: none;
+}
+.collections .products{
+    max-height: 80vh;
+}

@@ -92,7 +92,7 @@ function LoginBox() {
     <form>
       <div className="flex flex-col gap-3 py-6">
         <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " onChange={handleInput} value={formData.email} type="email" name="email" placeholder="Email Address" />
-        <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " onChange={handleInput} value={formData.password} type="tel" name="password" placeholder="Password" />
+        <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " onChange={handleInput} value={formData.password} type="password" name="password" placeholder="Password" />
         <span className="text-[13px] font-semibold underline">Forgot Password?</span>
         <button type="button" onClick={handleLogin} className="p-3.5 mt-2 bg-black text-white font-semibold">Log In</button>
       </div>

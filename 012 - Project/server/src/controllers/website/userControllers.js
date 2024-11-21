@@ -1,11 +1,13 @@
 const UserModel = require("../../models/userModel");
 const otpData = new Map();
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
 const sendOtpOnUserRegistration = async (req, res) => {
     try {
         const isAvailable = await UserModel.findOne({ email: req.body.email });
         console.log(isAvailable);
+
         if (!isAvailable) {
 
             otpData.clear();
@@ -43,7 +45,6 @@ const sendOtpOnUserRegistration = async (req, res) => {
     }
     catch (error) {
         console.log(error);
-
         if (error.name == 'ValidationError') return res.status(400).json({ message: 'required fields are missing!' })
         res.status(500).json({ message: 'Internal Server Error' });
     }
@@ -72,15 +73,21 @@ const validateOtpAndRegisterUser = async (req, res) => {
 const loginUser = async (req, res) => {
     try {
         const isAvailable = await UserModel.findOne({ email: req.body.email });
+        
         if (isAvailable) {
             if (isAvailable.password === req.body.password) {
-                return res.status(204).json({ message: 'success', data: isAvailable });
+                const { password, ...userWithoutPassword } = isAvailable._doc;
+                console.log(userWithoutPassword);
+                jwt.sign(userWithoutPassword, process.env.JWT_SECRET_KEY, { expiresIn: 60 }, (err, token) => {
+                    if (err) return res.status(500).json({ message: 'try again after sometime...', data: null });
+                    return res.status(200).json({ message: 'success', token });
+                });
             }
             else {
                 return res.status(403).json({ message: 'incorrect password', data: null });
             }
         }
-        res.status(404).json({ message: 'user not found! Please Register', data: null });
+        if (!isAvailable) return res.status(404).json({ message: 'user not found! Please Register', data: null });
     }
     catch (error) {
         console.log(error);
