@@ -27,14 +27,17 @@ export const productSlice = createSlice({
     extraReducers: (builder) => { // extraReducers for Thunk(fetchProducts)
         builder
             .addCase(fetchProducts.pending, (state, action) => {
+                console.log('product-pending');
                 state.loading = true;
             })
             .addCase(fetchProducts.fulfilled, (state, action) => {
                 state.loading = false;
+                console.log('product-success');
                 state.value = action.payload;
             })
             .addCase(fetchProducts.rejected, (state, action) => {
                 state.loading = false;
+                console.log('product-error')
                 state.error = action.payload;
             })
     }

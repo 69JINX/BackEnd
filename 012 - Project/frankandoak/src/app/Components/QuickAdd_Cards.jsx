@@ -3,11 +3,17 @@ import React, { useState } from 'react'
 import './../Css/QuickAdd_Cards.css'
 import Link from 'next/link'
 import { FaRegCircleDot } from "react-icons/fa6";
+import { FaCircle } from "react-icons/fa6";
 
 function QuickAdd_Cards(props) {
     const [Bg_img, setBg_img] = useState(props.bg_out);
+    const [selectedColor, setSelectedColor] = useState('');
+
+    const setColor = () => {
+
+    }
     return (
-        <Link href="#">
+        // <Link href="#">
             <div className="box">
                 <div className='image position-relative d-flex justify-content-center align-items-end' style={{ backgroundImage: `url('${Bg_img}')` }} onMouseEnter={() => setBg_img(props.bg_in)} onMouseLeave={() => setBg_img(props.bg_out)}>
                     <div className='best-seller bg-black p-1 text-white d-inline-block position-absolute m-1'>
@@ -28,13 +34,21 @@ function QuickAdd_Cards(props) {
                 <div className='details'>
                     <ul className='m-0 list-unstyled p-0'>
                         <li className='title fw-bold my-2'>{props.title}</li>
-                        <li className='price my-2'>{props.price}</li>
-                        <li className='color fw-bold'>1 color</li>
-                        <li className='show_color'><FaRegCircleDot /></li>
+                        <li className='price fs-6 my-2 d-flex'><div>{props.price}</div>&nbsp;<div className='text-decoration-line-through'>{props.mrp}</div></li>
+                        <li className='color fw-bold'>{props.colors.length} color</li>
+                        <li className='show_color d-flex gap-2'>
+                            {props.colors && props.colors.map((color) => (
+                                <div key={color.code} role='button' onClick={() => setSelectedColor(color.code)}>
+                                    <FaRegCircleDot role='button' color={color.code}
+                                        size={selectedColor === color.code ? 30 : 20}/>
+                                </div>
+                            ))
+                            }
+                        </li>
                     </ul>
                 </div>
             </div>
-        </Link>
+        // </Link>
     )
 }
 
