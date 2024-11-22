@@ -11,7 +11,7 @@ function Footer_social_media() {
     return (
         <>
                 <div className="logo d-inline-block" style={{width:'60px'}}>
-                    <Image src={logo} height={60} width={100}></Image>
+                    <Image alt="" src={logo} height={60} width={100}></Image>
                 </div>
                 <div style={{ fontSize: "10px" }} className='fw-bold mt-1'>Frank and Oak</div>
                 <div className='social-media my-4'>
@@ -22,8 +22,7 @@ function Footer_social_media() {
                     <BsEnvelope size={25} className='mx-1' />
                     <RiLinkedinFill size={25} className='mx-1' />
                 </div>
-                <div className='py-4 d-block'><Image style={{ width: '25%' }} src={b_corp_certified} height={75} width={50}></Image></div>
-                
+                <div className='py-4 d-block'><Image alt="" style={{ width: '25%' }} src={b_corp_certified} height={75} width={50}></Image></div>
         </>
     )
 }

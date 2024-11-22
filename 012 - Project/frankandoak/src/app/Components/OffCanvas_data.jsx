@@ -18,10 +18,10 @@ function OffCanvas_data() {
         setShowThisJustIn('block');
     },[]);
 
-    const Ref_ThisJustIn = useRef();
-    const Ref_Women = useRef();
-    const Ref_Men = useRef();
-    const Ref_OurStory = useRef();
+    const Ref_ThisJustIn = useRef(null);
+    const Ref_Women = useRef(null);
+    const Ref_Men = useRef(null);
+    const Ref_OurStory = useRef(null);
 
     const [showThisJustIn, setShowThisJustIn] = useState('none');
     const [showWomen, setShowWomen] = useState('none');
@@ -38,6 +38,7 @@ function OffCanvas_data() {
         setShowWomen('none');
         setShowMen('none');
         setShowOurStory('none');
+
 
         let spaceremoved = `Ref_${e.target.innerHTML.replace(/ /g, "")}`;
         eval(spaceremoved).current.style.backgroundColor = 'white';
@@ -121,7 +122,7 @@ function OffCanvas_data() {
                             </Accordion.Item>
                         </Accordion>
                         <div className="logo m-auto py-5" style={{ width: '60px' }}>
-                            <Image src={logo_dark} height={60} width={100}></Image>
+                            <Image alt="" src={logo_dark} height={60} width={100}></Image>
                         </div>
                     </div>
                 </div>

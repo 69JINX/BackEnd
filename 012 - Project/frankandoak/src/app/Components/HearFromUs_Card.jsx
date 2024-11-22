@@ -23,7 +23,7 @@ function HearFromUs_Card(props) {
                     </div>
                 </div>
                 <div className="Image">
-                    <Image src={props.image} style={{ height: "100%", width: "100%" }} />
+                    <Image alt="" src={props.image} style={{ height: "100%", width: "100%" }} />
                 </div>
             </div>
         </>

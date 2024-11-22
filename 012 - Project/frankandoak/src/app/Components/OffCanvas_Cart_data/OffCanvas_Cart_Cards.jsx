@@ -3,7 +3,7 @@ import React from 'react'
 import { cart_img } from '../../../Public/images.jsx'
 import { FaRegHeart } from "react-icons/fa"
 import Link from 'next/link.js'
-import { Signika_Negative } from '@next/font/google'
+import { Signika_Negative } from 'next/font/google'
 
 const Signika = Signika_Negative({ subsets: ['latin-ext'] })
 
@@ -11,7 +11,7 @@ function OffiCanvas_Cart_Cards() {
     return (
         <div className={`Cart-item d-flex py-3 border-bottom`}>
             <div className='w-25 mx-2 bg-black'>
-                <Image src={cart_img} height={180}></Image>
+                <Image alt="" src={cart_img} height={180}></Image>
             </div>
             <div className='w-75 px-2 d-flex flex-column justify-content-between'>
                 <div className='w-100'>

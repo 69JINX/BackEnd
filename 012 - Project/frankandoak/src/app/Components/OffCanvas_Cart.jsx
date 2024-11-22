@@ -4,7 +4,7 @@ import '././../Css/OffCanvas_data.css'
 import Link from 'next/link';
 import OffCanvas_Cart_Cards from './OffCanvas_Cart_data/OffCanvas_Cart_Cards';
 import { IoLockClosedOutline } from "react-icons/io5";
-import { Poppins } from '@next/font/google'
+import { Poppins } from 'next/font/google'
 
 const poppins = Poppins({ subsets: ['latin-ext'], weight: ['400'] })
 

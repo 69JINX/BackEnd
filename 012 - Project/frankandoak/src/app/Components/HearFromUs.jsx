@@ -57,12 +57,12 @@ function HearFromUs() {
       <div className='HearFromUs w-100 mt-5 py-5'>
         <h2 className='text-center fw-medium mb-5'>You didn’t hear it from us</h2>
         <Slider {...settings}>
-          <div><HearFromUs_Card image={HFU_img1} quote={"This is a simple vest but it looks expensive and falls nicely on the body! Soft and simple."} quote_author={"Emily H."} /></div>
-          <div><HearFromUs_Card image={HFU_img2} quote={"I have this shirt in 4 other colours. It fits great and can easily be dressed down or up depending on what you’re doing."} quote_author={"Scott R."} /></div>
-          <div><HearFromUs_Card image={HFU_img3} quote={"Great staple wardrobe piece and a flattering fit."} quote_author={"Lee-Anne D."} /></div>
-          <div><HearFromUs_Card image={HFU_img4} quote={"Just an all around great shirt, fits amazing. Stylish and cozy."} quote_author={"Nick M."} /></div>
-          <div><HearFromUs_Card image={HFU_img5} quote={"Love these pants — they're fitted and give outfits a clean look, but they're also very stretchy and non-constrictive."} quote_author={"hris O."} /></div>
-          <div><HearFromUs_Card image={HFU_img6} quote={"Great fit and cut. Love the chic looseness."} quote_author={"Hilda H."} /></div>
+          <div><HearFromUs_Card alt="" image={HFU_img1} quote={"This is a simple vest but it looks expensive and falls nicely on the body! Soft and simple."} quote_author={"Emily H."} /></div>
+          <div><HearFromUs_Card alt="" image={HFU_img2} quote={"I have this shirt in 4 other colours. It fits great and can easily be dressed down or up depending on what you’re doing."} quote_author={"Scott R."} /></div>
+          <div><HearFromUs_Card alt="" image={HFU_img3} quote={"Great staple wardrobe piece and a flattering fit."} quote_author={"Lee-Anne D."} /></div>
+          <div><HearFromUs_Card alt="" image={HFU_img4} quote={"Just an all around great shirt, fits amazing. Stylish and cozy."} quote_author={"Nick M."} /></div>
+          <div><HearFromUs_Card alt="" image={HFU_img5} quote={"Love these pants — they're fitted and give outfits a clean look, but they're also very stretchy and non-constrictive."} quote_author={"hris O."} /></div>
+          <div><HearFromUs_Card alt="" image={HFU_img6} quote={"Great fit and cut. Love the chic looseness."} quote_author={"Hilda H."} /></div>
         </Slider>
       </div>
     </>

@@ -17,19 +17,19 @@ function NavbarSlider() {
 
     return (
         <div className='bg-black'>
-            <div class="navslider text-white text-center w-50 m-auto">
+            <div className="navslider text-white text-center w-50 m-auto">
                 <Slider {...settings}>
                     <div>
-                        <span>A cult favourite. Discover The Skyline. <Link href="#" class="text-white text-decoration-underline p-0">Shop Women</Link> <Link href="#" class="text-white text-decoration-underline p-0">Shop Men</Link></span>
+                        <span>A cult favourite. Discover The Skyline. <Link href="#" className="text-white text-decoration-underline p-0">Shop Women</Link> <Link href="#" className="text-white text-decoration-underline p-0">Shop Men</Link></span>
                     </div>
                     <div>
                         <span>Enjoy free shipping on orders over $99 and free returns</span>
                     </div>
                     <div>
-                        <span>Thousand Fell x Frank And Oak Sneaker at $99.99 —<Link href="#" class="text-white text-decoration-underline p-0">Shop Women</Link> <Link href="#" class="text-white text-decoration-underline p-0">Shop Men</Link></span>
+                        <span>Thousand Fell x Frank And Oak Sneaker at $99.99 —<Link href="#" className="text-white text-decoration-underline p-0">Shop Women</Link> <Link href="#" className="text-white text-decoration-underline p-0">Shop Men</Link></span>
                     </div>
                     <div>
-                        <span>Just in— Your new wardrobe icons.<Link href="#" class="text-white text-decoration-underline p-0">Shop Women</Link> <Link href="#" class="text-white text-decoration-underline p-0">Shop Men</Link></span>
+                        <span>Just in— Your new wardrobe icons.<Link href="#" className="text-white text-decoration-underline p-0">Shop Women</Link> <Link href="#" className="text-white text-decoration-underline p-0">Shop Men</Link></span>
                     </div>
                 </Slider>
             </div>

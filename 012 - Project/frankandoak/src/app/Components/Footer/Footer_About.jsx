@@ -35,11 +35,11 @@ function Footer_About() {
                     <input type='text' placeholder='First Name' className='p-2 my-2' style={{ backgroundColor: '#1F2322', border: '1px solid grey', width: '100%' }} />
                     <div style={{ fontSize: "13px" }} className='py-2'>I shop for
                         <input className='mx-2 ms-3' type="radio" id="rd_Women" name="Gender" style={{ accentColor: "white", cursor: 'pointer', backgroundColor: 'yellow' }} />
-                        <label for="rd_Women">Women</label>
+                        <label htmlFor="rd_Women">Women</label>
                         <input className='mx-2 ms-3' type="radio" id="rd_Men" name="Gender" style={{ accentColor: "white", cursor: 'pointer' }} />
-                        <label for="rd_Men">Men</label>
+                        <label htmlFor="rd_Men">Men</label>
                         <input className='mx-2 ms-3' type="radio" id="rd_All" name="Gender" style={{ accentColor: "white", cursor: 'pointer' }} />
-                        <label for="rd_All">All</label>
+                        <label htmlFor="rd_All">All</label>
                         <div>
                             <button className='w-100 my-3 p-2 fw-bold text-white bg-black' style={{ border: '2px solid white' }}>Subscribe</button>
                         </div>

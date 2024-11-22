@@ -2,6 +2,7 @@
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import './../Css/Navbar.css'
+import './../Css/ProfileDropDown.css'
 import { CiSearch, CiHeart } from "react-icons/ci";
 import { PiUserCircle } from "react-icons/pi";
 import { IoBagHandleOutline } from "react-icons/io5";
@@ -20,12 +21,18 @@ import OffCanvas_data from './OffCanvas_data';
 import OffCanvas_Cart from './OffCanvas_Cart';
 import { Modal } from 'react-bootstrap';
 import { logo_dark } from './../../Public/images.jsx'
-import { Passero_One, Roboto_Condensed } from '@next/font/google'
+import { Passero_One, Roboto_Condensed } from 'next/font/google'
 import Image from 'next/image';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
 import { Atom } from 'react-loading-indicators';
 import Cookies from "js-cookie";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '@/redux/Slices/productSlice';
+import { fetchUserData } from '@/redux/Slices/userSlice';
+import { useRouter } from "next/navigation";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { GoMail } from "react-icons/go";
 
 
 
@@ -35,6 +42,8 @@ function Navigbar() {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const [profileDropDown, setProfileDropDown] = useState(false);
 
     const [showCart, setShowCart] = useState(false);
     const handleCloseCart = () => setShowCart(false);
@@ -47,15 +56,42 @@ function Navigbar() {
     const [LoginModalShow, setLoginModalShow] = useState(false);
     const [SignUpModalShow, setSignUpModalShow] = useState(false);
 
+    const [userData, setUserData] = useState(null);
+
+    const dispatch = useDispatch();
+
+    const user = useSelector((state) => state.user.value);
+
+    useEffect(() => {
+        dispatch(fetchProducts()); // Whenever website(header) loads, all products will be fetches in advance and stored in the redux store, so whenever we need to show data in any page, we can show it from redux store instead of calling api on every page
+        dispatch(fetchUserData()); // Fetch user data from the server whenever user data is required in the website
+    }, [dispatch]);
+
+
+    useEffect(() => {
+        console.log('user Data => ', user);
+        if (user) return setUserData(user.data);
+    }, [user])
 
     const checkIfLoggedIn = () => {
-        const token = Cookies.get('frankandoak_user');
-        if (token) {
-            alert('You are already Logged In');
+        dispatch(fetchUserData());
+
+        if (!(JSON.stringify(user) === "{}")) { // Checking if user is not a empty object. If user is empty that means we didn't get any cookie token from client or token which was stored in cookie was expired
+            // alert('You are already Logged In');
+            setProfileDropDown(!profileDropDown);
             return 0;
         }
+
         setLoginModalShow(true);
     }
+
+    const logOut = () => {
+        Cookies.remove('frankandoak_user');
+        window.location.reload();
+    }
+
+
+
 
 
     return (
@@ -63,6 +99,8 @@ function Navigbar() {
             <div className="Navbar ">
                 <div className='web-view d-flex justify-content-between pe-4'>
                     <div className="Menu">
+
+
 
                         <ul className='m-0'>
                             <li className='fs-4'><Link href="#" className="logo">Frank And Oak</Link></li>
@@ -88,6 +126,18 @@ function Navigbar() {
                         </ul>
                     </div>
                     <div className="controls fs-3">
+
+                        <nav>
+                            <div className={`menu ${profileDropDown ? 'active' : ''}`}>
+                                {userData ?
+                                    <ul>
+                                        <li><FaRegCircleUser size={20} /><span>{userData.first_name} {userData.last_name}</span></li>
+                                        <li><GoMail size={20} /><span>{userData.email}</span></li>
+                                    </ul> : ''}
+                                <div role='button' className='logout-btn' onClick={logOut}>Sign Out</div>
+                            </div>
+                        </nav>
+
                         <ul className='m-0'>
                             <li><CiSearch /></li>
                             <li className='position-relative'>
@@ -182,6 +232,7 @@ function Navigbar() {
 function LogInModal(props) {
 
     const [formData, setformData] = useState({});
+    const router = useRouter();
 
     const handleInput = (e) => {
         setformData({ ...formData, [e.target.name]: e.target.value });
@@ -216,6 +267,8 @@ function LogInModal(props) {
                     }
                     Cookies.set('frankandoak_user', response.data.token);
                     alert('Successfully logged in');
+
+                    window.location.reload();
 
                     props.onHide();
                 }
@@ -260,7 +313,7 @@ function LogInModal(props) {
                     /> */}
                     <div className='d-flex justify-content-around'>
                         <div className='mb-2 bg-black m-auto' style={{ width: '50px' }}>
-                            <Image src={logo_dark} width={40}></Image>
+                            <Image alt="" src={logo_dark} width={40}></Image>
                         </div>
                         <div className='mb-2 ps-4 m-auto' style={{ width: '50px' }}>
                             <FaHeart size={30} />
@@ -498,7 +551,6 @@ function SignUpModal(props) {
 
     useEffect(() => {
         // Clean up the interval on unmount
-        console.log('unmounted');
         return () => clearInterval(timerInterval);
     }, []);
 

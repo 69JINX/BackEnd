@@ -6,7 +6,7 @@ import Footer from '../Components/Footer'
 import QuickAdd_Cards from '../Components/QuickAdd_Cards'
 import { QA_bgout1, QA_bgout2, QA_bgout3, QA_bgout4, QA_bgout5, QA_bgout6, QA_bgout7, QA_bgout8, QA_bgout9, QA_bgout10 } from './../../Public/images.jsx'
 import { QA_bgin1, QA_bgin2, QA_bgin3, QA_bgin4, QA_bgin5, QA_bgin6, QA_bgin7, QA_bgin8, QA_bgin9, QA_bgin10 } from './../../Public/images.jsx'
-import { Noto_Sans } from '@next/font/google'
+import { Noto_Sans } from 'next/font/google'
 
 const notoSans = Noto_Sans({ subsets: ['latin-ext'], weight: ['400'] });
 
