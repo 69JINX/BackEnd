@@ -78,7 +78,7 @@ const loginUser = async (req, res) => {
             if (isAvailable.password === req.body.password) {
                 const { password, ...userWithoutPassword } = isAvailable._doc;
                 console.log(userWithoutPassword);
-                jwt.sign(userWithoutPassword, process.env.JWT_SECRET_KEY, { expiresIn: 600 }, (err, token) => {
+                jwt.sign(userWithoutPassword, process.env.JWT_SECRET_KEY, { expiresIn: 600 }, (err, token) => { // expires in 600 seconds
                     if (err) return res.status(500).json({ message: 'try again after sometime...', data: null });
                     return res.status(200).json({ message: 'success', token });
                 });

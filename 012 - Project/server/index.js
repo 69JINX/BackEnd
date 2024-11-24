@@ -17,6 +17,7 @@ app.use('/frankandoakservices/admin-panel/admin/', express.static(path.join(__di
 app.use('/frankandoakservices/admin-panel/product/', express.static(path.join(__dirname,'src', 'uploads', 'product')));
 
 app.use('/frankandoak-files/', express.static(path.join(__dirname,'src', 'uploads', 'product')));
+app.use('/frankandoak-files/', express.static(path.join(__dirname,'src', 'uploads', 'product-category')));
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running at port ${process.env.PORT}`);

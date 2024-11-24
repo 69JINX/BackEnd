@@ -19,7 +19,7 @@ export default function Home() {
       <FeaturedCategories />
       <QuickAdd />
       <HearFromUs />
-      <Inspire_Better_Living />
+      <Inspire_Better_Living /> 
       <Footer />
     </>
   );

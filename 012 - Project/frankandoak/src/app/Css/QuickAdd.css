@@ -1,7 +1,6 @@
 .slick-arrow {
     z-index: 999;
-}
-
+}   
 .Quick-Add .slick-prev:before,
 .Quick-Add .slick-next:before {
     font-size: 30px !important;
@@ -32,4 +31,16 @@
 .Quick-Add .slick-disabled {
     opacity: 0;
     pointer-events:none;
+}
+
+
+.carousel .carousel-control-prev,.carousel-control-next{
+background-color: rgb(131, 131, 131);
+border-radius: 50%;
+height: 50px !important;
+width: 50px !important;
+margin: 0px 100px !important;
+/* align-content: center !important;
+align-items: center !important; */
+align-self: center !important;
 }

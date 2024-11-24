@@ -99,6 +99,8 @@ const {
 const {
     activeProductsForWebsite
 } = require('./website/productControllers')
+const { activeProductCategoriesForWebsite } = require('./website/productCategoryControllers')
+const { activeParentCategoriesForWebsite } = require('./website/parentCategoryControllers')
 
 
 module.exports = {
@@ -122,6 +124,12 @@ module.exports = {
     //Website User Controllers
     sendOtpOnUserRegistration, loginUser, validateOtpAndRegisterUser, verifyJWT,
 
+    //Website Product Category Controllers
+    activeParentCategoriesForWebsite,
+
+    //Website Product Category Controllers
+    activeProductCategoriesForWebsite,
+
     //Website Product Controllers
-    activeProductsForWebsite
+    activeProductsForWebsite,
 }

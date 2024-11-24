@@ -33,6 +33,8 @@ import { fetchUserData } from '@/redux/Slices/userSlice';
 import { useRouter } from "next/navigation";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { GoMail } from "react-icons/go";
+import { fetchProductCategories } from '@/redux/Slices/productCategorySlice';
+import { fetchParentCategories } from '@/redux/Slices/parentCategorySlice';
 
 
 
@@ -64,6 +66,8 @@ function Navigbar() {
 
     useEffect(() => {
         dispatch(fetchProducts()); // Whenever website(header) loads, all products will be fetches in advance and stored in the redux store, so whenever we need to show data in any page, we can show it from redux store instead of calling api on every page
+        dispatch(fetchParentCategories());
+        dispatch(fetchProductCategories());
         dispatch(fetchUserData()); // Fetch user data from the server whenever user data is required in the website
     }, [dispatch]);
 
