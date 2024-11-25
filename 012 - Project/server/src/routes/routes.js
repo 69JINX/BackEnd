@@ -10,6 +10,7 @@ const userRoute = require('./website/userRoutes');
 const websiteProductRoute = require('./website/productRoutes');
 const websiteProductCategoryRoute = require('./website/productCategoryRoutes');
 const websiteParentCategoryRoute = require('./website/parentCategoryRoutes');
+const cartRoute = require('./website/cartRoutes');
 
 const adminPanelRoutes = express.Router();
 const websiteRoutes = express.Router();
@@ -26,6 +27,7 @@ websiteRoutes.use('/user', userRoute);
 websiteRoutes.use('/parent-category', websiteParentCategoryRoute);
 websiteRoutes.use('/product-category', websiteProductCategoryRoute);
 websiteRoutes.use('/product', websiteProductRoute);
+websiteRoutes.use('/cart', cartRoute);
 
 
 

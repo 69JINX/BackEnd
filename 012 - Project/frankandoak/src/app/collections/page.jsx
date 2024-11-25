@@ -48,9 +48,6 @@ function page() {
                 <Navigbar />
                 <div className='d-flex'>
                     <div className='w-25 ps-3'>
-                        <div className={`${notoSans.className} fs-5 py-3 border-bottom mx-3`}>
-                            Shop All
-                        </div>
                         <div className={`loader text-center m-auto ${loader ? 'd-block' : 'd-none'}`}>
                             <div id="loader">
                                 <span></span>

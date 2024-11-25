@@ -19,9 +19,9 @@ import OurStory from './NavbarDropdowns/OurStory';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import OffCanvas_data from './OffCanvas_data';
 import OffCanvas_Cart from './OffCanvas_Cart';
-import { Modal } from 'react-bootstrap';
+import { Modal, Toast } from 'react-bootstrap';
 import { logo_dark } from './../../Public/images.jsx'
-import { Passero_One, Roboto_Condensed } from 'next/font/google'
+import { Roboto_Condensed } from 'next/font/google'
 import Image from 'next/image';
 import { toast, ToastContainer } from 'react-toastify';
 import axios from 'axios';
@@ -35,6 +35,7 @@ import { FaRegCircleUser } from "react-icons/fa6";
 import { GoMail } from "react-icons/go";
 import { fetchProductCategories } from '@/redux/Slices/productCategorySlice';
 import { fetchParentCategories } from '@/redux/Slices/parentCategorySlice';
+import { fetchCart } from '@/redux/Slices/cartSlice';
 
 
 
@@ -48,8 +49,8 @@ function Navigbar() {
     const [profileDropDown, setProfileDropDown] = useState(false);
 
     const [showCart, setShowCart] = useState(false);
-    const handleCloseCart = () => setShowCart(false);
-    const handleShowCart = () => setShowCart(true);
+    // const handleCloseCart = () => setShowCart(false);
+    // const handleShowCart = () => setShowCart(true);
 
     const [showCartOnSmallScreen, setShowCartOnSmallScreen] = useState(false);
     const handleCloseCartOnSmallScreen = () => setShowCartOnSmallScreen(false);
@@ -63,6 +64,8 @@ function Navigbar() {
     const dispatch = useDispatch();
 
     const user = useSelector((state) => state.user.value);
+    const cart = useSelector((state) => state.cart.cart_value.data);
+
 
     useEffect(() => {
         dispatch(fetchProducts()); // Whenever website(header) loads, all products will be fetches in advance and stored in the redux store, so whenever we need to show data in any page, we can show it from redux store instead of calling api on every page
@@ -73,9 +76,14 @@ function Navigbar() {
 
 
     useEffect(() => {
-        console.log('user Data => ', user);
-        if (user) return setUserData(user.data);
+        if (user) {
+            console.log('user._id=>', user._id)
+            dispatch(fetchCart(user._id));
+            setUserData(user);
+            return
+        }
     }, [user])
+
 
     const checkIfLoggedIn = () => {
         dispatch(fetchUserData());
@@ -93,9 +101,6 @@ function Navigbar() {
         Cookies.remove('frankandoak_user');
         window.location.reload();
     }
-
-
-
 
 
     return (
@@ -151,9 +156,12 @@ function Navigbar() {
                                 <SignUpModal show={SignUpModalShow} onHide={() => setSignUpModalShow(false)} onLogin={() => setLoginModalShow(true)} />
                             </li>
                             <li><CiHeart /></li>
-                            <li role='button'>
-                                <IoBagHandleOutline onClick={handleShowCart} />
-                                <Offcanvas style={{ width: '35vw' }} placement='end' show={showCart} onHide={handleCloseCart}>
+                            <li role='button' className='position-relative'>
+                                <IoBagHandleOutline onClick={() => setShowCart(true)} />
+                                <div className='position-absolute top-0 start-50 fs-6 ms-2'>
+                                    {cart && cart.length}
+                                </div>
+                                <Offcanvas style={{ width: '35vw' }} placement='end' show={showCart} onHide={() => setShowCart(false)}>
                                     <OffCanvas_Cart />
                                 </Offcanvas>
                             </li>
@@ -178,57 +186,14 @@ function Navigbar() {
                             <li><PiUserCircle /></li>
                             <li><CiHeart /></li>
                             <li role='button'>
-                                <IoBagHandleOutline onClick={handleShowCartOnSmallScreen} />
-                                <Offcanvas style={{ width: '60vw' }} placement='end' show={showCartOnSmallScreen} onHide={handleCloseCartOnSmallScreen}>
+                                <IoBagHandleOutline onClick={() => setShowCartOnSmallScreen(true)} />
+                                <Offcanvas style={{ width: '60vw' }} placement='end' show={showCartOnSmallScreen} onHide={() => setShowCartOnSmallScreen(false)}>
                                     <OffCanvas_Cart />
                                 </Offcanvas></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            {/* <Navbar collapseOnSelect expand="lg" className="px-5 Navbar">
-                <Navbar.Brand href="#home" className='logo fw-bold fs-4'>Frank And Oak</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="me-auto">
-                        <div className="Menu">
-                            <ul className='m-0'>
-                                <Link href="#" className="logo p-0"><li></li></Link>
-                                <li><Link href="#"> This Just In</Link>
-                                    <div className="this-just-in" style={{ marginLeft: '-18vw' }}>
-                                        <ThisJustIn />
-                                    </div>
-                                </li>
-                                <li><Link href="#"> Women</Link>
-                                    <div className="Women" style={{ marginLeft: '-26vw' }}>
-                                        <Women />
-                                    </div></li>
-                                <li><Link href="#"> Men</Link>
-                                    <div className="Men" style={{ marginLeft: '-32vw' }}>
-                                        <Men />
-                                    </div>
-                                </li>
-                                <li><Link href="#"> OurStory</Link>
-                                    <div className="OurStory" style={{ marginLeft: '-36.5vw' }}>
-                                        <OurStory />
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </Nav>
-                    <Nav>
-                        <div className="controls fs-3">
-                            <ul className='m-0'>
-                                <li><CiSearch /></li>
-                                <li><PiUserCircle /></li>
-                                <li><CiHeart /></li>
-                                <li><IoBagHandleOutline /></li>
-                            </ul>
-                        </div>
-                    </Nav>
-                </Navbar.Collapse>
-
-            </Navbar> */}
         </>
     )
 }
@@ -237,6 +202,8 @@ function LogInModal(props) {
 
     const [formData, setformData] = useState({});
     const router = useRouter();
+    const [show, setShow] = useState(false);
+    const [toast, setToast] = useState({ text: '', color: '' });
 
     const handleInput = (e) => {
         setformData({ ...formData, [e.target.name]: e.target.value });
@@ -247,49 +214,30 @@ function LogInModal(props) {
         var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
         if (reg.test(formData.email) == false) { // using this function because type="email" is not validating email(it is not validating email we have to put button type to submit which if we did then page is refreshing, used e.preventDefault() but it is not working because of something parent element having some Link tag or form in it)
-            alert('Invalid Email Address');
-            // toast.error('Invalid Email Address', {
-            //     position: "top-right",
-            //     autoClose: 5000,
-            //     hideProgressBar: false,
-            //     closeOnClick: true,
-            //     pauseOnHover: true,
-            //     draggable: true,
-            //     progress: undefined,
-            //     theme: "colored",
-            // });
-
+            setShow(true);
+            setToast({ text: 'Invalid Email', color: '#ED4337' });
             return;
         }
 
         axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/user/login`, formData)
             .then((response) => {
-
                 if (response.data.token) {
                     for (const key in formData) {
                         formData[key] = '';
                     }
+                    setShow(true);
+                    setToast({ text: 'Successfully logged in', color: '#72bf6a' });
                     Cookies.set('frankandoak_user', response.data.token);
-                    alert('Successfully logged in');
-
                     window.location.reload();
-
                     props.onHide();
                 }
             })
             .catch((error) => {
-                if (error.response.data.message) alert(error.response.data.message);
+                if (error.response.data.message) {
+                    setShow(true);
+                    setToast({ text: error.response.data.message, color: '#ED4337' });
 
-                // toast.error(error.response.data.message, {
-                //     position: "top-right",
-                //     autoClose: 5000,
-                //     hideProgressBar: false,
-                //     closeOnClick: true,
-                //     pauseOnHover: true,
-                //     draggable: true,
-                //     progress: undefined,
-                //     theme: "colored",
-                // });
+                }
             })
     }
 
@@ -315,6 +263,11 @@ function LogInModal(props) {
                         pauseOnHover
                         theme="colored"
                     /> */}
+                    <Toast className='position-fixed' style={{ position: 'fixed', top: '40px', right: '10px', zIndex: '999', backgroundColor: toast.color, fontWeight: 'bold' }}
+                        onClose={() => setShow(false)} show={show} delay='3000' autohide>
+                        <Toast.Body>{toast.text}</Toast.Body>
+                    </Toast>
+
                     <div className='d-flex justify-content-around'>
                         <div className='mb-2 bg-black m-auto' style={{ width: '50px' }}>
                             <Image alt="" src={logo_dark} width={40}></Image>

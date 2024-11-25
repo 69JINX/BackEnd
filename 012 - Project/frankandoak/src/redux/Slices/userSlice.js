@@ -15,7 +15,7 @@ export const fetchUserData = createAsyncThunk(
                         'Authorization': `Bearer ${token}` // 'Bearer' added for security reasons
                     }
                 }); 
-                return response.data
+                return response.data.data
             }
             return {};
         }

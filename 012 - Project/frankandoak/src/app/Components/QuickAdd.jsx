@@ -82,31 +82,6 @@ function QuickAdd() {
 
     return (
         <>
-            {/* <Slider {...settings} className='Quick-Add'>
-                {products && products.map((product) => (
-                    <div key={product._id}>
-                        <QuickAdd_Cards product={product} filepath={filepath} />
-                    </div>
-                ))
-                }
-                {products && products.map((product) => (
-                    <div key={product._id}>
-                        <QuickAdd_Cards product={product} filepath={filepath} />
-                    </div>
-                ))
-                }
-            </Slider> */}
-
-            {/* <Carousel className='carousel'>
-                {products && products.map((product) => (
-                    <Carousel.Item className='px-5'>
-                        <QuickAdd_Cards product={product} filepath={filepath} />
-                    </Carousel.Item>
-                ))
-                }
-            </Carousel> */}
-
-
             <Carousel className='carousel' interval={null}>  
                 {products && products.reduce((result, _, index, array) => { // All this calculation just to show 4 QuickCards in a single <Carousel.Item>, because only one QuickCard was showing on the screen at a time
                     // Group items into chunks of 3 (or desired number)

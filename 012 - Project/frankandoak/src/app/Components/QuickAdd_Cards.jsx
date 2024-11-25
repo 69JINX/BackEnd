@@ -7,10 +7,12 @@ import { Toast } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserData } from '@/redux/Slices/userSlice';
 import ReactDOM from "react-dom";
+import { addToCart, fetchCart } from '@/redux/Slices/cartSlice';
+import axios from 'axios';
 
 function QuickAdd_Cards({ product, filepath }) {
     const [Bg_img, setBg_img] = useState(filepath + product.thumbnail);
-    const [selectedColor, setSelectedColor] = useState(product.color && product.color[0].code);
+    const [selectedColor, setSelectedColor] = useState(product.color && product.color[0]._id);
     const [toast, setToast] = useState({ text: '', color: '', delay: 0 });
 
     const [show, setShow] = useState(false);
@@ -18,19 +20,42 @@ function QuickAdd_Cards({ product, filepath }) {
     const user = useSelector((state) => state.user.value);
     const dispatch = useDispatch();
 
-    const addToCard = () => {
+    const add_To_Card = (e) => {
         dispatch(fetchUserData());
+        console.log('use addto card', user);
         setShow(true);
-
         if ((JSON.stringify(user) === "{}")) {
-            setToast({ text: 'Please Login to perform further actions!', color: '#ED4337', delay: 3000 });
+            setToast({ text: 'Login to perform further actions!', color: '#ED4337', delay: 3000 });
             return 0;
         }
+        const data = {
+            user: user._id,
+            product: product._id,
+            color: selectedColor,
+            size: e.target.dataset.value
+        }
+        console.log(data);
 
-        setToast({ text: 'Added to Cart', color: '#72bf6a', delay: 1000 });
+        // dispatch(addToCart(data));
+
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/cart/add-to-cart`, data)
+            .then((response) => {
+                setShow(true);
+                if (response.data.message === 'cart-quantity-updated') setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, color: '#72bf6a', delay: 1000 });
+                if (response.data.message === 'cart-product-added') setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Added to Cart</>, color: '#72bf6a', delay: 1000 });
+                // setToast({ text: `${product.name} Added to Cart`, color: '#72bf6a', delay: 1000 });
+                console.log(response);
+                dispatch(fetchCart(user._id));
+            })
+            .catch((error) => {
+                console.log(error);
+                setShow(true);
+                setToast({ text: error.response.data.message && error.response.data.message, color: '#ED4337', delay: 3000 });
+            })
+
     }
 
-    
+
 
     return (
         <div className="box">
@@ -38,6 +63,7 @@ function QuickAdd_Cards({ product, filepath }) {
                 onClose={() => setShow(false)} show={show} delay={toast.delay} autohide>
                 <Toast.Body>{toast.text}</Toast.Body>
             </Toast>
+
             <div className='image position-relative d-flex justify-content-center align-items-end' style={{ backgroundImage: `url('${Bg_img}')` }} onMouseEnter={() => setBg_img(filepath + product.image_on_hover)} onMouseLeave={() => setBg_img(filepath + product.thumbnail)}>
                 <div className='best-seller bg-black p-1 text-white d-inline-block position-absolute m-1'>
                     BEST SELLER
@@ -46,8 +72,8 @@ function QuickAdd_Cards({ product, filepath }) {
                     Quick add
                     <div className='quick-add-size'>
                         {
-                            product.size && product.size.map((size, index) => (
-                                <div key={index} role='button' className="size" onClick={addToCard}>
+                            product.size && product.size.map((size, index) => (  // The .value property exists only for specific form-related elements like <input>, <textarea>, and <select>. For other elements like <div>, the value attribute does not automatically map to a .value property. Using data-* attributes, as they are designed for custom data.Then, access it using the dataset property(e.target.dataset.value). Using data-* attributes is generally preferred for clarity and standardization.
+                                <div key={index} data-value={size._id} role='button' className="size" onClick={(e) => add_To_Card(e)}>
                                     {size.name}
                                 </div>
                             ))
@@ -62,9 +88,9 @@ function QuickAdd_Cards({ product, filepath }) {
                     <li className='color fw-bold'>{product.color && product.color.length} color</li>
                     <li className='show_color d-flex flex-wrap gap-2'>
                         {product.color && product.color.map((color) => (
-                            <div key={color.code} role='button' onClick={() => setSelectedColor(color.code)}>
+                            <div key={color.code} role='button' onClick={() => setSelectedColor(color._id)}>
                                 <FaRegCircleDot role='button' color={color.code}
-                                    size={selectedColor === color.code ? 30 : 20} />
+                                    size={selectedColor === color._id ? 30 : 20} />
                             </div>
                         ))
                         }
