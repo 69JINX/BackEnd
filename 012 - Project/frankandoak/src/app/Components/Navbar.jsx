@@ -204,6 +204,7 @@ function LogInModal(props) {
     const router = useRouter();
     const [show, setShow] = useState(false);
     const [toast, setToast] = useState({ text: '', color: '' });
+    const [loader, setloader] = useState(false);
 
     const handleInput = (e) => {
         setformData({ ...formData, [e.target.name]: e.target.value });
@@ -236,8 +237,31 @@ function LogInModal(props) {
                 if (error.response.data.message) {
                     setShow(true);
                     setToast({ text: error.response.data.message, color: '#ED4337' });
-
                 }
+            })
+    }
+
+    const handleForgotPassword = () => {
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+
+        if (reg.test(formData.email) == false) {
+            setShow(true);
+            setToast({ text: 'Invalid Email', color: '#ED4337' });
+            return;
+        }
+        setloader(true);
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/website/user/forgot-password/${formData.email}`)
+            .then((response) => {
+                setShow(true);
+                console.log(response);
+                setToast({ text: response.data.message, color: '#72bf6a' });
+                setloader(false);
+            })
+            .catch((error) => {
+                console.log(error);
+                setShow(true);
+                setToast({ text: error.response.data.message, color: '#ED4337' });
+                setloader(false);
             })
     }
 
@@ -297,7 +321,10 @@ function LogInModal(props) {
                         <form>
                             <div><input className='w-100 my-2 p-2' onChange={handleInput} value={formData.email} type='email' name="email" placeholder='Email Address' /></div>
                             <div><input className='w-100 my-2 p-2' onChange={handleInput} value={formData.password} type='password' name="password" placeholder='Password' /></div>
-                            <div className='text-decoration-underline'>Forgot Password ?</div>
+                            <div className={` text-center ${loader ? 'd-block' : 'd-none'}`}>
+                                <Atom className="text-center fixed top-0 left-0" color="#32cd32" size="medium" text="" textColor="" />
+                            </div>
+                            <div className='text-decoration-underline' onClick={handleForgotPassword}>Forgot Password ?</div>
                             <div><button type='button' onClick={handleLogin} className='w-100 my-2 p-2 fw-bold border border-white border-2 text-white bg-black'>
                                 Log In
                             </button></div>

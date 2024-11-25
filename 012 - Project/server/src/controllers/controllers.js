@@ -92,7 +92,8 @@ const { createSize,
 //Website UserControllers
 const {
     sendOtpOnUserRegistration, loginUser, validateOtpAndRegisterUser,
-    verifyJWT
+    verifyJWT,
+    forgotPassword
 } = require('./website/userControllers')
 
 //Website ProductControllers
@@ -123,7 +124,7 @@ module.exports = {
     productsByParentCategory, productCategoriesByParentCategory,
 
     //Website User Controllers
-    sendOtpOnUserRegistration, loginUser, validateOtpAndRegisterUser, verifyJWT,
+    sendOtpOnUserRegistration, loginUser, validateOtpAndRegisterUser, forgotPassword, verifyJWT,
 
     //Website Product Category Controllers
     activeParentCategoriesForWebsite,

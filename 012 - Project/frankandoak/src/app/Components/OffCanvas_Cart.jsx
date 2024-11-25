@@ -4,11 +4,12 @@ import '././../Css/OffCanvas_data.css'
 import Link from 'next/link';
 import OffCanvas_Cart_Cards from './OffCanvas_Cart_data/OffCanvas_Cart_Cards';
 import { IoLockClosedOutline } from "react-icons/io5";
-import { Poppins } from 'next/font/google'
+import { Poppins, Kanit } from 'next/font/google'
 import { useDispatch, useSelector } from 'react-redux';
 import './../Css/Collections.css'
 
 const poppins = Poppins({ subsets: ['latin-ext'], weight: ['400'] })
+const kanit = Kanit({ subsets: ['latin-ext'], weight: ['400'] })
 
 function OffCanvas_Cart() {
 
@@ -54,24 +55,24 @@ function OffCanvas_Cart() {
                             <div className='text-center my-4 text-danger fs-4'>Your Cart is Empty</div>
                             :
                             <>
-                                <div className='OffCanvas-Cart-Cards p-3 overflow-scroll' style={{ height: '84%' }}>
+                                <div className='OffCanvas-Cart-Cards p-3 overflow-scroll' style={{ height: '78%' }}>
                                     {
                                         cart && cart.map((cart_item, index) => (
                                             <OffCanvas_Cart_Cards key={index} cart={cart_item} filepath={filepath} />
                                         ))
                                     }
                                 </div>
-                                <div className='p-2 bg-light'>
+                                <div className='px-2 bg-light'>
+                                    <div className={`${kanit.className} m-2 fs-5`}>
+                                        Subtotal
+                                        (<span className={`${kanit.className} fs-6 opacity-75`}>{cart.length} items</span>)
+                                    </div>
                                     <Link href="#" className="text-decoration-none">
                                         <button className={`${poppins.className} w-100 p-2 fs-5 fw-bold text-white bg-black`}>Secure Checkout <IoLockClosedOutline size={17} /></button>
                                     </Link>
                                 </div>
                             </>
-
                 }
-
-
-
             </Offcanvas.Body>
         </>
     )
