@@ -56,8 +56,19 @@ const deleteCartProduct = async (req, res) => {
     }
 }
 
+const updateProductQuantityInCart = async (req, res) => {
+    try {
+
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
 module.exports = {
     createCart,
     readCart,
-    deleteCartProduct
+    deleteCartProduct,
+    updateProductQuantityInCart
 };

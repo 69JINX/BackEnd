@@ -16,14 +16,18 @@ function OffCanvas_Cart() {
     const [cart, setCart] = useState([]);
     const [filepath, setfilepath] = useState('');
 
+    const [totalProduct, setTotalProduct] = useState(0);
+
     const user = useSelector((state) => state.user.value)
 
     const { cart_value, cart_loading, cart_error } = useSelector((state) => state.cart);
     useEffect(() => {
-        if (cart_value) {
+        if (!(JSON.stringify(cart_value) === "{}")) {
             setCart(cart_value.data);
             setfilepath(cart_value.filepath);
-            console.log('cart_value=>', cart_value);
+            let sum = 0;
+            cart_value.data.forEach(item => sum += item.quantity * item.product.price);
+            setTotalProduct(sum);
             return;
         }
     }, [cart_value])
@@ -48,7 +52,6 @@ function OffCanvas_Cart() {
                 </div>
                 {
                     (JSON.stringify(user) === "{}") ?
-
                         <div className='text-center my-4 text-danger fs-4'>Please Login to See Your Cart</div>
                         :
                         (cart && cart.length == 0) ?
@@ -63,9 +66,14 @@ function OffCanvas_Cart() {
                                     }
                                 </div>
                                 <div className='px-2 bg-light'>
-                                    <div className={`${kanit.className} m-2 fs-5`}>
-                                        Subtotal
-                                        (<span className={`${kanit.className} fs-6 opacity-75`}>{cart.length} items</span>)
+                                    <div className={`${kanit.className} m-2 fs-5 d-flex justify-content-between`}>
+                                        <div className={`${kanit.className}`}>
+                                            Subtotal
+                                            (<span className={`${kanit.className} fs-6 opacity-75`}>{cart.length} items</span>)
+                                        </div>
+                                        <div className={`${kanit.className}`}>
+                                            ₹{totalProduct}
+                                        </div>
                                     </div>
                                     <Link href="#" className="text-decoration-none">
                                         <button className={`${poppins.className} w-100 p-2 fs-5 fw-bold text-white bg-black`}>Secure Checkout <IoLockClosedOutline size={17} /></button>

@@ -324,7 +324,7 @@ function LogInModal(props) {
                             <div className={` text-center ${loader ? 'd-block' : 'd-none'}`}>
                                 <Atom className="text-center fixed top-0 left-0" color="#32cd32" size="medium" text="" textColor="" />
                             </div>
-                            <div className='text-decoration-underline' onClick={handleForgotPassword}>Forgot Password ?</div>
+                            <div className='text-decoration-underline d-inline-block' role="button" onClick={handleForgotPassword}>Forgot Password ?</div>
                             <div><button type='button' onClick={handleLogin} className='w-100 my-2 p-2 fw-bold border border-white border-2 text-white bg-black'>
                                 Log In
                             </button></div>
