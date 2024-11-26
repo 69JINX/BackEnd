@@ -20,7 +20,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import OffCanvas_data from './OffCanvas_data';
 import OffCanvas_Cart from './OffCanvas_Cart';
 import { Modal, Toast } from 'react-bootstrap';
-import { logo_dark } from './../../Public/images.jsx'
+import { logo_dark } from '../../Public/images.jsx'
 import { Roboto_Condensed } from 'next/font/google'
 import Image from 'next/image';
 import { toast, ToastContainer } from 'react-toastify';
@@ -105,7 +105,7 @@ function Navigbar() {
 
     return (
         <>
-            <div className="Navbar ">
+            <div className="Navbar">
                 <div className='web-view d-flex justify-content-between pe-4'>
                     <div className="Menu">
 

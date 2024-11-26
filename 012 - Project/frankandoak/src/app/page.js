@@ -1,5 +1,5 @@
 import NavbarSlider from './Components/NavbarSlider.jsx'
-import Navbar from './Components/Navbar.jsx'
+import Navbar from './Components/Navigbar.jsx'
 import MainPoster from './Components/MainPoster.jsx';
 import Facilities from './Components/Facilities.jsx'
 import FeaturedCategories from './Components/FeaturedCategories.jsx';

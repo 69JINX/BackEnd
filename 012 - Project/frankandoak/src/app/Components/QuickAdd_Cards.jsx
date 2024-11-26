@@ -10,7 +10,7 @@ import ReactDOM from "react-dom";
 import { addToCart, fetchCart } from '@/redux/Slices/cartSlice';
 import axios from 'axios';
 
-function QuickAdd_Cards({ product, filepath }) {
+function QuickAdd_Card({ product, filepath }) {
     const [Bg_img, setBg_img] = useState(filepath + product.thumbnail);
     const [selectedColor, setSelectedColor] = useState(product.color && product.color[0]._id);
     const [toast, setToast] = useState({ text: '', color: '', delay: 0 });
@@ -101,4 +101,4 @@ function QuickAdd_Cards({ product, filepath }) {
     )
 }
 
-export default QuickAdd_Cards
+export default QuickAdd_Card

@@ -1,10 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import Navigbar from '../Components/Navbar'
+import Navigbar from '../Components/Navigbar'
 import NavbarSlider from '../Components/NavbarSlider'
 import './../Css/Collections.css'
 import Footer from '../Components/Footer'
-import QuickAdd_Cards from '../Components/QuickAdd_Cards'
+import QuickAdd_Card from '../Components/QuickAdd_Cards'
 import { Noto_Sans } from 'next/font/google'
 import { useSelector } from 'react-redux'
 
@@ -88,7 +88,7 @@ function page() {
                         <div className='products d-flex flex-wrap gap-4 overflow-y-scroll p-3'>
                             {products && products.map((product) => (
                                 <div key={product._id}>
-                                    <QuickAdd_Cards product={product} filepath={filepath} />
+                                    <QuickAdd_Card product={product} filepath={filepath} />
                                 </div>
                             ))
                             }

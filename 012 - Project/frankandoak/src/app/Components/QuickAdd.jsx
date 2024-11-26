@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import QuickAdd_Cards from './QuickAdd_Cards.jsx'
+import QuickAdd_Card from './QuickAdd_Cards.jsx'
 import './../Css/QuickAdd.css'
 import Slider from "react-slick"; // npm i react-slick
 import "slick-carousel/slick/slick.css";
@@ -93,7 +93,7 @@ function QuickAdd() {
                     <Carousel.Item key={idx}>
                         <div className="d-flex m-4 justify-content-between">
                             {chunk.map((item) => (
-                                <QuickAdd_Cards product={item} filepath={filepath} />
+                                <QuickAdd_Card product={item} filepath={filepath} />
                             ))}
                         </div>
                     </Carousel.Item>

@@ -58,7 +58,11 @@ const deleteCartProduct = async (req, res) => {
 
 const updateProductQuantityInCart = async (req, res) => {
     try {
+        console.log(req.params);
+        console.log(req.body);
 
+        const response = await CartModel.findOneAndUpdate(req.params, { quantity: req.body.newQuantity });
+        res.status(200).json({ message: 'Product quantity updated successfully', data: response });
     }
     catch (error) {
         console.log(error);
