@@ -22,6 +22,8 @@ function OffCanvas_Cart() {
     const { cart_value, cart_loading, cart_error } = useSelector((state) => state.cart);
     useEffect(() => {
         if (!(JSON.stringify(cart_value) === "{}")) {
+            console.log(user);
+            console.log(cart_value);
             setCart(cart_value.data);
             setfilepath(cart_value.filepath);
             let sum = 0;

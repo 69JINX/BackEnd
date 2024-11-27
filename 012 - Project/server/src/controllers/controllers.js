@@ -103,6 +103,7 @@ const {
 const { activeProductCategoriesForWebsite } = require('./website/productCategoryControllers')
 const { activeParentCategoriesForWebsite } = require('./website/parentCategoryControllers')
 const { createCart, readCart, deleteCartProduct, updateProductQuantityInCart } = require('./website/cartControllers')
+const { checkout } = require('./website/paymentControllers')
 
 
 module.exports = {
@@ -136,5 +137,8 @@ module.exports = {
     activeProductsForWebsite,
 
     //Website AddToCart
-    createCart, readCart, deleteCartProduct, updateProductQuantityInCart
+    createCart, readCart, deleteCartProduct, updateProductQuantityInCart,
+
+    //Website Payment
+    checkout
 }

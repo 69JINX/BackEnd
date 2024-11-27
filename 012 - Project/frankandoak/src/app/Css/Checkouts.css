@@ -15,6 +15,8 @@
     overflow: scroll;
     font-family: 'Courier New', Courier, monospace;
 }
+
+
 .PaymentDetails::-webkit-scrollbar{
     display: none;
 }
@@ -47,7 +49,8 @@ border:1px solid rgb(197, 197, 197);
 }
 
 .CartProducts .products{
-    max-height: 60vh;
+    max-height: 70vh;
+    width: 75%;
     overflow: scroll;
 }
 .CartProducts .products::-webkit-scrollbar{
@@ -55,7 +58,7 @@ border:1px solid rgb(197, 197, 197);
 }
 
 .CartProducts .productQuantity{
-    background-color: rgb(134, 133, 133);
+    background-color: rgb(208, 207, 207);
     width: 25px;
     height: 25px;
     text-align: center;
@@ -69,4 +72,14 @@ border:1px solid rgb(197, 197, 197);
     height: 100px;
     background-size: 100%;
     background-repeat: no-repeat;
+}
+
+@media only screen and (max-width: 767px) {
+    .PaymentDetails{
+        width: 100vw;
+        height: 100%;
+    }
+    .CartProducts{
+        width: 100vw;
+    }
 }
