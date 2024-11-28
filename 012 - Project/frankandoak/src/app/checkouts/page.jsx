@@ -12,7 +12,10 @@ import { fetchCart } from '@/redux/Slices/cartSlice'
 
 function page() {
 
-    const [countries, setCountries] = useState([])
+    const [countries, setCountries] = useState([]);
+    const [states, setStates] = useState([]);
+    const [userAddress, setUserAddress] = useState({});
+    const [loader, setLoader] = useState({ loadingCountries: true, loadingStates: true });
     const [cart, setCart] = useState([])
     const [filepath, setFilepath] = useState('');
     const [totalPrice, setTotalPrice] = useState(0);
@@ -27,10 +30,52 @@ function page() {
 
     const dispatch = useDispatch();
 
+    const getGeolocation = () => { // Geolocation API
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(success, error); // When 'All location on this site' appear to user and user click Allow then success function will be called, if doesn't allow site for location then error function will be called
+        } else {
+            console.log("Geolocation not supported");
+        }
+
+        function success(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            console.log('Latitude: ' + latitude + 'Latitude:' + longitude);
+            axios.get(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}&api_key=67486f951d185792877035luj0f9d48`) // API Key from https://geocode.maps.co (Free user plan) || Locations is not accurate!
+                .then((res) => {
+                    setUserAddress(res.data);
+                    console.log(res.data);
+                })
+                .catch((err) => console.log(err))
+        }
+
+        function error() {
+            console.log("Unable to retrieve your location");
+        }
+    }
+
     const fetchCountries = () => {
-        axios.get('https://restcountries.com/v3.1/all?fields=name')
-            .then(res => setCountries(res.data))
+        setLoader((prev) => ({ ...prev, loadingCountries: true }));
+        axios.get('https://countriesnow.space/api/v0.1/countries/states')
+            .then(res => {
+                setCountries(res.data.data);
+                setLoader((prev) => ({ ...prev, loadingCountries: false }));
+            })
             .catch(err => console.log(err));
+    }
+    const fetchStatesbyCountry = (country) => {
+        setLoader((prev) => ({ ...prev, loadingStates: true }));
+        axios.post(`https://countriesnow.space/api/v0.1/countries/states`, { 'country': country })
+            .then((res) => {
+                setStates(res.data.data.states)
+                setLoader((prev) => ({ ...prev, loadingStates: false }));
+            })
+            .catch((err) => console.log(err))
+    }
+
+    const getStateBySelectedCountry = (e) => {
+        setPaymentDetails({ ...paymentDetails, country: e.target.value });
+        fetchStatesbyCountry(e.target.value);
     }
 
     useEffect(() => {
@@ -98,8 +143,15 @@ function page() {
     }
 
     useEffect(() => {
+        getGeolocation();
         fetchCountries();
     }, [])
+
+    useEffect(() => {
+        if (userAddress.address) { fetchStatesbyCountry(userAddress.address.country) }
+        else { fetchStatesbyCountry('India') }
+        console.log('userAddress===>>>', userAddress);
+    }, [userAddress])
 
     return (
         <>
@@ -142,13 +194,32 @@ function page() {
                         <div><hr /></div>
                     </div>
                     <div className='fs-4 fw-bold'>Delivery</div>
-                    <select className="form-select p-2" aria-label="Default select example" name="country" onChange={(e) => setPaymentDetails({ ...paymentDetails, country: e.target.value })}>
-                        {
-                            countries && countries.map((country, index) => (
-                                <option selected={country.name.common === 'India'} value={country.name.common}>{country.name.common}</option>
-                            ))
-                        }
-                    </select>
+                    <div className='d-flex'>
+                        <div className='w-50'>
+                            <select className="form-select p-2" aria-label="Default select example" name="country" onChange={getStateBySelectedCountry}>
+                                {
+                                    loader.loadingCountries ?
+                                        <option value='loading' >Loading Countries...&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                                        :
+                                        countries && countries.map((country, index) => (
+                                            <option selected={country.name === (userAddress.address && userAddress.address.country)} value={country.name}>{country.name}</option>
+                                        ))
+                                }
+                            </select>
+                        </div>
+                        <div className='ms-2 w-50'>
+                            <select className="form-select p-2" aria-label="Default select example" name="country" onChange={(e) => setPaymentDetails({ ...paymentDetails, country: e.target.value })}>
+                                {
+                                    loader.loadingStates ?
+                                        <option value='loading'>Loading States...&nbsp;&nbsp;&nbsp;&nbsp;</option>
+                                        :
+                                        states && states.map((state, index) => (
+                                            <option selected={state.name === (userAddress.address && userAddress.address.state)} value={state.name}>{state.name}</option>
+                                        ))
+                                }
+                            </select>
+                        </div>
+                    </div>
                     <div className='d-flex justify-content-between my-3'>
                         <input type="text" className='form-control w-50 py-2' defaultValue={user.first_name} placeholder='First Name' name="first_name" onChange={(e) => setPaymentDetails({ ...paymentDetails, first_name: e.target.value })} />
                         <input type="text" className='form-control w-50 ms-2 py-2' defaultValue={user.last_name} placeholder='Last Name' name="last_name" onChange={(e) => setPaymentDetails({ ...paymentDetails, last_name: e.target.value })} />
