@@ -49,6 +49,8 @@ function Navigbar() {
     const [profileDropDown, setProfileDropDown] = useState(false);
 
     const [showCart, setShowCart] = useState(false);
+    const [showSearch, setShowSearch] = useState(false);
+    const [searchText, setSearchText] = useState('');
     // const handleCloseCart = () => setShowCart(false);
     // const handleShowCart = () => setShowCart(true);
 
@@ -108,9 +110,6 @@ function Navigbar() {
             <div className="Navbar">
                 <div className='web-view d-flex justify-content-between pe-4'>
                     <div className="Menu">
-
-
-
                         <ul className='m-0'>
                             <li className='fs-4'><Link href="#" className="logo">Frank And Oak</Link></li>
                             <li><Link href="#"> This Just In</Link>
@@ -134,8 +133,7 @@ function Navigbar() {
                             </li>
                         </ul>
                     </div>
-                    <div className="controls fs-3">
-
+                    <div className="controls fs-3 align-content-center">
                         <nav>
                             <div className={`menu ${profileDropDown ? 'active' : ''}`}>
                                 {userData ?
@@ -148,9 +146,17 @@ function Navigbar() {
                         </nav>
 
                         <ul className='m-0'>
-                            <li><CiSearch /></li>
+                            <li className='search d-flex align-items-center'>
+                                <input type="search" onChange={e => setSearchText(e.target.value)}
+                                    className={`form-control me-3 ${showSearch ? 'opacity-100' : 'opacity-0'}`}
+                                    style={{ width: `${showSearch ? '' : '0vw'}` }} placeholder='search products...'
+                                />
+                                <div className='' style={{ width: '30px' }}>
+                                    <CiSearch role="button"className='searchIcon' onClick={() => setShowSearch(!showSearch)} />
+                                </div>
+                            </li>
                             <li className='position-relative'>
-                                <PiUserCircle role='button' onClick={checkIfLoggedIn} />
+                                <PiUserCircle role='button' id="PiUserCircle" onClick={checkIfLoggedIn} />
                                 <div className='userProfile position-absolute'></div>
                                 <LogInModal show={LoginModalShow} onHide={() => setLoginModalShow(false)} onSignUp={() => setSignUpModalShow(true)} />
                                 <SignUpModal show={SignUpModalShow} onHide={() => setSignUpModalShow(false)} onLogin={() => setLoginModalShow(true)} />
