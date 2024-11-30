@@ -10,7 +10,7 @@ import ReactDOM from "react-dom";
 import { addToCart, fetchCart } from '@/redux/Slices/cartSlice';
 import axios from 'axios';
 
-function QuickAdd_Card({ product, filepath }) {
+function QuickAdd_Card({ product, filepath, handleToast }) {
     const [Bg_img, setBg_img] = useState(filepath + product.thumbnail);
     const [selectedColor, setSelectedColor] = useState(product.color && product.color[0]._id);
     const [toast, setToast] = useState({ text: '', color: '', delay: 0 });
@@ -26,6 +26,7 @@ function QuickAdd_Card({ product, filepath }) {
         setShow(true);
         if ((JSON.stringify(user) === "{}")) {
             setToast({ text: 'Login to perform further actions!', color: '#ED4337', delay: 3000 });
+            handleToast('Login to perform further actions!', '#ED4337', 3000)
             return 0;
         }
         const data = {
@@ -41,9 +42,14 @@ function QuickAdd_Card({ product, filepath }) {
         axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/cart/add-to-cart`, data)
             .then((response) => {
                 setShow(true);
-                if (response.data.message === 'cart-quantity-updated') setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, color: '#72bf6a', delay: 1000 });
-                if (response.data.message === 'cart-product-added') setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Added to Cart</>, color: '#72bf6a', delay: 1000 });
-                // setToast({ text: `${product.name} Added to Cart`, color: '#72bf6a', delay: 1000 });
+                if (response.data.message === 'cart-quantity-updated') {
+                    setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, color: '#72bf6a', delay: 1000 });
+                    handleToast(<><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, '#72bf6a', 1000)
+                }
+                if (response.data.message === 'cart-product-added') {
+                    setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Added to Cart</>, color: '#72bf6a', delay: 1000 });
+                    handleToast(<><span className='text-decoration-underline'>{product.name}</span> Added to Cart</>, '#72bf6a', 1000)
+                }
                 console.log(response);
                 dispatch(fetchCart(user._id));
             })
@@ -51,6 +57,7 @@ function QuickAdd_Card({ product, filepath }) {
                 console.log(error);
                 setShow(true);
                 setToast({ text: error.response.data.message && error.response.data.message, color: '#ED4337', delay: 3000 });
+                handleToast(error.response.data.message && error.response.data.message, '#ED4337', 3000)
             })
 
     }
@@ -59,7 +66,8 @@ function QuickAdd_Card({ product, filepath }) {
 
     return (
         <div className="box">
-            <Toast className='position-fixed' style={{ position: 'fixed', top: '40px', right: '10px', zIndex: '999', backgroundColor: toast.color, fontWeight: 'bold' }}
+
+            <Toast className='position-fixed' style={{ position: 'fixed', top: '40px', right: '10px', zIndex: '99999', backgroundColor: toast.color, fontWeight: 'bold' }}
                 onClose={() => setShow(false)} show={show} delay={toast.delay} autohide>
                 <Toast.Body>{toast.text}</Toast.Body>
             </Toast>

@@ -513,7 +513,7 @@ const ViewCategory = () => {
                       </td>
                       <td>{index + 1}</td>
                       <td>{category.name}</td>
-                      <td>{category.parent_category.name}</td>
+                      <td>{category.parent_category && category.parent_category.name}</td>
                       <td>{category.slug}</td>
                       <td className="object-contain p-2">
                         {category.thumbnail ?
@@ -587,7 +587,7 @@ const ViewCategory = () => {
                   </td>
                   <td>{index + 1}</td>
                   <td>{category.name}</td>
-                  <td>{category.parent_category.name}</td>
+                  <td>{category.parent_category && category.parent_category.name}</td>
                   <td>{category.slug}</td>
                   <td className="object-contain p-2">
                     {category.thumbnail ?

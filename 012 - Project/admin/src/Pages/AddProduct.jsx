@@ -11,7 +11,7 @@ const AddProduct = () => {
   const [Sizes, setSizes] = useState([]);
   const [SelectedSizes, setSelectedSizes] = useState([]);
   const [SelectedColors, setSelectedColors] = useState([]);
-  const [keepStyleofReactSelect, setkeepStyleofReactSelect] = useState(false);
+  const [keepStyleofReactSelect, setkeepStyleofReactSelect] = useState(true);
   const [preIMGs, setpreIMGs] = useState({});
   const [isArray, setisArray] = useState(false);
 
@@ -394,7 +394,7 @@ const AddProduct = () => {
                 styles={keepStyleofReactSelect ? customStyles : ''}
               />
               <div className="my-2 flex ps-4">
-                <input className="cursor-pointer" onChange={() => setkeepStyleofReactSelect(!keepStyleofReactSelect)} id="swapReactSelectStyle" type="checkbox" />
+                <input className="cursor-pointer" defaultChecked={true} onChange={() => setkeepStyleofReactSelect(!keepStyleofReactSelect)} id="swapReactSelectStyle" type="checkbox" />
                 <label className="cursor-pointer px-2" for="swapReactSelectStyle">preview</label>
               </div>
             </div>

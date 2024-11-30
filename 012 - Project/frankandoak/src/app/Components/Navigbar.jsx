@@ -36,6 +36,7 @@ import { GoMail } from "react-icons/go";
 import { fetchProductCategories } from '@/redux/Slices/productCategorySlice';
 import { fetchParentCategories } from '@/redux/Slices/parentCategorySlice';
 import { fetchCart } from '@/redux/Slices/cartSlice';
+import QuickAdd_Card from './QuickAdd_Cards';
 
 
 
@@ -50,9 +51,14 @@ function Navigbar() {
 
     const [showCart, setShowCart] = useState(false);
     const [showSearch, setShowSearch] = useState(false);
-    const [searchText, setSearchText] = useState('');
+    const [showSearchResultBox, setshowSearchResultBox] = useState(false);
+    const [searchedProducts, setSearchProducts] = useState([]);
+    const [filepath, setfilepath] = useState('');
     // const handleCloseCart = () => setShowCart(false);
     // const handleShowCart = () => setShowCart(true);
+
+    const [toast, setToast] = useState({ text: '', color: '', delay: 0 });
+    const [showToast, setShowToast] = useState(false);
 
     const [showCartOnSmallScreen, setShowCartOnSmallScreen] = useState(false);
     const handleCloseCartOnSmallScreen = () => setShowCartOnSmallScreen(false);
@@ -104,11 +110,48 @@ function Navigbar() {
         window.location.reload();
     }
 
+    const handleToast = (text, color, delay) => {
+        setToast({ text, color, delay });
+        setShowToast(true);
+    }
+
+    const searchProducts = (e) => {
+        // console.log(e.key);
+        // console.log(e.target.value);
+        if (e.target.value == '') setshowSearchResultBox(false);
+        if (e.key === "Enter") {
+            setSearchProducts([]);
+            axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/product/search-products/${e.target.value}`)
+                .then((res) => {
+                    console.log(res);
+                    setSearchProducts(res.data.products);
+                    setfilepath(res.data.filepath);
+                    if (res.data.products.length > 0) {
+                        setshowSearchResultBox(true);
+                    }
+                    if (res.data.products.length == 0) {
+                        setshowSearchResultBox(false);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+
+        }
+    }
+
+    useEffect(() => {
+        if (!showSearch) setshowSearchResultBox(false);
+    }, [showSearch])
 
     return (
         <>
             <div className="Navbar">
-                <div className='web-view d-flex justify-content-between pe-4'>
+                <Toast className='position-fixed' style={{ position: 'fixed', top: '117px', right: '10px', zIndex: '99999', backgroundColor: toast.color, fontWeight: 'bold' }}
+                    onClose={() => setShowToast(false)} show={showToast} delay={toast.delay} autohide>
+                    <Toast.Body>{toast.text}</Toast.Body>
+                </Toast>
+                <div className='web-view position-relative d-flex justify-content-between pe-4'>
                     <div className="Menu">
                         <ul className='m-0'>
                             <li className='fs-4'><Link href="#" className="logo">Frank And Oak</Link></li>
@@ -145,14 +188,15 @@ function Navigbar() {
                             </div>
                         </nav>
 
-                        <ul className='m-0'>
+                        <ul className="m-0">
                             <li className='search d-flex align-items-center'>
-                                <input type="search" onChange={e => setSearchText(e.target.value)}
-                                    className={`form-control me-3 ${showSearch ? 'opacity-100' : 'opacity-0'}`}
+                                <input type="search" disabled={!showSearch} onKeyUp={searchProducts} onInput={(e) => { if (e.target.value === '') setshowSearchResultBox(false) }}
+                                    className={`form-control bg-white shadow-none me-3 ${showSearch ? 'opacity-100' : 'opacity-0'}`}
+
                                     style={{ width: `${showSearch ? '' : '0vw'}` }} placeholder='search products...'
                                 />
                                 <div className='' style={{ width: '30px' }}>
-                                    <CiSearch role="button"className='searchIcon' onClick={() => setShowSearch(!showSearch)} />
+                                    <CiSearch role="button" className='searchIcon' onClick={() => setShowSearch(!showSearch)} />
                                 </div>
                             </li>
                             <li className='position-relative'>
@@ -172,6 +216,13 @@ function Navigbar() {
                                 </Offcanvas>
                             </li>
                         </ul>
+                    </div>
+                    <div style={{ height: `${showSearchResultBox ? '' : '0vh'}`, zIndex: '9999' }} className={`search-result-box ${showSearchResultBox ? 'p-4' : 'p-0'} `} >
+                        {
+                            searchedProducts && searchedProducts.map((product) => (
+                                <QuickAdd_Card handleToast={handleToast} product={product} filepath={filepath} />
+                            ))
+                        }
                     </div>
                 </div>
                 <div className='mobile-view d-flex justify-content-between pe-4 flex-wrap-reverse'>

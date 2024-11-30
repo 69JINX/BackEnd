@@ -98,7 +98,8 @@ const {
 
 //Website ProductControllers
 const {
-    activeProductsForWebsite
+    activeProductsForWebsite,
+    searchProductsForWebsite
 } = require('./website/productControllers')
 const { activeProductCategoriesForWebsite } = require('./website/productCategoryControllers')
 const { activeParentCategoriesForWebsite } = require('./website/parentCategoryControllers')
@@ -134,7 +135,7 @@ module.exports = {
     activeProductCategoriesForWebsite,
 
     //Website Product Controllers
-    activeProductsForWebsite,
+    activeProductsForWebsite, searchProductsForWebsite,
 
     //Website AddToCart
     createCart, readCart, deleteCartProduct, updateProductQuantityInCart,

@@ -92,9 +92,6 @@ function page() {
                                 </div>
                             ))
                             }
-
-
-
                         </div>
                     </div>
                 </div>

@@ -479,7 +479,7 @@ const ViewProduct = () => {
               </thead>
               <tbody>
                 {
-                  DeletedProducts.map((product, index) => (
+                  DeletedProducts && DeletedProducts.map((product, index) => (
                     <tr className="border-b">
                       <td>
                         <input value={product._id} checked={isChildSelectCheckedInBin[index]} onChange={(e) => handleChildCheckboxInBin(e, index)}
@@ -494,7 +494,7 @@ const ViewProduct = () => {
                         {product.parent_category.name}
                       </td>
                       <td className="w-[100px] p-2">
-                        {product.product_category.name}
+                        {product.product_category && product.product_category.name}
                       </td>
                       <td className="object-contain cursor-pointer"
                         onClick={() => setDetailesOpen(true)} data-tooltip-id="details-tooltip" data-tooltip-content='Click for Details'>
@@ -565,7 +565,7 @@ const ViewProduct = () => {
           </thead>
           <tbody>
             {
-              Products.map((product, index) => (
+              Products && Products.map((product, index) => (
                 <tr className="border-b text-center">
                   <td>
                     <input value={product._id} checked={isChildSelectChecked[index]} onChange={(e) => handleChildCheckbox(e, index)}
@@ -581,7 +581,7 @@ const ViewProduct = () => {
                     {product.parent_category.name}
                   </td>
                   <td className="w-[130px] p-2">
-                    {product.product_category.name}
+                    {product.product_category && product.product_category.name}
                   </td>
                   <td className="object-contain text-center cursor-pointer"
                     onClick={() => setDetailesOpen(true)} data-tooltip-id={`details-tooltip-of-${product._id}`}>
