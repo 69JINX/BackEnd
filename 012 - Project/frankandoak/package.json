@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 8080",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start -p 8080",
+    "lint": "next lint",
+    "_comment": "'-p 8080'  so i doesn't open in the 3000 by default, because there might be another project running on port 3000"
   },
   "dependencies": {
     "@next/font": "^14.2.15",

@@ -1,3 +1,4 @@
+const CartModel = require("../../models/cartModel");
 const parentCategoryModel = require("../../models/parentCategoryModel");
 const productCategoryModel = require("../../models/productCategoryModel");
 const productModel = require("../../models/productModel");
@@ -165,6 +166,7 @@ const permanentDeleteParentCategory = async (req, res) => {
         })
 
 
+        await CartModel.deleteMany({ product: { $in: products } });
         await productModel.deleteMany({ parent_category: req.params._id })
         await productCategoryModel.deleteMany({ parent_category: req.params._id })
         await parentCategoryModel.deleteOne(req.params);
@@ -197,8 +199,50 @@ const recoverParentCategories = async (req, res) => {
 
 const permanentDeleteParentCategories = async (req, res) => {
     try {
+
+        const products = await productModel.find({ parent_category: { $in: req.body.checkedCategoriesIDsInBin } });
+        const productCategories = await productCategoryModel.find({ parent_category: { $in: req.body.checkedCategoriesIDsInBin } });
+
+        // products.map((product) => {
+        //     if (product.thumbnail) {
+        //         if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.thumbnail))) {
+        //             fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.thumbnail));
+        //         }
+        //     }
+
+        //     if (product.image_on_hover) {
+        //         if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.image_on_hover))) {
+        //             fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.image_on_hover));
+        //         }
+        //     }
+
+        //     if (product.gallery) {
+        //         product.gallery.map((img) => {
+        //             if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) {
+        //                 fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img));
+        //             }
+        //         })
+        //     }
+        // })
+
+        // productCategories.map((productCategory) => {
+        //     if (productCategory.thumbnail) {
+        //         if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail))) {
+        //             fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail));
+        //         }
+        //     }
+        // })
+        console.log('checkedCategoriesIDsInBin=', req.body.checkedCategoriesIDsInBin);
+
+        console.log('products=>', products);
+        console.log('Product Categories=>', productCategories);
+
+        await CartModel.deleteMany({ product: { $in: products } });
+        await productModel.deleteMany({ parent_category: { $in: req.body.checkedCategoriesIDsInBin } });
+        await productCategoryModel.deleteMany({ parent_category: { $in: req.body.checkedCategoriesIDsInBin } });
         await parentCategoryModel.deleteMany({ _id: { $in: req.body.checkedCategoriesIDsInBin } });
-        res.status(200).json({ message: 'Permanetly Deleted Successfully' })
+
+        res.status(200).json({ message: 'Permanetly Deleted Successfully', products, productCategories })
     }
     catch (error) {
         console.log(error);

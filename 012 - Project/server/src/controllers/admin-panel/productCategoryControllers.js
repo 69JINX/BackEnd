@@ -2,6 +2,7 @@ const path = require("path");
 const productCategoryModel = require("../../models/productCategoryModel");
 const fs = require('fs');
 const productModel = require("../../models/productModel");
+const CartModel = require("../../models/cartModel");
 
 const createProductCategory = async (req, res) => {
     try {
@@ -221,8 +222,10 @@ const permanentDeleteProductCategory = async (req, res) => {
             }
         })
 
+        console.log(products);
 
-        await productModel.deleteMany({ product_category: req.params._id })
+        await CartModel.deleteMany({ product: { $in: products } });
+        await productModel.deleteMany({ product_category: req.params._id });
         await productCategoryModel.deleteOne(req.params);
 
         res.status(200).json({ message: 'Permanetly Deleted Successfully' })
@@ -253,18 +256,43 @@ const recoverProductCategories = async (req, res) => {
 
 const permanentDeleteProductCategories = async (req, res) => {
     try {
-
+        const products = await productModel.find({ product_category: { $in: req.body.checkedCategoriesIDsInBin } });
         const productCategories = await productCategoryModel.find({ _id: { $in: req.body.checkedCategoriesIDsInBin } });
+
+        products.map((product) => {
+            if (product.thumbnail) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.thumbnail))) {
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.thumbnail));
+                }
+            }
+
+            if (product.image_on_hover) {
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.image_on_hover))) {
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', product.image_on_hover));
+                }
+            }
+
+            if (product.gallery) {
+                product.gallery.map((img) => {
+                    if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product', img))) {
+                        fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product', img));
+                    }
+                })
+            }
+        })
 
         productCategories.map((productCategory) => {
             if (productCategory.thumbnail) {
-                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail))) { // checking if old file exists || __dirname giving path of this current productCategoryController.js file but not the path of project root directory, so used process.cwd() because it is giving path of root directory
-                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail)); // deleting old file if it exists
+                if (fs.existsSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail))) {
+                    fs.unlinkSync(path.join(process.cwd(), 'src', 'uploads', 'product-category', productCategory.thumbnail));
                 }
             }
         })
 
+        await CartModel.deleteMany({ product: { $in: products } });
+        await productModel.deleteMany({ product_category: { $in: req.body.checkedCategoriesIDsInBin } });
         await productCategoryModel.deleteMany({ _id: { $in: req.body.checkedCategoriesIDsInBin } });
+        
         res.status(200).json({ message: 'Permanetly Deleted Successfully' })
     }
     catch (error) {

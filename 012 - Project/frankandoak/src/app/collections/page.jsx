@@ -52,7 +52,7 @@ function page() {
 
     const filterProductByCategory = (e) => {
         console.log(e.target.dataset.parent_category);
-        
+
         if (e.target.checked) {
             const filtered = fetchedProducts.data.filter(product =>
                 product.product_category._id == e.target.value
@@ -117,7 +117,15 @@ function page() {
                                 <span></span>
                             </div>
                         </div>
+                        {
+                            fetchedProducts.data && fetchedProducts.data.length == 0 ?
+                                <div className='fs-3 bg text-danger fw-bold text-center'>
+                                    No Product Found
+                                </div>
+                                : ''
+                        }
                         <div className='products d-flex flex-wrap gap-4 overflow-y-scroll p-3'>
+
                             {products && products.map((product) => (
                                 <div key={product._id}>
                                     <QuickAdd_Card product={product} filepath={filepath} />

@@ -40,7 +40,7 @@ const ViewProduct = () => {
         setParentCategories(response.data.data);
         setcheckedProductsIDs([]);
         setcheckedProductsIDsInBin([]);
-        
+
       })
       .catch((error) => {
         console.log(error);
