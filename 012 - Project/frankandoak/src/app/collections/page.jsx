@@ -17,6 +17,8 @@ function page() {
     const [parentCategories, setparentCategories] = useState([]);
     const [productCategories, setproductCategories] = useState([]);
     const [loader, setLoader] = useState(true);
+    const [filteredProducts, setfilteredProducts] = useState([]);
+    const [checkedCheckboxes, setcheckedCheckboxes] = useState([]);
 
     const fetchedProducts = useSelector((state) => state.products.value);
     const fetchedProductCategories = useSelector((state) => state.productCategories.value);
@@ -39,6 +41,36 @@ function page() {
         setparentCategories(fetchedParentCategories.data);
         console.log('fetchedParentCategories => ', fetchedParentCategories);
     }, [fetchedParentCategories])
+
+    useEffect(() => {
+        console.log('Filtered Products =>', filteredProducts);
+        setProducts(filteredProducts);
+        if (filteredProducts.length == 0) {
+            setProducts(fetchedProducts.data);
+        }
+    }, [filteredProducts])
+
+    const filterProductByCategory = (e) => {
+        console.log(e.target.dataset.parent_category);
+        
+        if (e.target.checked) {
+            const filtered = fetchedProducts.data.filter(product =>
+                product.product_category._id == e.target.value
+                &&
+                product.parent_category._id == e.target.dataset.parent_category
+            );
+            setfilteredProducts([...filteredProducts, ...filtered]);
+        }
+        if (!e.target.checked) {
+            setfilteredProducts(prevItems => prevItems.filter(product =>
+                !(
+                    product.product_category._id == e.target.value
+                    &&
+                    product.parent_category._id == e.target.dataset.parent_category
+                )
+            ));
+        }
+    }
 
 
     return (
@@ -63,7 +95,7 @@ function page() {
                                         <ul className='ms-2 list-unstyled'>
                                             {productCategories && productCategories.map((productCategory, index) => (
                                                 productCategory.parent_category.name === parentCategory.name ?
-                                                    <li key={index}><input role='button' type="checkbox" className='mx-2' />{productCategory.name}</li>
+                                                    <li key={index}><input role='button' onClick={filterProductByCategory} type="checkbox" value={productCategory._id} data-parent_category={productCategory.parent_category._id} className='mx-2' />{productCategory.name}</li>
                                                     : ''
                                             ))
                                             }
