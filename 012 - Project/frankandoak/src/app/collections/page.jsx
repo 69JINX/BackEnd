@@ -117,13 +117,6 @@ function page() {
                                 <span></span>
                             </div>
                         </div>
-                        {
-                            fetchedProducts.data && fetchedProducts.data.length == 0 ?
-                                <div className='fs-3 bg text-danger fw-bold text-center'>
-                                    No Product Found
-                                </div>
-                                : ''
-                        }
                         <div className='products d-flex flex-wrap gap-4 overflow-y-scroll p-3'>
 
                             {products && products.map((product) => (

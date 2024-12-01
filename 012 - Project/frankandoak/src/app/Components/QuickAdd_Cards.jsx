@@ -43,15 +43,15 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
             .then((response) => {
                 setShow(true);
                 if (response.data.message === 'cart-quantity-updated') {
+                    dispatch(fetchCart(user._id));
                     setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, color: '#72bf6a', delay: 1000 });
                     handleToast(<><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, '#72bf6a', 1000)
                 }
                 if (response.data.message === 'cart-product-added') {
+                    dispatch(fetchCart(user._id));
                     setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Added to Cart</>, color: '#72bf6a', delay: 1000 });
                     handleToast(<><span className='text-decoration-underline'>{product.name}</span> Added to Cart</>, '#72bf6a', 1000)
                 }
-                console.log(response);
-                dispatch(fetchCart(user._id));
             })
             .catch((error) => {
                 console.log(error);
@@ -92,7 +92,7 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
             <div className='details'>
                 <ul className='m-0 list-unstyled p-0'>
                     <li className='title fw-bold my-2'>{product.name}</li>
-                    <li className='price fs-6 my-2 d-flex'><div>{`₹${product.price}`}</div>&nbsp;<div className='text-decoration-line-through'>{`₹${product.mrp}`}</div></li>
+                    <li className='price fs-6 my-2 d-flex ms-2'><div>{`₹${product.price}`}</div>&nbsp;<div className='text-decoration-line-through text-danger ms-3'>{`₹${product.mrp}`}</div></li>
                     <li className='color fw-bold'>{product.color && product.color.length} color</li>
                     <li className='show_color d-flex flex-wrap gap-2'>
                         {product.color && product.color.map((color) => (
