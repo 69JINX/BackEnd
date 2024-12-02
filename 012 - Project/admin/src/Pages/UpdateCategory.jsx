@@ -12,7 +12,7 @@ const UpdateCategory = () => {
   const nav = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:4000/api/admin-panel/parent-category/read-category/${id}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/read-category/${id}`)
       .then((response) => {
         setparentCategory(response.data.data[0]);
       })
@@ -22,7 +22,7 @@ const UpdateCategory = () => {
   }, [])
 
   const handleUpdate = () => {
-    axios.put(`http://localhost:4000/api/admin-panel/parent-category/update-category/${id}`, parentCategory)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/parent-category/update-category/${id}`, parentCategory)
       .then((response) => {
         console.log(response.data);
         nav('/dashboard/category/view-category');

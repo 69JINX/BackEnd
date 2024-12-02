@@ -13,7 +13,7 @@ const UpdateSizes = () => {
   const nav = useNavigate();
 
   useEffect(() => {
-    axios.get(`http://localhost:4000/api/admin-panel/size/read-size/${id}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/read-size/${id}`)
       .then((response) => {
         setSize(response.data.data[0]);
       })
@@ -23,7 +23,7 @@ const UpdateSizes = () => {
   }, [])
 
   const handleUpdate = () => {
-    axios.put(`http://localhost:4000/api/admin-panel/size/update-size/${id}`, Size)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/size/update-size/${id}`, Size)
       .then((response) => {
         console.log(response.data);
         nav('/dashboard/size/view-sizes');

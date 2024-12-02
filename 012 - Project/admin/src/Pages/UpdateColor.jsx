@@ -51,7 +51,7 @@ const UpdateColor = () => {
 
 
   useEffect(() => {
-    axios.get(`http://localhost:4000/api/admin-panel/color/read-color/${id}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/read-color/${id}`)
       .then((response) => {
         setColor(response.data.data[0]);
         setSelectedColor(response.data.data[0].code);
@@ -69,7 +69,7 @@ const UpdateColor = () => {
   const handleUpdate = () => {
     console.log(Color);
     console.log(selectedColor);
-    axios.put(`http://localhost:4000/api/admin-panel/color/update-color/${id}`, Color)
+    axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/update-color/${id}`, Color)
       .then((response) => {
         console.log(response.data);
         nav('/dashboard/color/view-colors');
