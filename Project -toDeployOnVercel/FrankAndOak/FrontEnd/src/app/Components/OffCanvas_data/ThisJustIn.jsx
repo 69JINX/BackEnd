@@ -8,7 +8,7 @@ function ThisJustIn() {
         <>
             <Accordion alwaysOpen>
                 <Accordion.Item eventKey="0">
-                    <Accordion.Header>Women's New Arrivals</Accordion.Header>
+                    <Accordion.Header>Women&apos;s New Arrivals</Accordion.Header>
                     <Accordion.Body>
                         <ul className='list-unstyled'>
                             <li><Link href="#">Shop All</Link></li>
@@ -22,7 +22,7 @@ function ThisJustIn() {
                     </Accordion.Body>
                 </Accordion.Item>
                 <Accordion.Item eventKey="1">
-                    <Accordion.Header>Men's New Arrivals</Accordion.Header>
+                    <Accordion.Header>Men&apos;s New Arrivals</Accordion.Header>
                     <Accordion.Body>
                         <ul className='list-unstyled'>
                             <li><Link href="#">Shop All</Link></li>
@@ -37,10 +37,10 @@ function ThisJustIn() {
             </Accordion>
             <div className="ThisJustIn-images images m-3">
                 <div className="image1 me-5 position-relative">
-                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Women's New Arrivals</div>
+                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Women&apos;s New Arrivals</div>
                 </div>
                 <div className="image2 mt-4 position-relative">
-                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Men's New Arrivals</div>
+                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Men&apos;s New Arrivals</div>
                 </div>
             </div>
         </>

@@ -66,11 +66,11 @@ function OffCanvas_data() {
                         <ThisJustIn />
                     </div>
                     <div className='OffCanvas-Women' style={{ display: showWomen }}>
-                        <span>Women's home</span>
+                        <span>Women&apos;s home</span>
                         <Women />
                     </div>
                     <div className='OffCanvas-Men' style={{ display: showMen }}>
-                        <span>Men's home</span>
+                        <span>Men&apos;s home</span>
                         <Men />
                     </div>
                     <div className='OffCanvas-OurStory' style={{ display: showOurStory }}>
@@ -96,7 +96,7 @@ function OffCanvas_data() {
                                 <Accordion.Body>
                                     <ul className='list-unstyled'>
                                         <li><Link href="#">Gift Cards</Link></li>
-                                        <li><Link href="#">Frank's club</Link></li>
+                                        <li><Link href="#">Frank&apos;s club</Link></li>
                                         <li><Link href="#">Give$15, Get$15</Link></li>
                                         <li><Link href="#">Affiliate</Link></li>
                                         <li><Link href="#">Work with us</Link></li>

@@ -11,7 +11,7 @@ function ThisJustIn() {
         <div className='DropDown ThisJustIn-navdropdown fw-medium m-4 d-flex mg'>
             <div>
                 <ul className='list-unstyled pe-5'>
-                    <li><span className='heading mb-4 d-block fs-6 fw-medium'>Women's New Arrival</span></li>
+                    <li><span className='heading mb-4 d-block fs-6 fw-medium'>Women&apos;s New Arrival</span></li>
                     <li><Link href="/collections">Shop All</Link></li>
                     <li><Link href="/collections">Tops</Link></li>
                     <li><Link href="/collections">Bottoms</Link></li>
@@ -23,7 +23,7 @@ function ThisJustIn() {
             </div>
             <div>
                 <ul className='list-unstyled ps-5 pe-5 me-5'>
-                    <li><span className='heading mb-4 d-block fs-6 fw-medium'>Men's New Arrival</span></li>
+                    <li><span className='heading mb-4 d-block fs-6 fw-medium'>Men&apos;s New Arrival</span></li>
                     <li><Link href="/collections">Shop All</Link></li>
                     <li><Link href="/collections">Tops</Link></li>
                     <li><Link href="/collections">Bottoms</Link></li>
@@ -35,10 +35,10 @@ function ThisJustIn() {
 
             <div className="images">
                 <div className="image1 me-5 position-relative">
-                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Women's New Arrivals</div>
+                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Women&apos;s New Arrivals</div>
                 </div>
                 <div className="image2  position-relative">
-                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Men's New Arrivals</div>
+                    <div className="position-absolute bottom-0 p-3 text-white fs-5 ">Men&apos;s New Arrivals</div>
                 </div>
             </div>
         </div>

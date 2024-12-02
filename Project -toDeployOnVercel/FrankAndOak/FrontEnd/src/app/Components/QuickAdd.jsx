@@ -82,7 +82,7 @@ function QuickAdd() {
 
     return (
         <>
-            <Carousel className='carousel' interval={null}>  
+            <Carousel className='carousel' interval={null}>
                 {products && products.reduce((result, _, index, array) => { // All this calculation just to show 4 QuickCards in a single <Carousel.Item>, because only one QuickCard was showing on the screen at a time
                     // Group items into chunks of 3 (or desired number)
                     if (index % 4 === 0) {
@@ -92,8 +92,8 @@ function QuickAdd() {
                 }, []).map((chunk, idx) => (
                     <Carousel.Item key={idx}>
                         <div className="d-flex m-4 justify-content-between">
-                            {chunk.map((item) => (
-                                <QuickAdd_Card product={item} filepath={filepath} />
+                            {chunk.map((item, index) => (
+                                <QuickAdd_Card key={index} product={item} filepath={filepath} />
                             ))}
                         </div>
                     </Carousel.Item>

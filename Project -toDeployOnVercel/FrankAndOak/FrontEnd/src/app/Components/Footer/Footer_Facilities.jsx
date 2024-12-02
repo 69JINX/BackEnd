@@ -24,7 +24,7 @@ function Footer_Facilities() {
                     <div className="icon">
                         <VscActivateBreakpoints size={40}/>
                     </div>
-                    <div className='fs-5 my-3'>Frank's Club</div>
+                    <div className='fs-5 my-3'>Frank&apos;s Club</div>
                     <div style={{fontSize:'13px'}}>Earn points and get rewards.</div>
                 </div>
                 <div className="Buy-Pay">

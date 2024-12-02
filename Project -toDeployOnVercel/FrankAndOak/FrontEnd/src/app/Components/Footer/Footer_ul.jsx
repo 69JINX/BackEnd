@@ -19,7 +19,7 @@ function Discover_li() {
         <>
             <ul className='list-unstyled'>
                 <li className='py-2 fw-bold' style={{ fontSize: '13px' }}>Gift Cards</li>
-                <li className='py-2 fw-bold' style={{ fontSize: '13px' }}>Frank's Club</li>
+                <li className='py-2 fw-bold' style={{ fontSize: '13px' }}>Frank&apos;s Club</li>
                 <li className='py-2 fw-bold' style={{ fontSize: '13px' }}>Give $15, Get $15</li>
                 <li className='py-2 fw-bold' style={{ fontSize: '13px' }}>Affiliate</li>
                 <li className='py-2 fw-bold' style={{ fontSize: '13px' }}>Blog</li>

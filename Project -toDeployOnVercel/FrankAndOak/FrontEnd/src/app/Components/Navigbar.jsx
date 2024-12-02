@@ -219,8 +219,8 @@ function Navigbar() {
                     </div>
                     <div style={{ height: `${showSearchResultBox ? '' : '0vh'}`, zIndex: '9999' }} className={`search-result-box ${showSearchResultBox ? 'p-4' : 'p-0'} `} >
                         {
-                            searchedProducts && searchedProducts.map((product) => (
-                                <QuickAdd_Card handleToast={handleToast} product={product} filepath={filepath} />
+                            searchedProducts && searchedProducts.map((product, index) => (
+                                <QuickAdd_Card key={index} handleToast={handleToast} product={product} filepath={filepath} />
                             ))
                         }
                     </div>
@@ -362,7 +362,7 @@ function LogInModal(props) {
                     </div>
                     <div className='Offers d-flex justify-content-around mb-4 text-center'>
                         <div>
-                            <div>Frank's Club</div>
+                            <div>Frank&apos;s Club</div>
                             <div>Earn points, get rewards</div>
                         </div>
                         <div>
@@ -402,7 +402,7 @@ function LogInModal(props) {
                         </div> */}
                         <hr />
                         <div className='text-center'>
-                            Don't have an account?
+                            Don&apos;t have an account?
                             <span role='button' onClick={() => { props.onHide(); props.onSignUp() }} className='text-decoration-underline'>
                                 &nbsp;Sign up &#8594;
                             </span>
@@ -622,7 +622,7 @@ function SignUpModal(props) {
                         <span role='button' onClick={() => { props.onHide(); props.onLogin() }} className='text-decoration-underline'>
                             &nbsp;Log in &#8594;
                         </span>
-                    </div>  
+                    </div>
                     <div className='px-4'>
                         <form>
                             <div><input name='first_name' type='text' value={formData.first_name} onChange={handleInput} className='w-100 my-2 p-2' placeholder='First Name' /></div>
