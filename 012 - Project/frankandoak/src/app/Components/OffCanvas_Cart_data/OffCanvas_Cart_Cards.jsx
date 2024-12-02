@@ -78,10 +78,10 @@ function OffiCanvas_Cart_Cards({ cartProduct, filepath }) {
                     <div className='text-black-50'>
                         Size : {cartProduct.size.name}
                     </div>
-                    <div className='mt-2'>
+                    {/* <div className='mt-2'>
                         <Link href=""><span className={`${Signika.className} text-decoration-underline`}>Move to Wishlist</span></Link>
                         <span className='px-2'><FaRegHeart color='black' /></span>
-                    </div>
+                    </div> */}
                     <div className='m-2'>
                         <FaRegCircleDot role='button' color={cartProduct.color.code} size={20} />
                     </div>

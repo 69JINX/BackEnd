@@ -205,7 +205,7 @@ function Navigbar() {
                                 <LogInModal show={LoginModalShow} onHide={() => setLoginModalShow(false)} onSignUp={() => setSignUpModalShow(true)} />
                                 <SignUpModal show={SignUpModalShow} onHide={() => setSignUpModalShow(false)} onLogin={() => setLoginModalShow(true)} />
                             </li>
-                            <li><CiHeart /></li>
+                            {/* <li><CiHeart /></li> */}
                             <li role='button' className='position-relative'>
                                 <IoBagHandleOutline onClick={() => setShowCart(true)} />
                                 <div className='position-absolute top-0 start-50 fs-6 ms-2'>
@@ -386,8 +386,8 @@ function LogInModal(props) {
                                 Log In
                             </button></div>
                         </form>
-                        <hr />
-                        <div>
+                        {/* <hr /> */}
+                        {/* <div>
                             <div className='text-center pb-2'>Social Login</div>
                             <div className='d-flex justify-content-around'>
                                 <div role='button' className='border border-2 border-black p-2 text-center'>
@@ -399,7 +399,7 @@ function LogInModal(props) {
                                     <span className='ms-1'>Sign in with Google</span>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                         <hr />
                         <div className='text-center'>
                             Don't have an account?
@@ -622,7 +622,7 @@ function SignUpModal(props) {
                         <span role='button' onClick={() => { props.onHide(); props.onLogin() }} className='text-decoration-underline'>
                             &nbsp;Log in &#8594;
                         </span>
-                    </div>
+                    </div>  
                     <div className='px-4'>
                         <form>
                             <div><input name='first_name' type='text' value={formData.first_name} onChange={handleInput} className='w-100 my-2 p-2' placeholder='First Name' /></div>
@@ -660,7 +660,7 @@ function SignUpModal(props) {
                                 </button>
                             </div>
                         </form>
-                        <hr />
+                        {/* <hr />
                         <div>
                             <div className='text-center pb-2'>Social SignUp</div>
                             <div className='d-flex justify-content-around'>
@@ -673,8 +673,8 @@ function SignUpModal(props) {
                                     <span className='ms-1'>Sign in with Google</span>
                                 </div>
                             </div>
-                        </div>
-                        <hr />
+                        </div> */}
+                        {/* <hr /> */}
                     </div>
                 </div>
             </Modal.Body>

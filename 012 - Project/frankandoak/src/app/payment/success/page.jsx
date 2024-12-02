@@ -22,8 +22,9 @@ function PaymentSuccess() {
                         <div class="message-box _success">
                             <i class="fa fa-check-circle" aria-hidden="true"><FaCheckCircle color={'green'} /></i>
                             <h2> Your payment was successful </h2>
-                            <p> Thank you for your payment. we will <br />
-                                be in contact with more details shortly </p>
+                            <p> Thank you for your payment. <br />
+                                You will be shortly contacted on your <br />
+                                provided mobile number by our team for deliver of your products </p>
                         </div>
                     </div>
                 </div>

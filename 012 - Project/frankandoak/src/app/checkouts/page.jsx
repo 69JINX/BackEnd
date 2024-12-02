@@ -159,6 +159,7 @@ function page() {
                 loadStripe(`${process.env.NEXT_PUBLIC_STRIPE_KEY}`)
                     // loadStripe('pk_test_51LiyTNSH4QsKt7gApjEgxNySurOKQbOlLuc0XxwsqJek8ItuUyPQLIwIThhZ7Q4Ut7dYzWkrlg15v5kgV2opUJF6002wEvois3')
                     .then((res) => {
+                        res
                         setLoader((prev) => ({ ...prev, loadingStripePage: false }));
                         res.redirectToCheckout({
                             sessionId: response.data.session.id,
