@@ -132,7 +132,7 @@ const ViewColor = () => {
     }).then((result) => {
       if (result.isConfirmed) {
 
-        axios.put(`http://localhost:4000/api/admin-panel/color/delete-color/${id}`)
+        axios.put(`${process.env.REACT_APP_API_URL}/api/admin-panel/color/delete-color/${id}`)
           .then((response) => {
             console.log(response.data);
             fetchColor();
@@ -175,7 +175,7 @@ const ViewColor = () => {
       }).then((result) => {
         if (result.isConfirmed) {
 
-          axios.put('http://localhost:4000/api/admin-panel/color/delete-colors', { checkedColorsIDs })
+          axios.put('${process.env.REACT_APP_API_URL}/api/admin-panel/color/delete-colors', { checkedColorsIDs })
             .then((response) => {
               console.log(response.data);
               fetchColor();
