@@ -11,7 +11,7 @@ import { fetchUserData } from '@/redux/Slices/userSlice'
 import { fetchCart } from '@/redux/Slices/cartSlice'
 import { loadStripe } from '@stripe/stripe-js'
 
-function page() {
+function Checkout() {
 
     const [countries, setCountries] = useState([]);
     const [states, setStates] = useState([]);
@@ -357,4 +357,4 @@ function page() {
     )
 }
 
-export default page
+export default Checkout

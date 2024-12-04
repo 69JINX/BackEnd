@@ -225,7 +225,47 @@ function Navigbar() {
                         }
                     </div>
                 </div>
-                <div className='mobile-view d-flex justify-content-between pe-4 flex-wrap-reverse'>
+                <div className='mobile-view d-flex  flex-row justify-content-between pe-4 flex-wrap-reverse'>
+                <div className="controls d-flex fs-3 mb-2">
+                        <nav>
+                            <div className={`menu smallscrn-menu ${profileDropDown ? 'active' : ''}`}>
+                                {userData ?
+                                    <ul>
+                                        <li><FaRegCircleUser size={20} /><span>{userData.first_name} {userData.last_name}</span></li>
+                                        <li><GoMail size={20} /><span>{userData.email}</span></li>
+                                    </ul> : ''}
+                                <div role='button' className='logout-btn' onClick={logOut}>Sign Out</div>
+                            </div>
+                        </nav>
+                        <ul className='m-0'>
+                            <li className='search d-flex align-items-center'>
+
+                                <div className='' style={{ width: '30px' }}>
+                                    <CiSearch role="button" className='searchIcon' onClick={() => setShowSearch(!showSearch)} />
+                                </div>
+                            </li>
+                            <li className='position-relative'>
+                                <PiUserCircle role='button' id="PiUserCircle" onClick={checkIfLoggedIn} />
+                                <div className='userProfile position-absolute'></div>
+                                <LogInModal show={LoginModalShow} onHide={() => setLoginModalShow(false)} onSignUp={() => setSignUpModalShow(true)} />
+                                <SignUpModal show={SignUpModalShow} onHide={() => setSignUpModalShow(false)} onLogin={() => setLoginModalShow(true)} />
+                            </li>
+                            <li role='button' className='position-relative'>
+                                <IoBagHandleOutline onClick={() => setShowCart(true)} />
+                                <div className='position-absolute top-0 start-50 fs-6 ms-2'>
+                                    {cart && cart.length}
+                                </div>
+                                <Offcanvas style={{ width: `${window.innerWidth<500?'80vw':'35vw'}` }} placement='end' show={showCart} onHide={() => setShowCart(false)}>
+                                    <OffCanvas_Cart />
+                                </Offcanvas>
+                            </li>
+                        </ul>
+                        <input type="search" disabled={!showSearch} onKeyUp={searchProducts} onInput={(e) => { if (e.target.value === '') setshowSearchResultBox(false) }}
+                            className={`form-control bg-white shadow-none me-3 ${showSearch ? 'opacity-100' : 'opacity-0'}`}
+
+                            style={{ width: `${showSearch ? '200px' : '0vw'}` }} placeholder='search products...'
+                        />
+                    </div>
                     <div className="Menu">
                         <ul className='m-0 d-flex align-items-center'>
                             <li >
@@ -237,17 +277,14 @@ function Navigbar() {
                             <li className='fs-4 fw-bold'><Link href="#" className="logo">Frank And Oak</Link></li>
                         </ul>
                     </div>
-                    <div className="controls fs-3">
-                        <ul className='m-0'>
-                            <li><CiSearch /></li>
-                            <li><PiUserCircle /></li>
-                            <li><CiHeart /></li>
-                            <li role='button'>
-                                <IoBagHandleOutline onClick={() => setShowCartOnSmallScreen(true)} />
-                                <Offcanvas style={{ width: '60vw' }} placement='end' show={showCartOnSmallScreen} onHide={() => setShowCartOnSmallScreen(false)}>
-                                    <OffCanvas_Cart />
-                                </Offcanvas></li>
-                        </ul>
+                    
+
+                    <div style={{ height: `${showSearchResultBox ? '' : '0vh'}`, zIndex: '9999' }} className={`search-result-box ${showSearchResultBox ? 'p-4' : 'p-0'} `} >
+                        {
+                            searchedProducts && searchedProducts.map((product, index) => (
+                                <QuickAdd_Card key={index} handleToast={handleToast} product={product} filepath={filepath} />
+                            ))
+                        }
                     </div>
                 </div>
             </div>

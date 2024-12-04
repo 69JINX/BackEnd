@@ -14,6 +14,7 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
     const [Bg_img, setBg_img] = useState(filepath + product.thumbnail);
     const [selectedColor, setSelectedColor] = useState(product.color && product.color[0]._id);
     const [toast, setToast] = useState({ text: '', color: '', delay: 0 });
+    const [showLoader, setShowLoader] = useState(false);
 
     const [show, setShow] = useState(false);
 
@@ -21,10 +22,12 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
     const dispatch = useDispatch();
 
     const add_To_Card = (e) => {
+        setShowLoader(true);
         dispatch(fetchUserData());
         console.log('use addto card', user);
         setShow(true);
         if ((JSON.stringify(user) === "{}")) {
+            setShowLoader(false);
             setToast({ text: 'Login to perform further actions!', color: '#ED4337', delay: 3000 });
             handleToast('Login to perform further actions!', '#ED4337', 3000)
             return 0;
@@ -42,6 +45,7 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
         axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/cart/add-to-cart`, data)
             .then((response) => {
                 setShow(true);
+                setShowLoader(false);
                 if (response.data.message === 'cart-quantity-updated') {
                     dispatch(fetchCart(user._id));
                     setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, color: '#72bf6a', delay: 1000 });
@@ -54,6 +58,7 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
                 }
             })
             .catch((error) => {
+                setShowLoader(false);
                 console.log(error);
                 setShow(true);
                 setToast({ text: error.response.data.message && error.response.data.message, color: '#ED4337', delay: 3000 });
@@ -65,8 +70,12 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
 
 
     return (
-        <div className="box">
+        <div className="box position-relative">
+            <div className={`w-100 h-100 position-absolute z-3 top-0 start-0 bg-black opacity-25 ${showLoader ? '' : 'd-none'}`}>
+                <div class="spinner-border position-absolute start-50 top-50 text-info" role="status">
 
+                </div>
+            </div>
             <Toast className='position-fixed' style={{ position: 'fixed', top: '40px', right: '10px', zIndex: '99999', backgroundColor: toast.color, fontWeight: 'bold' }}
                 onClose={() => setShow(false)} show={show} delay={toast.delay} autohide>
                 <Toast.Body>{toast.text}</Toast.Body>

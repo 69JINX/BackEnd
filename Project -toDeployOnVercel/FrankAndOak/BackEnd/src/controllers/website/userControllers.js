@@ -27,7 +27,7 @@ const sendOtpOnUserRegistration = async (req, res) => {
             const info = await transporter.sendMail({
                 from: '"Frank and Oak" <frankandoak@gmail.com>',
                 to: req.body.email,
-                subject: 'OTP for Email Change for Frank and Oak',
+                subject: 'OTP for Registration in Frank and Oak',
                 text: ``, // can't add html, only plan text
                 body: `<i><b>Your OTP is : ${otp}</b></i>`, // doesn't show anywhere in the mail  // mail with html attribute, but if included, will overwrite the text attribute
                 html: `

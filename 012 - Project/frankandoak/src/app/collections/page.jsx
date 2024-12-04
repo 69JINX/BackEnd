@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 
 const notoSans = Noto_Sans({ subsets: ['latin-ext'], weight: ['400'] });
 
-function page() {
+function Collection() {
 
     const [products, setProducts] = useState([]);
     const [filepath, setFilepath] = useState('');
@@ -134,4 +134,4 @@ function page() {
     )
 }
 
-export default page
+export default Collection

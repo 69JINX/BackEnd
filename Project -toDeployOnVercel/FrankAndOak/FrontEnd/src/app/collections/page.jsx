@@ -23,7 +23,14 @@ function Collection() {
     const fetchedProducts = useSelector((state) => state.products.value);
     const fetchedProductCategories = useSelector((state) => state.productCategories.value);
     const fetchedParentCategories = useSelector((state) => state.parentCategories.value);
+    const [windowWidth, setWindowWidth] = useState(false)
 
+    useEffect(() => {
+        console.log('Window Size=>',window.innerWidth);
+        if (window.innerWidth < 500) {
+            setWindowWidth(true);
+        }
+    }, [])
 
     useEffect(() => {
         setProducts(fetchedProducts.data);
@@ -78,8 +85,8 @@ function Collection() {
             <div className='collections'>
                 <NavbarSlider />
                 <Navigbar />
-                <div className='d-flex'>
-                    <div className='w-25 ps-3'>
+                <div className={`${windowWidth ? '' : 'd-flex'}`}>
+                    <div className={`ps-3 ${windowWidth?'w-100':'w-25'}`}>
                         <div className={`loader text-center m-auto ${loader ? 'd-block' : 'd-none'}`}>
                             <div id="loader">
                                 <span></span>
@@ -92,7 +99,7 @@ function Collection() {
                                 parentCategories && parentCategories.map((parentCategory, index) => (
                                     <div key={index}>
                                         <div className='p-2'><strong>{parentCategory.name}</strong></div>
-                                        <ul className='ms-2 list-unstyled'>
+                                        <ul className={`ms-2 list-unstyled ${windowWidth?'d-flex':''}`}>
                                             {productCategories && productCategories.map((productCategory, index) => (
                                                 productCategory.parent_category.name === parentCategory.name ?
                                                     <li key={index}><input role='button' onClick={filterProductByCategory} type="checkbox" value={productCategory._id} data-parent_category={productCategory.parent_category._id} className='mx-2' />{productCategory.name}</li>
@@ -106,7 +113,7 @@ function Collection() {
                             }
                         </div>
                     </div>
-                    <div className='w-75'>
+                    <div className={`${windowWidth?'w-100':'w-75'}`}>
                         <div className={`${notoSans.className} fs-5 py-3 border-top mx-3`}>
                             Shop All
                         </div>
@@ -120,7 +127,7 @@ function Collection() {
                         <div className='products d-flex flex-wrap gap-4 overflow-y-scroll p-3'>
 
                             {products && products.map((product) => (
-                                <div key={product._id}>
+                                <div key={product._id} className='m-auto'>
                                     <QuickAdd_Card product={product} filepath={filepath} />
                                 </div>
                             ))

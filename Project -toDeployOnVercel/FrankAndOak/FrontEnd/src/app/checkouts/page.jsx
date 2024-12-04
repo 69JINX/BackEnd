@@ -317,8 +317,8 @@ function Checkout() {
                         <span className='p-2' role="button">Terms of service</span>
                     </div>
                 </div>
-                <div className='CartProducts p-3'>
-                    <div className='products ps-2'>
+                <div className={`CartProducts p-3 `}>
+                    <div className={`products ${window.innerWidth < 500 ? 'w-100' : ''} ps-2`}>
                         <ul className='list-group'>
                             {
                                 cart && cart.map((cartProduct, index) => (

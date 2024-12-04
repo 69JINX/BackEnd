@@ -14,6 +14,7 @@ function QuickAdd() {
 
     const [products, setProducts] = useState([]);
     const [filepath, setFilepath] = useState('');
+    const [show, setShow] = useState(true);
 
 
     const fetchedProducts = useSelector((state) => state.products.value);
@@ -28,61 +29,66 @@ function QuickAdd() {
     useEffect(() => {
         console.log('products', products);
     }, [products])
+    useEffect(() => {
+        if (window.innerWidth < 800) {
+            setShow(false);
+        }
+    }, [])
 
-    var settings = {
-        slidesToShow: 4.1,
-        slidesToScroll: 4,
-        infinite: false,
-        speed: 200,
-        mobileFirst: true,//add this one
-        responsive: [
-            {
-                breakpoint: 1420,
-                settings: {
-                    slidesToShow: 3.2,
-                    slidesToScroll: 3
-                }
-            },
-            {
-                breakpoint: 1130,
-                settings: {
-                    slidesToShow: 2.5,
-                    slidesToScroll: 2
-                }
-            },
-            {
-                breakpoint: 890,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2
-                }
-            },
-            {
-                breakpoint: 710,
-                settings: {
-                    slidesToShow: 1.6,
-                    slidesToScroll: 1
-                }
-            },
-            {
-                breakpoint: 570,
-                settings: {
-                    slidesToShow: 1,
-                    slidesToScroll: 1
-                }
-            }
-            // You can unslick at a given breakpoint now by adding:
-            // settings: "unslick"
-            // instead of a settings object
-        ]
-    }
+    // var settings = {
+    //     slidesToShow: 4.1,
+    //     slidesToScroll: 4,
+    //     infinite: false,
+    //     speed: 200,
+    //     mobileFirst: true,//add this one
+    //     responsive: [
+    //         {
+    //             breakpoint: 1420,
+    //             settings: {
+    //                 slidesToShow: 3.2,
+    //                 slidesToScroll: 3
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 1130,
+    //             settings: {
+    //                 slidesToShow: 2.5,
+    //                 slidesToScroll: 2
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 890,
+    //             settings: {
+    //                 slidesToShow: 2,
+    //                 slidesToScroll: 2
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 710,
+    //             settings: {
+    //                 slidesToShow: 1.6,
+    //                 slidesToScroll: 1
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 570,
+    //             settings: {
+    //                 slidesToShow: 1,
+    //                 slidesToScroll: 1
+    //             }
+    //         }
+    //         // You can unslick at a given breakpoint now by adding:
+    //         // settings: "unslick"
+    //         // instead of a settings object
+    //     ]
+    // }
 
 
 
 
     return (
         <>
-            <Carousel className='carousel' interval={null}>
+            <Carousel className={`carousel ${show ? '' : 'd-none'}`} interval={null}>
                 {products && products.reduce((result, _, index, array) => { // All this calculation just to show 4 QuickCards in a single <Carousel.Item>, because only one QuickCard was showing on the screen at a time
                     // Group items into chunks of 3 (or desired number)
                     if (index % 4 === 0) {
@@ -90,6 +96,7 @@ function QuickAdd() {
                     }
                     return result;
                 }, []).map((chunk, idx) => (
+
                     <Carousel.Item key={idx}>
                         <div className="d-flex m-4 justify-content-between">
                             {chunk.map((item, index) => (
