@@ -30,8 +30,10 @@ function QuickAdd() {
         console.log('products', products);
     }, [products])
     useEffect(() => {
-        if (window.innerWidth < 800) {
-            setShow(false);
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth < 800) {
+                setShow(false);
+            }
         }
     }, [])
 

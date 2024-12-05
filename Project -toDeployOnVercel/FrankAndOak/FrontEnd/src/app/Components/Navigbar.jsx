@@ -54,6 +54,7 @@ function Navigbar() {
     const [showSearchResultBox, setshowSearchResultBox] = useState(false);
     const [searchedProducts, setSearchProducts] = useState([]);
     const [filepath, setfilepath] = useState('');
+    const [windowWidth, setWindowWidth] = useState(0);
     // const handleCloseCart = () => setShowCart(false);
     // const handleShowCart = () => setShowCart(true);
 
@@ -74,6 +75,12 @@ function Navigbar() {
     const user = useSelector((state) => state.user.value);
     const cart = useSelector((state) => state.cart.cart_value.data);
 
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setWindowWidth(window.innerWidth);
+        }
+      }, []);
+ 
 
     useEffect(() => {
         dispatch(fetchProducts()); // Whenever website(header) loads, all products will be fetches in advance and stored in the redux store, so whenever we need to show data in any page, we can show it from redux store instead of calling api on every page
@@ -143,6 +150,7 @@ function Navigbar() {
     useEffect(() => {
         if (!showSearch) setshowSearchResultBox(false);
     }, [showSearch])
+
 
     return (
         <>
@@ -226,7 +234,7 @@ function Navigbar() {
                     </div>
                 </div>
                 <div className='mobile-view d-flex  flex-row justify-content-between pe-4 flex-wrap-reverse'>
-                <div className="controls d-flex fs-3 mb-2">
+                    <div className="controls d-flex fs-3 mb-2">
                         <nav>
                             <div className={`menu smallscrn-menu ${profileDropDown ? 'active' : ''}`}>
                                 {userData ?
@@ -255,7 +263,7 @@ function Navigbar() {
                                 <div className='position-absolute top-0 start-50 fs-6 ms-2'>
                                     {cart && cart.length}
                                 </div>
-                                <Offcanvas style={{ width: `${window.innerWidth<500?'80vw':'35vw'}` }} placement='end' show={showCart} onHide={() => setShowCart(false)}>
+                                <Offcanvas style={{ width: `${windowWidth < 500 ? '80vw' : '35vw'}` }} placement='end' show={showCart} onHide={() => setShowCart(false)}>
                                     <OffCanvas_Cart />
                                 </Offcanvas>
                             </li>
@@ -277,7 +285,7 @@ function Navigbar() {
                             <li className='fs-4 fw-bold'><Link href="#" className="logo">Frank And Oak</Link></li>
                         </ul>
                     </div>
-                    
+
 
                     <div style={{ height: `${showSearchResultBox ? '' : '0vh'}`, zIndex: '9999' }} className={`search-result-box ${showSearchResultBox ? 'p-4' : 'p-0'} `} >
                         {

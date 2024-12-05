@@ -21,6 +21,7 @@ function Checkout() {
     const [cart, setCart] = useState([])
     const [filepath, setFilepath] = useState('');
     const [totalPrice, setTotalPrice] = useState(0);
+    const [windowWidth, setWindowWidth] = useState(0);
     const [paymentDetails, setPaymentDetails] = useState({ first_name: '', last_name: '', address: '', telephone: '', country: { name: '', code: '' }, state: '', city: '', postal_code: '' });
 
     const [show, setShow] = useState(false);
@@ -31,6 +32,12 @@ function Checkout() {
 
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setWindowWidth(window.innerWidth);
+        }
+    }, []);
 
     const getGeolocation = () => { // Geolocation API
         if (navigator.geolocation) {
@@ -318,7 +325,7 @@ function Checkout() {
                     </div>
                 </div>
                 <div className={`CartProducts p-3 `}>
-                    <div className={`products ${window.innerWidth < 500 ? 'w-100' : ''} ps-2`}>
+                    <div className={`products ${windowWidth < 500 ? 'w-100' : ''} ps-2`}>
                         <ul className='list-group'>
                             {
                                 cart && cart.map((cartProduct, index) => (
