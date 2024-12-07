@@ -2,6 +2,10 @@
     width: 60vw;
 }
 
+.productImages img {
+    width: 400px !important;
+}
+
 * {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -19,7 +23,8 @@
 
 }
 
-.goToHomePage {
+.goToHomePage span{
+    text-decoration: underline;
     text-underline-offset: 0.3em;
     text-decoration-thickness: 1px;
     font-weight: 500;

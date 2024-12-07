@@ -105,7 +105,7 @@ function Product() {
                             {
                                 product.gallery && product.gallery.map((image, index) => (
                                     <Link key={index} target="_blank" href={filepath + image}>
-                                        <img key={index} className='p-2' width={400} src={filepath + image} />
+                                        <img key={index} className='p-2' src={filepath + image} />
                                     </Link>
                                 ))
                             }
@@ -119,9 +119,12 @@ function Product() {
                         </div>
                     </div>
                     <div className='productDetails p-5'>
-                        <div role='button' className='goToHomePage text-decoration-underline'>
-                            Home
+
+                        <div role='button' className='goToHomePage'>
+                            <Link href="/"><span>Home</span></Link> /
+                            <Link href="/collections"><span>All Products</span></Link>
                         </div>
+
                         <div className='my-3 new'>
                             NEW
                         </div>
@@ -177,11 +180,11 @@ function Product() {
                         <hr className='my-4' />
                         <div className='offers d-flex'>
                             <div className='d-flex align-content-center align-items-center'>
-                                <img style={{width:'30px'}} src="https://cdn.shopify.com/s/files/1/0553/7100/6130/files/shipping-holiday-PDP-v1.svg?v=1732296041" />
+                                <img style={{ width: '30px' }} src="https://cdn.shopify.com/s/files/1/0553/7100/6130/files/shipping-holiday-PDP-v1.svg?v=1732296041" />
                                 <span className='ms-2'>Free Shipping over $99</span>
                             </div>
                             <div className='ms-5'>
-                                <img style={{width:'25px'}} src="https://cdn.shopify.com/s/files/1/0553/7100/6130/files/returns-holiday-PDP-v1.svg?v=1732296041" />
+                                <img style={{ width: '25px' }} src="https://cdn.shopify.com/s/files/1/0553/7100/6130/files/returns-holiday-PDP-v1.svg?v=1732296041" />
                                 <span className='ms-2'>Free Extended Returns</span>
                             </div>
                         </div>
