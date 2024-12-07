@@ -1,7 +1,7 @@
 import React from 'react'
 import Footer_Facilities from './Footer/Footer_Facilities'
 import Footer_About from './Footer/Footer_About.jsx'
-
+import './../Css/Footer.css';
 
 function Footer() {
     return (

@@ -16,6 +16,7 @@
 
 .singleProduct {
     display: flex;
+
 }
 
 .goToHomePage {
@@ -92,8 +93,36 @@
     font-size: 14px;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1200px) {
     .productDetails{
         padding:30px 10px !important;
     }
 }
+
+
+
+@media only screen and (max-width: 1500px) {
+    .productImages img{
+        width: 350px;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .productImages{
+        height: 100vh;
+        overflow: scroll;
+        width: 50vw;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .productDetails{
+    width: 100vw;
+    }
+    .productImages {
+        width: 100vw;
+        height: 100%;
+    }
+}
+
+

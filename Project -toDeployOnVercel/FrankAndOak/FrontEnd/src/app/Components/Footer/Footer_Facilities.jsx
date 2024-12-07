@@ -2,6 +2,7 @@ import React from 'react'
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { VscRefresh, VscActivateBreakpoints } from "react-icons/vsc";
 import { MdOutlinePayment } from "react-icons/md";
+import './../../Css/Footer.css';
 
 function Footer_Facilities() {
     return (

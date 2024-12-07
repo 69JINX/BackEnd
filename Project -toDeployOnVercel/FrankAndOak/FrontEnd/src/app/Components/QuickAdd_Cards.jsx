@@ -1,13 +1,12 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import './../Css/QuickAdd_Cards.css'
 import Link from 'next/link'
 import { FaRegCircleDot } from "react-icons/fa6";
 import { Toast } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserData } from '@/redux/Slices/userSlice';
-import ReactDOM from "react-dom";
-import { addToCart, fetchCart } from '@/redux/Slices/cartSlice';
+import { fetchCart } from '@/redux/Slices/cartSlice';
 import axios from 'axios';
 
 function QuickAdd_Card({ product, filepath, handleToast }) {
@@ -70,7 +69,7 @@ function QuickAdd_Card({ product, filepath, handleToast }) {
 
 
     return (
-        <Link href={`/products/${product && product._id}`}>
+        <Link href={`/products/${product && product._id}?color=${selectedColor}`}>
             <div className="box position-relative">
                 <div className={`w-100 h-100 position-absolute z-3 top-0 start-0 bg-black opacity-25 ${showLoader ? '' : 'd-none'}`}>
                     <div class="spinner-border position-absolute start-50 top-50 text-info" role="status">

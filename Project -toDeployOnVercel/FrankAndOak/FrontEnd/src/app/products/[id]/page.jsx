@@ -1,22 +1,34 @@
 'use client'
 import Navigbar from '@/app/Components/Navigbar';
-import { useParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import './../../Css/singleProduct.css'
-import Image from 'next/image';
 import { CiHeart } from "react-icons/ci";
-import Footer_About from '@/app/Components/Footer/Footer_About';
 import Footer from '@/app/Components/Footer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Toast } from 'react-bootstrap';
+import axios from 'axios';
+import { fetchUserData } from '@/redux/Slices/userSlice';
+import { fetchCart } from '@/redux/Slices/cartSlice';
+import Link from 'next/link';
 
 function Product() {
 
     const [selectedSize, setselectedSize] = useState('');
     const [product, setProduct] = useState(null);
     const [filepath, setfilepath] = useState('');
-    const [addToCartText, setaddToCartText] = useState('Add to Cart')
+    const [addToCartText, setaddToCartText] = useState('Add to Cart');
+    const [showLoader, setShowLoader] = useState(false);
+    const [show, setShow] = useState(false);
+    const [toast, setToast] = useState({ text: '', color: '', delay: 0 });
     const products = useSelector((state) => state.products.value);
+    const user = useSelector((state) => state.user.value);
     const idFromParams = useParams();
+    const dispatch = useDispatch();
+
+    const searchParams = useSearchParams();
+    const color = searchParams.get('color');
+
 
     useEffect(() => {
         if (!(JSON.stringify(products) === '{}')) {
@@ -26,22 +38,75 @@ function Product() {
         }
     }, [products])
 
+
     const addToCart = () => {
         if (selectedSize == '') {
             return;
         }
 
+        // setShowLoader(true);
+        dispatch(fetchUserData());
+        console.log('use addto card', user);
+        setShow(true);
+        if ((JSON.stringify(user) === "{}")) {
+            setShowLoader(false);
+            setToast({ text: 'Login to perform further actions!', color: '#ED4337', delay: 3000 });
+            return 0;
+        }
+        const data = {
+            user: user._id,
+            product: product._id,
+            color: color,
+            size: selectedSize,
+        }
+        console.log(data);
+
+        axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/website/cart/add-to-cart`, data)
+            .then((response) => {
+                setShow(true);
+                setShowLoader(false);
+                if (response.data.message === 'cart-quantity-updated') {
+                    dispatch(fetchCart(user._id));
+                    setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Quantity Updated</>, color: '#72bf6a', delay: 1000 });
+
+                }
+                if (response.data.message === 'cart-product-added') {
+                    dispatch(fetchCart(user._id));
+                    setToast({ text: <><span className='text-decoration-underline'>{product.name}</span> Added to Cart</>, color: '#72bf6a', delay: 1000 });
+
+                }
+            })
+            .catch((error) => {
+                setShowLoader(false);
+                console.log(error);
+                setShow(true);
+                setToast({ text: error.response.data.message && error.response.data.message, color: '#ED4337', delay: 3000 });
+            })
+
     }
+
+
     return (
         <>
+            <Toast className='position-fixed' style={{ position: 'fixed', top: '40px', right: '10px', zIndex: '99999', backgroundColor: toast.color, fontWeight: 'bold' }}
+                onClose={() => setShow(false)} show={show} delay={toast.delay} autohide>
+                <Toast.Body>{toast.text}</Toast.Body>
+            </Toast>
             <Navigbar />
+            <div className={`w-100 h-100 position-absolute z-3 top-0 start-0 bg-black opacity-25 ${showLoader ? '' : 'd-none'}`}>
+                <div className="spinner-border position-absolute start-50 top-50 text-info" role="status">
+
+                </div>
+            </div>
             {product &&
-                <div className='singleProduct'>
+                <div className='singleProduct flex-column flex-md-row'>
                     <div className='productImages'>
-                        <div className='d-flex flex-wrap'>
+                        <div className='d-flex flex-md-wrap'>
                             {
                                 product.gallery && product.gallery.map((image) => (
-                                    <img className='p-2' width={450} src={filepath + image} />
+                                    <Link target="_blank" href={filepath + image}>
+                                        <img className='p-2' width={450} src={filepath + image} />
+                                    </Link>
                                 ))
                             }
                             {
@@ -129,12 +194,6 @@ function Product() {
                         </div>
                     </div>
                 </div >
-            }
-            {
-                !(product) &&
-                <div className='text-center'>
-                    <h1>No product found</h1>
-                </div>
             }
             <Footer />
         </>
