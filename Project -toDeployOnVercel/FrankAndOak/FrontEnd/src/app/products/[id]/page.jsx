@@ -103,9 +103,9 @@ function Product() {
                     <div className='productImages'>
                         <div className='d-flex flex-md-wrap'>
                             {
-                                product.gallery && product.gallery.map((image) => (
-                                    <Link target="_blank" href={filepath + image}>
-                                        <img className='p-2' width={450} src={filepath + image} />
+                                product.gallery && product.gallery.map((image, index) => (
+                                    <Link key={index} target="_blank" href={filepath + image}>
+                                        <img keu={index} className='p-2' width={450} src={filepath + image} />
                                     </Link>
                                 ))
                             }
@@ -158,7 +158,7 @@ function Product() {
 
                             {
                                 product.size.map((size, index) => (
-                                    <div role='button' data-value={size._id} onClick={(e) => setselectedSize(e.target.dataset.value)} className={`${selectedSize == size._id ? 'bg-black text-white' : ''} px-2 me-3 py-1 productSize d-inline-block`}>
+                                    <div key={index} role='button' data-value={size._id} onClick={(e) => setselectedSize(e.target.dataset.value)} className={`${selectedSize == size._id ? 'bg-black text-white' : ''} px-2 me-3 py-1 productSize d-inline-block`}>
                                         {size.name}
                                     </div>
                                 ))
