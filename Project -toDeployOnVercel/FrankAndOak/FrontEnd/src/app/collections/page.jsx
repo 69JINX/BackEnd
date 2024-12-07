@@ -99,11 +99,21 @@ function Collection() {
                             {
                                 parentCategories && parentCategories.map((parentCategory, index) => (
                                     <div key={index}>
-                                        <div className='p-2'><strong>{parentCategory.name}</strong></div>
-                                        <ul className={`ms-2 list-unstyled ${windowWidth ? 'd-flex' : ''}`}>
+                                        <div className='p-2 fs-4'><strong>{parentCategory.name}</strong></div>
+                                        <ul className={`ms-4 list-unstyled ${windowWidth ? 'd-flex' : ''}`}>
                                             {productCategories && productCategories.map((productCategory, index) => (
                                                 productCategory.parent_category.name === parentCategory.name ?
-                                                    <li key={index}><input role='button' onClick={filterProductByCategory} type="checkbox" value={productCategory._id} data-parent_category={productCategory.parent_category._id} className='mx-2' />{productCategory.name}</li>
+                                                    <li key={index}>
+
+                                                        <label class="container">
+                                                            {productCategory.name}
+                                                            <input role='button' onClick={filterProductByCategory} type="checkbox" value={productCategory._id} data-parent_category={productCategory.parent_category._id} className='mx-2' />
+                                                            <span class="checkmark"></span>
+                                                        </label>
+
+                                                        {/* <input role='button' onClick={filterProductByCategory} type="checkbox" value={productCategory._id} data-parent_category={productCategory.parent_category._id} className='mx-2' />{productCategory.name}
+                                                        <span class="checkmark"></span> */}
+                                                    </li>
                                                     : ''
                                             ))
                                             }
