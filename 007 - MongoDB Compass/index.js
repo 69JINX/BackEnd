@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb'); // npm i mongodb
 
 const dbName = 'temp_db'
-const url = 'mongodb://localhost:27017'; // url got from mongoDB compass
+const url = 'mongodb://localhost:27017'; // url got from mongoDB compass (mongoDB Compass should be running)
 const client = new MongoClient(url);
 
 // Connecting to Database
