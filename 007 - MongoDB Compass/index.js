@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb'); // npm i mongodb
 
 const dbName = 'temp_db'
 const url = 'mongodb://localhost:27017';
