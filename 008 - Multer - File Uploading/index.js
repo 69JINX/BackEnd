@@ -5,7 +5,6 @@ const app = express();
 
 //https://www.youtube.com/watch?v=WqJ0P8JnftI
 
-
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads')
@@ -25,6 +24,7 @@ app.get('/', (req, res) => {
 app.post('/upload', upload, (req, res) => {
     console.log(req.body);
     console.log(req.file);
+    res.status(200).json({message:'file uploaded successfully'});
 });
 
 app.listen(3000, () => {
