@@ -1,0 +1,831 @@
+start mongoDB service : net start mongoDB
+stop mongoDB service : net stop mongoDB
+
+- show dbs : show all Database
+- create/use database : use db_name
+- Create/use existing collection inside db :
+create :
+  db.createCollection("collection_name")
+use:
+ db.collection_name (not necessary to write the whole db name, if you are inside that db, the acronym db will represent the actual db automatically which is your db name (i.e. StudentDB.students)
+- insert record : db.collection.insertOne({name:Ram})
+- view collection records : db.collection_name.find()
+- update record : 
+db.collection_name.updateOne(
+{ _id : "findId"}, // find value
+{
+ $set :{
+    { 
+    gender:"male"  // set new value
+    }  
+)
+If the column doesn't exist, unless you have'nt defined the schema using mongoose it will create the column automatically but with schema, it will throw error that column doesn't exist
+
+[The maximum allowed size of a mongoDB document/record/row is 16MB, which might get increase when nesting too much]
+
+- update Multiple records : 
+db.collection_name.update(
+{},    // Empty obj to update all records
+{
+ $set :{
+    { 
+    hobbies: ['football', 'games'] 
+    }  
+)
+
+- find records based on a single value from an array
+db.collection_name.find({hobbies:'games'})
+mongoDB is smart enough to find the records if searchable records is array and given a value from the array in find function
+
+- count resultant records : db.collection_name.find().count();
+db.collection_name.find().size()
+https://www.tpointtech.com/javascript-count-function
+count, size, skip these are the methods of cursor. Cursor is an object that allows you to iterate over the results of a query.
+All cursor methods : https://www.mongodb.com/docs/manual/reference/method/js-cursor/
+
+- nested searching : db.collection_name.find({'bio.gender':'male'});
+result : 
+{
+name : 'Shyam',
+bio : {
+     gender:'male'
+        }
+}
+
+
+CRUD :
+Create  : 
+     insert(data, options) // accepts both obj (for single record) and array (for multiple records) i.e. used to insert single or multiple both,  deprecated function, should use insertOne or insertMany. Will work but not advisable to use
+     insertOne(data, options) // accepts an obj
+     insertMany(data, options)  // accepts an array of obj
+Read : 
+     find(filter, options) // return all records 
+     findOne(filter, options)  // return the first records that matches
+Update :
+     update(filter, data, options)
+     updateMany(filter, data, options)
+     replaceOne(filter, data, options)
+Delete :
+     deleteOne(filter, options)
+     deleteMany(filter, options) // empty obj to delete all i.e. deleteMany({})
+
+- find by id : db.collection_name.find({_id:ObjectId('id_to_search')})
+
+- Projection ( get only specific column/keys)
+by default, find method return all keys of the records, to get only specific records we use the 2nd argument in the find method to filter out keys
+db.collection_name.find(
+{},
+{name:1} 
+)
+above method will return { _id, name } of all records.
+_id key is return by default, so exclude the _id key too, modify the filter argument {name:1, _id:0}
+To exclude only name key and return rest of values : {name:0}, this will return all keys except name key
+
+- Datatypes
+   1. Text
+   2. Boolean
+   3. Number - [Integer, NumberLong, NumberDecimal]
+   4. ObjectId
+   5. ISODate
+   6. Timestamp
+   7. Array
+   8. Embedded Document (obj)
+
+Eg : 
+db.collection_name.insertOne(
+{
+date: new Date(),
+timestamp : new Timestamp()
+})
+result : 
+{
+"date" : ISODate("2025-03-22T16:25:48.741Z"), 
+"timestamp" : Timestamp(1742660748, 1)
+}
+
+- drop database/collection
+  drop db = db.dropDatabase()
+  drop collection = db.collection_name.drop()
+
+- give your own _id when creating record
+   db.collection_name.insertOne({_id:"my_id", name:"joen"})
+result :
+{
+_id : "my_id",
+name: "joen"
+}
+But if you tried to add new record with same id, then you can't and it will throw error 
+
+- insert query filter arguments :
+insertOne(
+data,
+{
+    writeConcern: { w: <value>, j: <boolean>, wtimeout: <number> },
+    ordered: <boolean>
+})
+ordered : when multiple data is inserted using insertMany, there might be any error when inserting some data, so if error occurs the rest of data won't get inserted. That's why ordered : false is used to insert rest of data even if any occurs in middle of inserting some data
+eg :
+db.collection_name.insertMany(
+[
+  {_id:"124", name:"joen"},
+  {_id:"my_id", name:"joen2"}, // this will cause error because this I'd already exist in the records, the error will prevent the rest of data to insert so online _id 123 record will be inserted
+  {_id:"134", name:"joen3"}
+],
+{
+ordered: false // but the ordered is false so it will just ignore the error record and jump of next record to insert. So both _id 123 and _id 134 record will be inserted in db. By default the ordered key is true
+})
+
+writeConcern :
+https://chatgpt.com/share/67dfab1e-78f0-8009-a780-40a26c3d91a4
+https://youtu.be/3slJKBYEgbU?si=-a9e-F3m61833TKm
+
+- Define a schema : https://youtu.be/6Cv7ihA4388
+ Specify schema when creating collection :
+
+db.createCollection("nonfiction", {
+    validator: {
+        $jsonSchema: {
+            required: ['name', 'price'],
+            properties: {
+                name: {
+                    bsonType: 'string',
+                    description: 'must be a string and required'
+                },
+                price: {
+                    bsonType: 'number',
+                    description: 'must be a number and required'
+                }
+            }
+        }
+    },
+    validationAction: 'error'
+});
+
+ Edit/create schema of already existed collection :
+
+db.runCommand({
+    collMod: 'nonfiction',
+    validator: {
+        $jsonSchema: {
+            required: ['name', 'price', 'author'],
+            properties: {
+                name: {
+                    bsonType: 'string',
+                    description: 'must be a string and required'
+                },
+                price: {
+                    bsonType: 'number',
+                    description: 'must be a number and required'
+                },
+                author: {
+                    bsonType: 'array',
+                    description: 'must be an array and is required',                   
+                      items: {
+                         bsonType: 'object',
+                         required: ['name', 'email'],
+                         properties: {
+                               name: {
+                                       bsonType: 'string'
+                                           },
+                              email: {
+                                       bsonType: 'string'
+                                    }
+                              }
+                          }
+                }
+            }
+        }
+    }
+   validationAction: 'error'
+});
+
+
+
+
+- Comparision Operators :
+   equal to : $eq          || not equal to : $ne
+   in : $in                      || not in : $nin
+   less than : $lt          || less than and equal to : $lte
+   greater than : $gt   || less than and equal to : $gte
+Eg - find records where age greater than 12
+db.collection_name.find(
+{ 
+age :{
+      $gte : 12
+       }
+})
+Eg - find records where age less than 5 and greater than 12
+db.collection_name.find(
+{ 
+age :{
+      $lte : 5,
+      $gte : 12
+       }
+})
+Eg - Find records where age is 5, 15 and 12
+db.collection_name.find(
+{ 
+age :{
+      $in : [5, 15, 12]
+       }
+})
+
+- Logical Operators 
+$and, $or, $nor, $not
+Eg - Find records where age is less than 10 or greater than 15
+db.collection_name.find({ 
+  $or : [
+      {
+         age :{$lte : 10}    
+       },
+      {
+         age :{$gte : 15}
+      }]
+})
+// $or, $and, $nor operator accepts conditions in an array as array items
+
+Note : why use $and operator when we can enter multiple conditions in find method ?
+db.collection_name.find(
+{
+   age:{$lt:11},
+   age:{$gt:13}
+});
+the above expression will only give result of $gt because if same keys are entered in the condition, the last key is graded and result will be based on the last key ignoring rest of starting keys.
+That's why here $and operator will use which give result where age is less than 11 and greater than 13
+db.collection_name.find(
+{
+  $and: [
+   {age:{$lt:11}},
+   {age:{$gt:13}}
+    ]
+});
+
+Eg - Find records where age is not less than 13 
+db.collection_name.find(
+{
+   age:{
+        $not: {
+             {$lt:13}
+          }
+});
+
+- Element Query Operators
+$exists :  Matches documents that have the specified field.
+$type :  Selects documents if a field is of the specified type.
+Eg - Find records where gender key exists
+db.collection_name.find(
+{
+   gender:{$exists: true}
+});
+Eg : Find records where type of gender is an object
+db.collection_name.find(
+{
+   gender:{$type: 3}
+});
+number 3 is the alias for object, you could also type direct $type : "object". All types are listed here with there corresponding alias
+https://www.mongodb.com/docs/manual/reference/operator/query/type/#mongodb-query-op.-type
+
+- Evaluation query operators 
+
+$expr : Allows use of aggregation expressions within the query language. Useful in cases where field-to-field comparision or calculation are needed. Use $expr when comparing two more more fields
+When using $expr, to specify field name, use dollar sign before the field name within quotes.
+Eg - db.collection_name.find({
+$expr:{
+      $gt:['$field1','$field2']
+     }
+});
+This will return all the records where the value of field1 is greater than field2.
+Comparing if fields within find method is only possible through $expr, the below expression will throw error
+db.collection_name.find({$gt:['$empId','$age']});
+Eg - db.collection_name.find({
+$expr : {
+     $gt : { '$price' , { '$avg' : '$price'} }
+   }
+})
+this will find all documents in the collection where the value of the 'price' field is greater than the average value of the 'price' fields of all documents in the collection
+$jsonSchema : Validate documents against the given JSON Schema.
+
+$mod : Performs a modulo operation on the value of a field and selects documents with a specified result.
+Eg -
+db.collection_name.find({
+   quantity :{
+           $mod : [2, 0]
+      }
+})
+This expression will return the documents/records where modulo (gives the remainder after integer division) is 0 when deviding by 2
+i.e. return all records where quantity is an even number 
+
+$regex : Selects documents where values match a specified regular expression.
+Eg : db.collection_name.find({
+name : {
+     $regex : /^A/
+   }
+})
+this will find all name which start with capital letter A
+
+$text : Allows mongoDB to search for specific words and phrases in the indexed fields and return documents thag match the search criteria
+
+$where : Matches documents that satisfy a JavaScript expression. Not used anymore
+
+- Quarrying array 
+$size, $all, $in, $elemMatch
+Eg - Find records where students have 3 hobbies ( hobbies is an array)
+db.collection_name.find({
+   hobbies : {
+        $size : 3
+     }
+})
+output : {_id: "123", name:"ram", hobbies:["cricket", "games", "tv"]}
+
+Eg - Find records where hobbies are tv and games
+db.collection_name.find({
+   hobbies : {
+        $all : ["tv", "games"]
+     }
+})
+Eg - Find records where hobbies are tv or games
+db.collection_name.find({
+   hobbies : {
+        $in : ["tv", "games"]
+     }
+})
+Eg - Find records that have at least a product with name apple and quantity greater than 11
+using $and operator :
+
+db.collection.find({
+$and : [
+     { 'products.name' : 'apple'},
+     { 'products.quantity' : { $gt : 11 }}
+   ]
+})
+output : 
+[{
+  _id : 1,
+ products: [
+    {name:'apple', quantity : 10},
+    {name:'orange', quantity : 5},
+    {name:'banana', quantity : 20}
+  ]
+},
+{
+  _id : 2,
+ products: [
+    {name:'apple', quantity : 15},
+    {name:'orange', quantity : 10},
+    {name:'banana', quantity : 5}
+  ]
+}]
+
+this will return record both _id 1 and 2. The _id 2 record that returned is correct because the product is apple and quantity is 15 which is greater than 11 but the _id 1 that got returned is wrong because the product name is apple but it is not greater than 11. The and operator found all items in the product array which matches the apple product and in case of quantity, it got banana whose quantity is 20 greater than 11, so it returned the _id 1 too which is not asked in the question. We wanted the record where product name is apple and apple should have a quality greater than 11, so that's where $elemMatch operator comes in, it helps match the whole item in the array :
+db.collection.find({
+products: {
+   $elemMatch : {
+       name: 'apple',
+       quantity : { $gt : 11}
+     }
+ }
+}) 
+This will perform the search on the every single item in the array of products checking both name and quantity conditions in that item and the _id 2 record will be returned
+
+- More operators :
+$inc, $min, $max, $mul, $unset, $rename, upsert
+Eg - Increase age of all students by 2
+db.collection.updateMany(
+{},
+{
+  $inc : {age : 2}
+})
+Eg - set age of ram to 50 only if it is less than it
+db.collection.updateOne(
+{name:'ram'},
+{
+  $max: {age : 50}
+})
+It will increase the value to 50 if the previous value is less than or equal to 50. Now that it is 50, the below query won't work :
+db.collection.updateOne(
+{name:'ram'},
+{
+  $max: {age : 24}
+})
+To decrease to 24, we have to use $min
+db.collection.updateMany(
+{name:'ram'},
+{
+  $min: {age : 24}
+})
+Eg - Multiply age of ram by 2
+db.collection.updateOne(
+{name:'ram'},
+{
+   $mul : {age:2}
+})
+Eg - remove age key from ram :
+db.collection.updateOne(
+{name: 'ram'},
+    $unset : {age : 2727} //any random value, because we just have to remove the key
+})
+Eg - Rename age key to newAge
+db.collection.updateMany({},
+{
+$rename : {age : "newAge"}
+})
+Eg : find the student golu and set his age to 17, insert golu if it doesn't exist
+db.collection.updateOne(
+{name : 'golu'},
+{
+  $set : {age : 17 }
+},
+{ upsert : true } // this will create golu with age 17 if golu doesn't exist. This saves us from performing multiple queries like finding golu by find query, if find return null then performing insertOne to create golu
+)
+And the above query will only work if the age was greater than 24
+
+- Array updation operators :
+$push, $pull, $pop, $addToSet
+
+Eg - For all experiences lesser than and equal to 1 year for all students, add a new field neglect : true
+Original data :
+{
+  _id : 123,
+  name : "Ram",
+  experience : [
+    {company : 'amazon', duration : 1},
+    {company : 'google', duration : 2.5}
+   ]
+}
+Expected data after update : 
+{
+  _id : 123,
+  name : "Ram",
+  experience : [
+    {company : 'amazon', duration : 1, neglect : true},
+    {company : 'google', duration : 2.5}
+   ]
+}
+
+Query :
+db.collection.updateMany(
+
+{
+
+    experience : {
+
+  $elemMatch : {duration : {$lte : 1}}
+
+     }
+
+},
+
+{ // update query }
+
+}
+
+Now in update query, there are 3 ways to update the existing elements of an array in mongoDB (not pushing/pulling elements, but changing the existing elements) 
+
+inserting new key "neglect:true" inside the experience array elements 
+
+1. update the 1st match element : 
+
+   {
+
+  $set : {
+
+    "experience.$.neglect":true
+  }
+
+   }
+
+2. update all match elements
+
+  {
+
+  $set : {
+
+    "experience.$[ele].neglect":true
+  }
+
+   },
+
+  {
+
+  arrayFilters : [
+
+    {"ele.duration" : {$lte:1}}
+
+  ]
+
+  }
+
+3. update all elements (even if they don't match)
+
+   {
+
+  $set : {
+
+    "experience.$[].neglect":true
+  }
+
+   }
+
+1. $push :
+
+{
+
+    $push : {
+
+  experience : { company :'meta', duration :2 }
+
+  }
+
+}
+
+2. $addToSet :
+
+{
+
+    $addToSet : {
+
+  experience : { company :'meta', duration :2 }
+
+  }
+
+}
+
+3. $pull : 
+
+{
+
+    $push : {
+
+  experience : { company :'amazon' }
+
+  }
+
+}
+
+4. $pop : 
+
+{
+
+    $pop : {
+
+  experience : 1 // 1 to remove last item, -1 to remove first item
+
+  }
+
+}
+
+difference between $push and $addToSet is that $addToSet won't push if the element you are inserting is already present in the array. In case of inserting obj, if all keys mathes the existing element, than it won't get inserted but if any one key is difference, than it will get inserted.
+
+
+- Sorting
+Eg - Show sorted records in ascending order by age
+db.collection.find().sort({ age : 1 });
+// 1 for ascending, -1 for descending 
+Eg - sort records by age, if same ages are found, sort them by their name
+db.collection.find().sort({ age : 1, name : 1});
+
+- Aggregation Pipeline
+
+The aggregation process in MongoDB consists of several stages, each stage transforming the data in some way.
+
+The output of one stage is fed as the input to the next stage, and so on, until the final stage produces the desired result.
+
+MongoDB provides several built-in aggregation pipeline stages to perform various operations on the data, such as $group, $sum, $avg, $min, $max, etc.
+
+syntax : db.collection.aggregate(pipeline, options)
+
+pipeline : array of different operations 
+
+all aggregation pipeline stages (ie. $match, $group etc) : https://www.mongodb.com/docs/manual/reference/operator/aggregation-pipeline/
+
+Eg - db.collection.aggregate([
+   {$match : {gender:'male'}} // find all records where gender is male
+])
+
+- $group
+The $group operator groups documents by the age field creating a new document for each unique age value. The _id field in the group stage specifies the field based on which the documents will be grouped.
+
+Eg - Group students by age
+
+db.collection.aggregate([
+{$group : {_id:'$age'}}
+])  
+
+this will result the below record where each _id is seperate group ie. group of age 12, group of age 14 etc :
+{ "_id" : 12 }
+{ "_id" : 14 }
+{ "_id" : 8 } 
+
+But we don't want only group name, we want the records of those group, then we will have to specify the field we want : 
+
+Eg - Group students by age and show each student name in that group db.collection.aggregate([
+{$group :   {_id:'$age'},
+{names:{$push:'$name'}} // name is the name of field we want, it will keep pushing the appropriate field (name) in the names key 
+}]) 
+
+Eg - Group students by age and also show complete document per age group
+ 
+
+db.collection.aggregate([
+
+{
+
+  group:{
+
+      _id : '$age',
+
+  records : {
+
+              $push : '$$ROOT'
+
+     }
+
+  }
+
+}])
+
+
+ 
+
+Eg - Give a count per age of male students
+
+db.students.aggregate([
+
+  {$match : {gender:'male'}},
+
+  {$group : {_id:'$age' , count: {$sum : 1}}}
+
+])
+
+The value of $sum is 1, which means that for each document in the group, the value of 'count' will be incremented by 1
+
+Eg - Give a count per age of male students and sort them by count in desc manner
+
+db.students.aggregate([
+
+  {$match : {gender:'male'}},
+
+  {$group : {_id:'$age' , count: {$sum : 1}}},
+
+  {$sort : {count : -1}}
+
+])
+
+In MongoDB's aggregation pipeline, count is a field name rather than a variable. It is dynamically created during the aggregation process when using the $group stage. MongoDB doesn't inherently recognize count as a special keyword—it is simply the name you've chosen for the field that stores the result of {$sum: 1}.
+
+We can create pipeline as much as we want.
+
+Eg - Find average age of all students
+
+db.collection.aggregate([
+
+  {$group : {_id:null, averAge : {$avg : '$age'}}}
+
+])
+
+If you specify _id:null in the $group operator, it means that all the documents in the collection will be grouped together into a single group
+
+
+$unwind ( aggregation )
+Deconstructs an array field from the input documents to output a document for each element. Each output document is the input document with the value of the array field replaced by the element.
+ data : 
+{
+   "_id" : 1, 
+   "item" : "ABC1",
+    sizes: [ "S", "M", "L"] 
+}
+query : db.inventory.aggregate( [ { $unwind : "$sizes" } ] )
+output : 
+{ "_id" : 1, "item" : "ABC1", "sizes" : "S" }
+{ "_id" : 1, "item" : "ABC1", "sizes" : "M" }
+{ "_id" : 1, "item" : "ABC1", "sizes" : "L" }
+
+$bucket
+When you want to categorise into discrete groups based on specified boundaries 
+
+Ex : Categorise male teachers based on their ages into three buckets : age less than 30, age between 30 and 40 and age greater than 40
+syntax :
+{
+   $bucket: {
+  groupBy: <expression>,
+  boundaries: [<boundary1>, <boundary2>, ...],
+  default: <expression>,
+  output: {
+       <outputField>: { <accumulator>: <expression>}
+               } 
+      }
+}
+syntax according to questions :
+{
+   $bucket: {
+   groupBy: "$age",
+   boundaries: [0, 30, 40],
+   default: "Greater than 40", // values which won't lie the above group 
+   output: {
+      count: { $sum: 1}
+          }
+    }
+}
+
+final query : 
+db.collection.aggregate([
+ {
+  $match : {
+       gender : "male"
+      }
+ }
+,
+{
+   $bucket: {
+   groupBy: "$age",
+   boundaries: [0, 30, 40],
+   default: "Greater than 40",
+   output: {
+      count: { $sum: 1}
+          }
+    }
+}
+])
+
+Joins :
+Types of joins :
+1. Inner join
+2. Left outer join
+3. Right outer join
+4. Full outer join
+
+$lookup :
+the $lookup is an aggregation pipeline stage that allows you to perform a left outer join between two collections 
+db.collection.aggregate([
+    {
+       $lookup: {
+                    from: "foreignCollection",
+                    localField: "localField", 
+                    foreignField: "foreignField", 
+                    as: "outputArray" 
+        }
+    }
+])
+Tip : 
+For right outer join, just perform the aggregate query on the foreignCollection
+For inner join, use $match operator
+For full outer join, combine queries of both collections
+
+$project :
+$project stage is used in the aggregation pipeline to reshape documents, include or exclude fields, and create computed fields
+It allows you to customize the output of your aggregation query by specifying which fields to include or exclude, applying expressions to existing fields, and renaming fields.
+{
+   $project: {
+// Field inclusion/exclusion or field transformations
+    }
+}
+
+> db.emp.aggregate ([
+{
+   $project: {
+           id:0,
+           firstName:1, 
+           lastName:1, 
+           monthly Salary:"$salary ",
+           annualSalary: { $multiply: [12, "$salary" ] } 
+       }
+ } ])
+
+capped :
+remove old items automatically when new items are inserted when collection size reaches the specified maximum size to help inserting newly fresh items and keep the size of collection consistence.
+> db.createCollection ("order_logs", 
+{ 
+      capped: true, 
+      max: 4, 
+     size:100000 // bytes
+})
+max or size, whichever gets true first 
+
+Transactions :
+Transactions provide data consistency by ensuring that either all the operations within the transaction are committed to the database, or none of them are.
+Transitions are designed to provide ACID properties
+A - Atomicity 
+C - Consistency
+I - Isolation
+D - Durability 
+
+- Atomicity & Transactions :
+https://chatgpt.com/share/67dfaea9-fd90-8009-b99e-fc1b761d6a68
+
+- Consistency
+Consistency ensures that a transaction brings the database from one valid state to another. It enforces any integrity constraints defined on the data, such as referential integrity or uniqueness constraints. If a transaction violates any constraints, the entire transaction is rolled back, preserving data integrity.
+
+- Isolation 
+Isolation ensures that each transaction operates independently of other concurrent transactions. It prevents interference between concurrent transactions, preserving data integrity and preventing unintended side effects. Isolation levels define different levels of concurrency control, allowing developers to choose the appropriate level of isolation for their use case.
+
+- Durability 
+Durability guarantees that once a transaction is committed, its changes are permanently stored and will survive any subsequent system failures. Committed transactions are made durable by writing their changes to disk or other persistent storage. This ensures that the data is not lost and can be recovered in the event of a crash or failure.
+
+- Sharding 
+sharding is a horizontal partitioning technique that distributes a large database across multiple physical servers (shards) to improve scalability, performance, and fault tolerance. 
+
+- Replication
+replication is the process of creating and maintaining multiple copies of data across different locations or servers to enhance data availability, improve performance, and ensure disaster recovery
+
+- Master Date Queries
+https://youtu.be/ZFhLaufhxYg
